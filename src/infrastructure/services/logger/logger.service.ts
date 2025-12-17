@@ -1,11 +1,12 @@
+/* eslint-disable */
 import { Injectable, LogLevel, LoggerService as NestLoggerService } from '@nestjs/common';
 
-export interface LoggerExtendtypes {
+export interface ILoggerExtendtypes {
   configuration(message: any, ...optionalParams: any[]): any;
 }
 
 @Injectable()
-export class LoggerService implements NestLoggerService, LoggerExtendtypes {
+export class LoggerService implements NestLoggerService, ILoggerExtendtypes {
   log(message: unknown, context?: string) {
     this.print('log', message, context);
   }
