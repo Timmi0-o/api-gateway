@@ -3,17 +3,20 @@ import Ajv, { ErrorObject } from 'ajv';
 import { ILoginDto } from 'src/application/dtos/auth/login.dto';
 import { ILogoutDto } from 'src/application/dtos/auth/logout.dto';
 import { IRefreshDto } from 'src/application/dtos/auth/refresh.dto';
+import { IResetPasswordDto } from 'src/application/dtos/auth/reset-password.dto';
 import { IAuthValidator } from 'src/domain/validators/auth-validator.interface';
 import { ServiceException } from 'src/shared/exceptions/service.exception';
 import { loginSchema } from '../schemas/login.schema';
 import { logoutSchema } from '../schemas/logout.schema';
 import { refreshSchema } from '../schemas/refresh.schema';
+import { resetPasswordSchema } from '../schemas/reset-password.schema';
 
 const ajv = new Ajv();
 
 const validateLogin = ajv.compile<ILoginDto>(loginSchema);
 const validateRefresh = ajv.compile<IRefreshDto>(refreshSchema);
 const validateLogout = ajv.compile<ILogoutDto>(logoutSchema);
+const validateResetPassword = ajv.compile<IResetPasswordDto>(resetPasswordSchema);
 
 @Injectable()
 export class AuthValidator implements IAuthValidator {
@@ -36,6 +39,14 @@ export class AuthValidator implements IAuthValidator {
   validateLogout(data: ILogoutDto): ILogoutDto {
     if (!validateLogout(data)) {
       throw ServiceException.validation(this.formatErrors(validateLogout.errors));
+    }
+
+    return data;
+  }
+
+  validateResetPassword(data: IResetPasswordDto): IResetPasswordDto {
+    if (!validateResetPassword(data)) {
+      throw ServiceException.validation(this.formatErrors(validateResetPassword.errors));
     }
 
     return data;

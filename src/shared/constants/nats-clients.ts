@@ -1,0 +1,4 @@
+export const NATS_CLIENTS = {
+  AUTH_CLIENT: 'AUTH_CLIENT',
+  USER_CLIENT: 'USER_CLIENT',
+};

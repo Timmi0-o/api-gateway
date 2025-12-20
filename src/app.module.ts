@@ -1,8 +1,9 @@
+import { AuthUsecaseModule } from '@infrastructure/modules/auth.module';
+import { UserUsecaseModule } from '@infrastructure/modules/user.module';
 import { LoggerModule } from '@infrastructure/services/logger/logger.module';
 import { Module } from '@nestjs/common';
-import { ControllersModule } from '@presentation/controllers/controllers.module';
 
 @Module({
-  imports: [LoggerModule, ControllersModule],
+  imports: [LoggerModule, AuthUsecaseModule, UserUsecaseModule],
 })
 export class AppModule {}

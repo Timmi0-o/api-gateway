@@ -40,3 +40,34 @@ export enum ERpcCode {
   DATA_LOSS = 15,
   UNAUTHENTICATED = 16,
 }
+
+/**
+ * Соответствие кодов gRPC ошибка ↔ HTTP статус код
+ */
+export interface IRpcHttpExceptionMap {
+  code: number;
+  exceptionKey: string;
+}
+
+/**
+ * Соответствие кодов gRPC ошибка ↔ HTTP статус код + ключ исключения,
+ */
+export const RPC_TO_HTTP_EXCEPTION_MAP: Record<ERpcCode, IRpcHttpExceptionMap> = {
+  [ERpcCode.OK]: { code: 200, exceptionKey: 'ok' },
+  [ERpcCode.CANCELLED]: { code: 499, exceptionKey: 'cancelled' }, // Not direct mapping, not in ServiceException
+  [ERpcCode.UNKNOWN]: { code: 500, exceptionKey: 'internal' },
+  [ERpcCode.INVALID_ARGUMENT]: { code: 400, exceptionKey: 'validation' },
+  [ERpcCode.DEADLINE_EXCEEDED]: { code: 504, exceptionKey: 'timeout' },
+  [ERpcCode.NOT_FOUND]: { code: 404, exceptionKey: 'entityNotFound' },
+  [ERpcCode.ALREADY_EXISTS]: { code: 409, exceptionKey: 'userAlreadyExists' },
+  [ERpcCode.PERMISSION_DENIED]: { code: 403, exceptionKey: 'forbidden' },
+  [ERpcCode.RESOURCE_EXHAUSTED]: { code: 429, exceptionKey: 'rateLimitExceeded' },
+  [ERpcCode.FAILED_PRECONDITION]: { code: 400, exceptionKey: 'operationNotAllowed' },
+  [ERpcCode.ABORTED]: { code: 409, exceptionKey: 'conflict' },
+  [ERpcCode.OUT_OF_RANGE]: { code: 400, exceptionKey: 'validation' },
+  [ERpcCode.UNIMPLEMENTED]: { code: 501, exceptionKey: 'unimplemented' }, // Not in ServiceException, fallback
+  [ERpcCode.INTERNAL]: { code: 500, exceptionKey: 'internal' },
+  [ERpcCode.UNAVAILABLE]: { code: 503, exceptionKey: 'serviceUnavailable' },
+  [ERpcCode.DATA_LOSS]: { code: 500, exceptionKey: 'internal' }, // no direct mapping
+  [ERpcCode.UNAUTHENTICATED]: { code: 401, exceptionKey: 'unauthorized' },
+};
