@@ -1,5 +1,6 @@
 import { GlobalExceptionFilter } from '@infrastructure/filters/global-exception.filter';
 import { LoggingInterceptor } from '@infrastructure/interceptors/logging.interceptor';
+import { ResponseInterceptor } from '@infrastructure/interceptors/response.interceptor';
 import { LoggerService } from '@infrastructure/services/logger/logger.service';
 import { VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
@@ -33,7 +34,7 @@ async function bootstrap() {
   // Устанавливаем глобальный Exception Filter и Interceptor
   app.useLogger(logger);
   app.useGlobalFilters(new GlobalExceptionFilter(logger));
-  app.useGlobalInterceptors(new LoggingInterceptor(logger));
+  app.useGlobalInterceptors(new LoggingInterceptor(logger), new ResponseInterceptor());
 
   await app.listen(PORT);
 

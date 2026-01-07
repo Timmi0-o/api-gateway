@@ -10,5 +10,6 @@ export const RPC_PATTERNS = {
   },
   user: {
     register: 'auth.register',
+    getMany: 'user.get-users',
   },
 } as const;
