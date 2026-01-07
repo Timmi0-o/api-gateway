@@ -1,6 +1,6 @@
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
-import { USER_VALIDATOR_TOKEN, IUserValidator } from '@domain/validators/user-validator.interface';
+import { IUserValidator, USER_VALIDATOR_TOKEN } from '@domain/validators/user-validator.interface';
 import {
   MICROSERVICE_CLIENT_PROXY_SERVICE,
   MicroserviceClientProxyModule,
@@ -24,4 +24,3 @@ import { ValidatorsModule } from '../../validations/validators.module';
   ],
 })
 export class UserUsecaseModule {}
-
