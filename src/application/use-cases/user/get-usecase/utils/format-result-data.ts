@@ -1,36 +1,36 @@
-import { IUsersDataResponse } from '@tourgis/contracts/dist/api-gateway/auth/v1/contracts/user/users-data.contract';
 import { IQueryAuthUsersDataResponse } from '@tourgis/contracts/dist/auth/v1';
+import { IUsersDataResponse } from '@tourgis/contracts/src/api-gateway/auth/v1/contracts/user/users-data.contract';
 
-const safePastKeyData = (data: unknown) => {
-  return data ? data : null;
-};
-
-export const getUsersFormatResultData = (data: IQueryAuthUsersDataResponse): IUsersDataResponse => {
+export const getUsersFormatResultData = ({
+  data,
+}: {
+  data: IQueryAuthUsersDataResponse;
+}): IUsersDataResponse => {
   return {
     meta: {
-      hasMore: safePastKeyData(data?.meta?.hasMore),
-      limit: safePastKeyData(data?.meta?.limit),
-      offset: safePastKeyData(data?.meta?.offset),
-      total: safePastKeyData(data?.meta?.total),
+      hasMore: data?.meta?.hasMore,
+      limit: data?.meta?.limit,
+      offset: data?.meta?.offset,
+      total: data?.meta?.total,
     },
     data: data?.data?.map((item) => ({
-      id: safePastKeyData(item?.auth?.id),
-      name: safePastKeyData(item?.auth?.name),
-      patronymic: safePastKeyData(item?.auth?.patronymic),
-      phone: safePastKeyData(item?.auth?.phone),
-      surname: safePastKeyData(item?.auth?.surname),
-      username: safePastKeyData(item?.auth?.username),
-      role: safePastKeyData(item?.auth?.role),
-      status: safePastKeyData(item?.auth?.status),
-      language: safePastKeyData(item?.auth?.language),
-      createdAt: safePastKeyData(item?.auth?.createdAt),
-      updatedAt: safePastKeyData(item?.auth?.updatedAt),
-      email: safePastKeyData(item?.auth?.email),
+      id: item?.auth?.id,
+      name: item?.auth?.name,
+      patronymic: item?.auth?.patronymic,
+      phone: item?.auth?.phone,
+      surname: item?.auth?.surname,
+      username: item?.auth?.username,
+      role: item?.auth?.role,
+      status: item?.auth?.status,
+      language: item?.auth?.language,
+      createdAt: item?.auth?.createdAt,
+      updatedAt: item?.auth?.updatedAt,
+      email: item?.auth?.email,
       orginazation: {
-        id: safePastKeyData(item?.organization?.id),
-        commonId: safePastKeyData(item?.organization?.commonId),
-        createdAt: safePastKeyData(item?.organization?.createdAt),
-        updatedAt: safePastKeyData(item?.organization?.updatedAt),
+        id: item?.organization?.id,
+        commonId: item?.organization?.commonId,
+        createdAt: item?.organization?.createdAt,
+        updatedAt: item?.organization?.updatedAt,
       },
     })),
     success: true,

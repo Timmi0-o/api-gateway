@@ -20,7 +20,7 @@ export class GetUsersUseCase {
         },
       });
 
-      return getUsersFormatResultData(res);
+      return getUsersFormatResultData({ data: res });
     } catch (err) {
       throw ExceptionWIthFormatRpcCode(err);
     }

@@ -5,19 +5,14 @@ WORKDIR /app
 # Устанавливаем procps для команды ps (требуется для NestJS hot-reload)
 RUN apt-get update && apt-get install -y procps && rm -rf /var/lib/apt/lists/*
 
-# Копируем локальные пакеты с их package.json и package-lock.json
-COPY tourgis-contracts/package.json tourgis-contracts/package-lock.json /tourgis-contracts/
-COPY tourgis-contracts/dist/ /tourgis-contracts/dist/
-
-COPY tourgis-errors/package.json tourgis-errors/package-lock.json /tourgis-errors/
-COPY tourgis-errors/dist/ /tourgis-errors/dist/
-
-COPY tourgis-common/package.json tourgis-common/package-lock.json /tourgis-common/
-COPY tourgis-common/dist/ /tourgis-common/dist/
-
-# Копируем package.json, package-lock.json и .npmrc
+# Копируем package.json, package-lock.json и .npmrc для главного приложения
 COPY api-gateway/package*.json ./
 COPY api-gateway/.npmrc ./
+
+# Копируем package.json для локальных пакетов (вместе с tsconfig для их компиляции)
+COPY tourgis-contracts/package.json tourgis-contracts/package-lock.json tourgis-contracts/tsconfig.json tourgis-contracts/tsconfig.build.json /tourgis-contracts/
+COPY tourgis-errors/package.json tourgis-errors/package-lock.json tourgis-errors/tsconfig.json /tourgis-errors/
+COPY tourgis-common/package.json tourgis-common/package-lock.json tourgis-common/tsconfig.json /tourgis-common/
 
 # Устанавливаем зависимости
 RUN npm ci
@@ -26,9 +21,6 @@ RUN npm ci
 RUN cd /tourgis-contracts && npm ci 2>/dev/null || true
 RUN cd /tourgis-errors && npm ci 2>/dev/null || true
 RUN cd /tourgis-common && npm ci 2>/dev/null || true
-
-# Копируем остальной код
-COPY api-gateway/ .
 
 EXPOSE 3000
 

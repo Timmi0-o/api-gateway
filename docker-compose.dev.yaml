@@ -8,6 +8,9 @@ services:
     ports:
       - ${APP_PORT}:${APP_PORT}
     volumes:
+      - ../tourgis-contracts:/tourgis-contracts
+      - ../tourgis-errors:/tourgis-errors
+      - ../tourgis-common:/tourgis-common
       - .:/app
       - /app/node_modules
     env_file:
