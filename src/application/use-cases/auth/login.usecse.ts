@@ -2,8 +2,8 @@ import { ILoginDto } from '@application/dtos/auth/login.dto';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { ILoginResponse } from '@domain/types/auth.types';
 import { IAuthValidator } from '@domain/validators/auth-validator.interface';
-import { RPC_PATTERNS } from '@shared/constants/rpc-patternts';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
+import { EAuthSubjects } from '@tourgis/common';
 
 export class LoginUseCase {
   constructor(
@@ -16,10 +16,11 @@ export class LoginUseCase {
 
     try {
       return await this.clientProxy.send<ILoginDto, ILoginResponse>({
-        messagePattern: RPC_PATTERNS.auth.login,
+        messagePattern: EAuthSubjects.LOGIN,
         data,
       });
     } catch (err) {
+      console.log('err', err);
       throw ExceptionWIthFormatRpcCode(err);
     }
   }

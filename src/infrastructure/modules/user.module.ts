@@ -1,4 +1,4 @@
-import { GetManyUseCase } from '@application/use-cases/user/get-many.usecase';
+import { GetUsersUseCase } from '@application/use-cases/user/get-usecase/get.usecase';
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IUserValidator, USER_VALIDATOR_TOKEN } from '@domain/validators/user-validator.interface';
@@ -23,11 +23,11 @@ import { ValidatorsModule } from '../../validations/validators.module';
       inject: [USER_VALIDATOR_TOKEN, MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
     {
-      provide: GetManyUseCase,
+      provide: GetUsersUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
-        return new GetManyUseCase(clientProxy);
+        return new GetUsersUseCase(clientProxy);
       },
-      inject: [USER_VALIDATOR_TOKEN, MICROSERVICE_CLIENT_PROXY_SERVICE],
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
   ],
 })

@@ -1,8 +1,8 @@
 import { ISendResetPasswordEmailDto } from '@application/dtos/auth/send-reset-password-email.dto';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { ISendResetPasswordEmailResponse } from '@domain/types/auth.types';
-import { RPC_PATTERNS } from '@shared/constants/rpc-patternts';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
+import { EAuthSubjects } from '@tourgis/common';
 
 export class SendResetPasswordEmailUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
@@ -13,7 +13,7 @@ export class SendResetPasswordEmailUseCase {
         ISendResetPasswordEmailDto,
         ISendResetPasswordEmailResponse
       >({
-        messagePattern: RPC_PATTERNS.auth.sendResetPasswordEmail,
+        messagePattern: EAuthSubjects.SEND_RESET_PASSWORD_EMAIL,
         data,
       });
     } catch (err) {

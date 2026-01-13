@@ -1,15 +1,17 @@
 import { IRegisterDto } from '@application/dtos/user/register.dto';
-import { IUserDto } from '@application/dtos/user/user.dto';
-import { GetManyUseCase } from '@application/use-cases/user/get-many.usecase';
+import { GetUsersUseCase } from '@application/use-cases/user/get-usecase/get.usecase';
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
 import { IRegisterResponse } from '@domain/types/user.types';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
+import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { IUsersDataResponse } from '@tourgis/contracts/dist/api-gateway/auth/v1/contracts/user/users-data.contract';
 
 @Controller({ path: 'user', version: '1' })
 export class UserController {
   constructor(
     private readonly registerUsecase: RegisterUseCase,
-    private readonly getManyUsecase: GetManyUseCase,
+    private readonly getUsersUsecase: GetUsersUseCase,
   ) {}
 
   @Post('register')
@@ -17,11 +19,9 @@ export class UserController {
     return this.registerUsecase.execute(data);
   }
 
-  @Get('get-many')
-  async getMany(): Promise<{
-    meta: { total: number; limit: number; count: number };
-    items: IUserDto[];
-  }> {
-    return this.getManyUsecase.execute();
+  @Get()
+  @UseGuards(RsaAuthGuard)
+  async getMany(@GetCommonUserId() commonUserId: string): Promise<IUsersDataResponse> {
+    return this.getUsersUsecase.execute(commonUserId);
   }
 }

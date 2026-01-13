@@ -1,0 +1,8 @@
+# Папка для RSA ключей
+
+# На этом сервисе (API Gateway) должен находиться ТОЛЬКО публичный ключ:
+# - public.key (добавить в git)
+# - private.key (НЕ добавлять в git, только на Auth Service)
+
+# Для генерации ключей:
+# npx ts-node scripts/generate-rsa-keys.ts
