@@ -2,8 +2,8 @@ import { IRegisterDto } from '@application/dtos/user/register.dto';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IRegisterResponse } from '@domain/types/user.types';
 import { IUserValidator } from '@domain/validators/user-validator.interface';
-import { RPC_PATTERNS } from '@shared/constants/rpc-patternts';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
+import { EAuthSubjects } from '@tourgis/common';
 
 export class RegisterUseCase {
   constructor(
@@ -16,7 +16,7 @@ export class RegisterUseCase {
 
     try {
       return await this.clientProxy.send<IRegisterDto, IRegisterResponse>({
-        messagePattern: RPC_PATTERNS.auth.register,
+        messagePattern: EAuthSubjects.REGISTER,
         data,
       });
     } catch (err) {

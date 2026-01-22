@@ -4,7 +4,7 @@ import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
 import { IRegisterResponse } from '@domain/types/user.types';
 import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { IUsersDataResponse } from '@tourgis/contracts/dist/api-gateway/auth/v1/contracts/user/users-data.contract';
 
 @Controller({ path: 'user', version: '1' })
@@ -21,7 +21,16 @@ export class UserController {
 
   @Get()
   @UseGuards(RsaAuthGuard)
-  async getMany(@GetCommonUserId() commonUserId: string): Promise<IUsersDataResponse> {
-    return this.getUsersUsecase.execute(commonUserId);
+  async getMany(
+    @GetCommonUserId() commonUserId: string,
+    @Query() query: any,
+  ): Promise<IUsersDataResponse> {
+    const formatQuery = {
+      ...(query.select ? { select: query.select.split('_') } : {}),
+      ...(query.filter ? { filter: query.filter } : {}),
+      ...(query.limit ? { limit: query.limit } : {}),
+      ...(query.offset ? { offset: query.offset } : {}),
+    };
+    return this.getUsersUsecase.execute(commonUserId, formatQuery);
   }
 }

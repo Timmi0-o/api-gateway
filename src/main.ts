@@ -10,6 +10,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
+    bodyParser: true,
+    rawBody: true,
   });
 
   const logger = app.get(LoggerService);
@@ -31,8 +33,6 @@ async function bootstrap() {
 
   await app.startAllMicroservices();
 
-  // Устанавливаем глобальный Exception Filter и Interceptor
-  app.useLogger(logger);
   app.useGlobalFilters(new GlobalExceptionFilter(logger));
   app.useGlobalInterceptors(new LoggingInterceptor(logger), new ResponseInterceptor());
 

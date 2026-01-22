@@ -1,22 +1,21 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
-import { EAuthSubjects } from '@tourgis/common';
-import { IUsersDataResponse } from '@tourgis/contracts/dist/api-gateway/auth/v1/contracts/user/users-data.contract';
-import { IQueryAuthUsersDataResponse } from '@tourgis/contracts/dist/auth/v1';
-import { getUsersFormatResultData } from './utils/format-result-data';
+import { EOrganizationSubjects } from '@tourgis/common';
+import { IOrganizationsDataResponse } from '@tourgis/contracts/dist/api-gateway/organization/v1/contracts/organization/organizations-data.contract';
+import { IQueryOrganizationsDataResponse } from '@tourgis/contracts/dist/organization/v1';
 
-export class GetUsersUseCase {
+export class GetOrganizationsUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
     commonUserId: string,
     query: { select?: string[]; filter?: string; limit?: number; offset?: number },
-  ): Promise<IUsersDataResponse> {
+  ): Promise<IOrganizationsDataResponse> {
+    console.log('query', query);
     try {
-      const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
-        messagePattern: EAuthSubjects.GET_USERS,
+      const res = await this.clientProxy.send<unknown, IQueryOrganizationsDataResponse>({
+        messagePattern: EOrganizationSubjects.ORGANIZATION_GET_MANY,
         data: {
-          commonUserIds: undefined,
           select: query.select ?? undefined,
           filter: query.filter ? JSON.parse(query.filter) : undefined,
           limit: query.limit ?? 25,
@@ -27,7 +26,8 @@ export class GetUsersUseCase {
         },
       });
 
-      return getUsersFormatResultData({ data: res });
+      // return getOrganizationsFormatResultData({ data: res });
+      return res as unknown as IOrganizationsDataResponse;
     } catch (err) {
       throw ExceptionWIthFormatRpcCode(err);
     }

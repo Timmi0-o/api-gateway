@@ -20,10 +20,16 @@ export const registerSchema: JSONSchemaType<IRegisterDto> = {
       type: 'string',
       pattern: '^.{8,}$',
     },
-    fullname: {
+    name: {
+      type: 'string',
+    },
+    surname: {
+      type: 'string',
+    },
+    patronymic: {
       type: 'string',
     },
   },
-  required: ['email', 'password', 'username', 'fullname'],
+  required: ['email', 'password', 'username', 'name', 'surname', 'patronymic'],
   additionalProperties: false,
 };

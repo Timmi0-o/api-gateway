@@ -8,7 +8,7 @@ export const getUsersFormatResultData = ({
 }): IUsersDataResponse => {
   return {
     meta: {
-      hasMore: data?.meta?.hasMore,
+      totalCount: data?.meta?.totalCount,
       limit: data?.meta?.limit,
       offset: data?.meta?.offset,
       total: data?.meta?.total,

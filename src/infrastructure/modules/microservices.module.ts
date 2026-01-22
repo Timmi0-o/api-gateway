@@ -17,6 +17,20 @@ const clientsModule = ClientsModule.register([
       servers: [process.env.NATS_URL || 'nats://nats-server:4222'],
     },
   },
+  {
+    name: NATS_CLIENTS.ORGANIZATION_CLIENT,
+    transport: Transport.NATS,
+    options: {
+      servers: [process.env.NATS_URL || 'nats://nats-server:4222'],
+    },
+  },
+  {
+    name: NATS_CLIENTS.TEST_GRPC_CLIENT,
+    transport: Transport.NATS,
+    options: {
+      servers: [process.env.NATS_URL || 'nats://nats-server:4222'],
+    },
+  },
 ]);
 
 @Module({

@@ -3,5 +3,7 @@ export interface IRegisterDto {
   phone?: string;
   username: string;
   password: string;
-  fullname: string;
+  name: string;
+  surname: string;
+  patronymic: string;
 }

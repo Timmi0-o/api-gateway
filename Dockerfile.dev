@@ -15,7 +15,7 @@ COPY tourgis-errors/package.json tourgis-errors/package-lock.json tourgis-errors
 COPY tourgis-common/package.json tourgis-common/package-lock.json tourgis-common/tsconfig.json /tourgis-common/
 
 # Устанавливаем зависимости
-RUN npm ci
+RUN npm install
 
 # Устанавливаем зависимости для локальных пакетов
 RUN cd /tourgis-contracts && npm ci 2>/dev/null || true
