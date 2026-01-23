@@ -18,7 +18,7 @@ export class GetOrganizationsUseCase {
         data: {
           select: query.select ?? undefined,
           filter: query.filter ? JSON.parse(query.filter) : undefined,
-          limit: query.limit ?? 25,
+          limit: query?.limit ? +query.limit : 25,
           offset: query.offset ?? 0,
         },
         metadata: {

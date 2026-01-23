@@ -1,11 +1,4 @@
-import { IQueryAuthUsersDataResponse } from '@tourgis/contracts/dist/auth/v1';
-import { IUsersDataResponse } from '@tourgis/contracts/src/api-gateway/auth/v1/contracts/user/users-data.contract';
-
-export const getUsersFormatResultData = ({
-  data,
-}: {
-  data: IQueryAuthUsersDataResponse;
-}): IUsersDataResponse => {
+export const getUsersFormatResultData = ({ data }: { data: any }): any => {
   return {
     meta: {
       totalCount: data?.meta?.totalCount,
@@ -31,6 +24,7 @@ export const getUsersFormatResultData = ({
         commonId: item?.organization?.commonId,
         createdAt: item?.organization?.createdAt,
         updatedAt: item?.organization?.updatedAt,
+        organizationMembers: item?.organization?.organizationMembers,
       },
     })),
     success: true,

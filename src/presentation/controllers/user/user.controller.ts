@@ -25,11 +25,14 @@ export class UserController {
     @GetCommonUserId() commonUserId: string,
     @Query() query: any,
   ): Promise<IUsersDataResponse> {
+    console.log('query', query);
+
     const formatQuery = {
       ...(query.select ? { select: query.select.split('_') } : {}),
       ...(query.filter ? { filter: query.filter } : {}),
       ...(query.limit ? { limit: query.limit } : {}),
       ...(query.offset ? { offset: query.offset } : {}),
+      ...(query.include ? { include: query.include } : {}),
     };
     return this.getUsersUsecase.execute(commonUserId, formatQuery);
   }
