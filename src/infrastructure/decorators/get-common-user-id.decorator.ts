@@ -17,7 +17,7 @@ export const GetCommonUserId = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext): string => {
     const request = ctx.switchToHttp().getRequest<Request & { user: IDecodedToken }>();
 
-    const userId = request.user.userId;
+    const userId = request.user.sub as string;
 
     if (!userId) {
       throw new BadRequestException('Common user ID not found in token');

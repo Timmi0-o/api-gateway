@@ -19,7 +19,7 @@ export class RsaTokenStrategy extends PassportStrategy(Strategy, 'rsa-bearer') {
     try {
       const decodedToken = await this.rsaTokenService.validateToken(token);
 
-      this.logger.debug(`✓ Token validated for user: ${decodedToken.userId}`);
+      this.logger.debug(`✓ Token validated for user: ${decodedToken.sub as string}`);
       return await Promise.resolve(decodedToken);
     } catch (error) {
       this.logger.warn(

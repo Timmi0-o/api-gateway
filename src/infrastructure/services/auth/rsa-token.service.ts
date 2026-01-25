@@ -48,7 +48,7 @@ export class RsaTokenService {
         throw new Error('Invalid token format');
       }
 
-      if (!decoded.userId) {
+      if (!decoded.sub) {
         throw new Error('Invalid token: missing user identifier');
       }
 
