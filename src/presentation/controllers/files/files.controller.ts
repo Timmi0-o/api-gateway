@@ -3,7 +3,6 @@ import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import { S3Service } from '@infrastructure/services/s3/s3.service';
 import { Controller, Post, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import type { MulterFile } from 'multer';
 
 @Controller({ path: 'files', version: '1' })
 @UseGuards(RsaAuthGuard)
@@ -14,7 +13,7 @@ export class FilesController {
   @UseInterceptors(FilesInterceptor('files', 10))
   async uploadFiles(
     @GetCommonUserId() commonUserId: string,
-    @UploadedFiles() files: MulterFile[],
+    @UploadedFiles() files: Express.Multer.File[],
   ): Promise<{
     success: boolean;
     data: Array<{

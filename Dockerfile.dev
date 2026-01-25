@@ -18,9 +18,9 @@ COPY tourgis-common/package.json tourgis-common/package-lock.json tourgis-common
 RUN npm install
 
 # Устанавливаем зависимости для локальных пакетов
-RUN cd /tourgis-contracts && npm ci 2>/dev/null || true
-RUN cd /tourgis-errors && npm ci 2>/dev/null || true
-RUN cd /tourgis-common && npm ci 2>/dev/null || true
+RUN cd /tourgis-contracts && npm ci 2>/dev/null || npm install
+RUN cd /tourgis-errors && npm ci 2>/dev/null || npm install
+RUN cd /tourgis-common && npm ci 2>/dev/null || npm install
 
 EXPOSE 3000
 

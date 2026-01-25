@@ -21,7 +21,11 @@ export const loginSchema: JSONSchemaType<ILoginDto> = {
     userAgent: {
       type: 'string',
     },
+    source: {
+      type: 'string',
+      enum: ['TOURGIS', 'ADMIN', 'BUSINESS', 'FRANCHISE'],
+    },
   },
-  required: ['username', 'password', 'fingerprint', 'ipAddress', 'userAgent'],
+  required: ['username', 'password', 'fingerprint', 'ipAddress', 'userAgent', 'source'],
   additionalProperties: false,
 };

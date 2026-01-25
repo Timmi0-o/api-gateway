@@ -18,8 +18,6 @@ export class GetUsersUseCase {
       include?: any;
     },
   ): Promise<IUsersDataResponse> {
-    console.log('JSON.parse(query?.include)', JSON.parse(query?.include));
-
     try {
       const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
         messagePattern: EAuthSubjects.GET_USERS,
@@ -34,8 +32,6 @@ export class GetUsersUseCase {
           commonUserId,
         },
       });
-
-      console.log('res', res);
 
       return getUsersFormatResultData({ data: res });
     } catch (err) {
