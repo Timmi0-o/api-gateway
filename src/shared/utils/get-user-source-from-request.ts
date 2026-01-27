@@ -20,6 +20,8 @@ export const getUserSourceFromRequest = (
 
   const origin = `${protocol}://${host}`;
 
+  console.log('origin', origin);
+
   if (!USER_SOURCE_WHITELIST.includes(origin) || !USER_SOURCE_MAP[origin]) {
     return undefined;
   }

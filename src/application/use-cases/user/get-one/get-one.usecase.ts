@@ -1,37 +1,38 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EAuthSubjects } from '@tourgis/common';
-import { IQueryAuthUsersDataResponse } from '@tourgis/contracts/dist/auth/v1';
+import { IMergedUserData, IQueryAuthUsersDataResponse } from '@tourgis/contracts/dist/auth/v1';
 
-export class GetUsersUseCase {
+export class GetOneUserUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
     commonUserId: string,
-    query: {
+    data: {
+      userId: string;
       select?: string[];
-      filter?: string;
-      limit?: number;
-      offset?: number;
       include?: string;
     },
-  ): Promise<IQueryAuthUsersDataResponse> {
+  ): Promise<{ result: IMergedUserData }> {
+    console.log('data', data);
     try {
       const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
         messagePattern: EAuthSubjects.GET_USERS,
         data: {
-          select: query.select ?? undefined,
-          filter: query.filter ? JSON.parse(query.filter) : undefined,
-          limit: query?.limit ? +query.limit : 25,
-          offset: query.offset ?? 0,
-          include: query?.include ? JSON.parse(query?.include) : undefined,
+          select: data.select ?? undefined,
+          include: data?.include ? JSON.parse(data?.include) : undefined,
+          filter: {
+            id: data.userId,
+          },
         },
         metadata: {
           commonUserId,
         },
       });
 
-      return res;
+      const resultMapObject = { result: res.data?.[0] };
+
+      return resultMapObject;
     } catch (err) {
       throw ExceptionWIthFormatRpcCode(err);
     }

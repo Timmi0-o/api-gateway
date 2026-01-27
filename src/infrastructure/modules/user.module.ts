@@ -1,5 +1,7 @@
+import { GetOneUserUseCase } from '@application/use-cases/user/get-one/get-one.usecase';
 import { GetUsersUseCase } from '@application/use-cases/user/get-usecase/get.usecase';
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
+import { UpdateUserUseCase } from '@application/use-cases/user/update/update.usecase';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IUserValidator, USER_VALIDATOR_TOKEN } from '@domain/validators/user-validator.interface';
 import {
@@ -26,6 +28,20 @@ import { ValidatorsModule } from '../../validations/validators.module';
       provide: GetUsersUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
         return new GetUsersUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetOneUserUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new GetOneUserUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateUserUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new UpdateUserUseCase(clientProxy);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },

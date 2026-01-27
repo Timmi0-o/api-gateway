@@ -8,21 +8,29 @@ export class GetOrganizationsUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
-    commonUserId: string,
-    query: { select?: string[]; filter?: string; limit?: number; offset?: number },
+    metadata: { commonUserId: string; systemRole: string },
+    data: {
+      select?: string[];
+      filter?: string;
+      limit?: number;
+      offset?: number;
+      include?: string;
+    },
   ): Promise<IOrganizationsDataResponse> {
-    console.log('query', query);
     try {
       const res = await this.clientProxy.send<unknown, IQueryOrganizationsDataResponse>({
         messagePattern: EOrganizationSubjects.ORGANIZATION_GET_MANY,
         data: {
-          select: query.select ?? undefined,
-          filter: query.filter ? JSON.parse(query.filter) : undefined,
-          limit: query?.limit ? +query.limit : 25,
-          offset: query.offset ?? 0,
+          ...data,
+          select: data.select ?? undefined,
+          filter: data.filter ? JSON.parse(data.filter) : undefined,
+          limit: data?.limit ? +data.limit : 25,
+          offset: data.offset ?? 0,
+          include: data?.include ? JSON.parse(data?.include) : undefined,
         },
         metadata: {
-          commonUserId,
+          commonUserId: metadata.commonUserId,
+          systemRole: metadata.systemRole,
         },
       });
 

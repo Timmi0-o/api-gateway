@@ -1,4 +1,4 @@
-import type { ILoginDto } from '@application/dtos/auth/login.dto';
+import type { EUserSource, ILoginDto } from '@application/dtos/auth/login.dto';
 import { ILogoutDto } from '@application/dtos/auth/logout.dto';
 import { IRefreshDto } from '@application/dtos/auth/refresh.dto';
 import { IResetPasswordDto } from '@application/dtos/auth/reset-password.dto';
@@ -36,12 +36,12 @@ export class AuthController {
 
   @Post('login')
   async login(
-    @Body() data: Omit<ILoginDto, 'ipAddress' | 'userAgent'> & { source?: string },
+    @Body() data: Omit<ILoginDto, 'ipAddress' | 'userAgent'> & { source?: EUserSource },
     @Req() request: Request,
   ): Promise<ILoginResponse> {
     const { ipAddress, userAgent } = getIpAndUserAgentFromReq(request, { notFoundErrors: true });
 
-    const source = getUserSourceFromRequest(request);
+    const source = getUserSourceFromRequest(request) as EUserSource;
     data.source = source;
 
     return this.loginUsecase.execute({ ...data, ipAddress, userAgent });

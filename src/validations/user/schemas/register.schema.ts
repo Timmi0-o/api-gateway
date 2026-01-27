@@ -29,7 +29,11 @@ export const registerSchema: JSONSchemaType<IRegisterDto> = {
     patronymic: {
       type: 'string',
     },
+    source: {
+      type: 'string',
+      enum: ['TOURGIS', 'ADMIN', 'BUSINESS', 'FRANCHISE'],
+    },
   },
-  required: ['email', 'password', 'username', 'name', 'surname', 'patronymic'],
+  required: ['email', 'password', 'username', 'name', 'surname', 'patronymic', 'source'],
   additionalProperties: false,
 };

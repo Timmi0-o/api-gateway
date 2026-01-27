@@ -1,5 +1,7 @@
 import { CreateOrganizationUseCase } from '@application/use-cases/organization/create/create.usecase';
+import { GetOneOrganizationUseCase } from '@application/use-cases/organization/get-one/get-one.usecase';
 import { GetOrganizationsUseCase } from '@application/use-cases/organization/get/get.usecase';
+import { UpdateOrganizationUseCase } from '@application/use-cases/organization/update/update.usecase';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import {
   MICROSERVICE_CLIENT_PROXY_SERVICE,
@@ -17,6 +19,20 @@ import { NATS_CLIENTS } from '@shared/constants/nats-clients';
       provide: GetOrganizationsUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
         return new GetOrganizationsUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetOneOrganizationUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new GetOneOrganizationUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateOrganizationUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new UpdateOrganizationUseCase(clientProxy);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },

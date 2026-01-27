@@ -4,7 +4,9 @@ import * as path from 'path';
 import { JwtService } from '../jwt/jwt.service';
 
 export interface IDecodedToken {
-  userId?: string;
+  sub?: string;
+  systemRole?: string;
+  roleid?: string;
   [key: string]: unknown;
 }
 

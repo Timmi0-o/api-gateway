@@ -6,4 +6,5 @@ export interface IRegisterDto {
   name: string;
   surname: string;
   patronymic: string;
+  source: string;
 }
