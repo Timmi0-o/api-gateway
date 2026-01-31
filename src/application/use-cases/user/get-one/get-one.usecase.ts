@@ -14,7 +14,6 @@ export class GetOneUserUseCase {
       include?: string;
     },
   ): Promise<{ result: IMergedUserData }> {
-    console.log('data', data);
     try {
       const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
         messagePattern: EAuthSubjects.GET_USERS,
@@ -30,7 +29,35 @@ export class GetOneUserUseCase {
         },
       });
 
-      const resultMapObject = { result: res.data?.[0] };
+      if (!res?.data?.[0]) {
+        const userByOrganization = await this.clientProxy.send({
+          messagePattern: EAuthSubjects.GET_USERS,
+          data: {
+            include: {
+              organization: {
+                filter: {
+                  id: data.userId,
+                },
+              },
+            },
+          },
+          metadata: {
+            commonUserId,
+          },
+        });
+
+        // @ts-expect-error: any
+        if (userByOrganization?.data?.find((item) => item.organization?.id === data.userId)) {
+          return {
+            // @ts-expect-error: any
+            result: userByOrganization.data.find((item) => item.organization?.id === data.userId),
+          };
+        }
+      }
+
+      console.log('res', res);
+
+      const resultMapObject = { result: res?.data?.[0] };
 
       return resultMapObject;
     } catch (err) {
