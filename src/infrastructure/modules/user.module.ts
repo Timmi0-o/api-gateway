@@ -1,5 +1,5 @@
 import { GetOneUserUseCase } from '@application/use-cases/user/get-one/get-one.usecase';
-import { GetUsersUseCase } from '@application/use-cases/user/get-usecase/get.usecase';
+import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
 import { UpdateUserUseCase } from '@application/use-cases/user/update/update.usecase';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
@@ -46,5 +46,6 @@ import { ValidatorsModule } from '../../validations/validators.module';
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
   ],
+  exports: [RegisterUseCase],
 })
 export class UserUsecaseModule {}

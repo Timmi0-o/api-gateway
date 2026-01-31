@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ServiceException } from '@shared/exceptions/service.exception';
 import * as fs from 'fs';
 import * as path from 'path';
 import { JwtService } from '../jwt/jwt.service';
@@ -55,14 +56,18 @@ export class RsaTokenService {
       }
 
       // TODO пока расшифровка через hsa256 потом нужно на rsa256
-      await this.jwtService.verify(token);
+      const verified = await this.jwtService.verify(token);
+
+      if (!verified) {
+        throw new Error('Invalid token: token verification failed');
+      }
 
       return decoded;
     } catch (error) {
       this.logger.error(
         `Failed to verify token: ${error instanceof Error ? error.message : String(error)}`,
       );
-      throw new Error(`Invalid token: ${error instanceof Error ? error.message : String(error)}`);
+      throw ServiceException.unauthorized('Invalid token: token verification failed');
     }
   }
 
@@ -73,6 +78,8 @@ export class RsaTokenService {
    */
   async validateToken(token: string): Promise<IDecodedToken> {
     const cleanToken = token.startsWith('Bearer ') ? token.slice(7) : token;
+
+    if (!cleanToken) ServiceException.forbidden('ACCESS_TOKEN_IS_REQUIRED');
 
     return this.decryptToken(cleanToken);
   }

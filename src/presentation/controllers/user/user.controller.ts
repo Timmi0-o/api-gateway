@@ -1,7 +1,7 @@
 import { IRegisterDto } from '@application/dtos/user/register.dto';
 import { IUpdateUserDto } from '@application/dtos/user/update.dto';
 import { GetOneUserUseCase } from '@application/use-cases/user/get-one/get-one.usecase';
-import { GetUsersUseCase } from '@application/use-cases/user/get-usecase/get.usecase';
+import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
 import { UpdateUserUseCase } from '@application/use-cases/user/update/update.usecase';
 import { IRegisterResponse } from '@domain/types/user.types';
