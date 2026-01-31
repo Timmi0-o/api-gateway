@@ -26,6 +26,7 @@ export class GetMembersUseCase {
           offset: data.offset ?? 0,
           include: {
             user: true,
+            role: true,
           },
         },
         metadata: {
