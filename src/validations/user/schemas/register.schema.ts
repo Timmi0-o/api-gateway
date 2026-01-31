@@ -31,7 +31,7 @@ export const registerSchema: JSONSchemaType<IRegisterDto> = {
     },
     source: {
       type: 'string',
-      enum: ['TOURGIS', 'ADMIN', 'BUSINESS', 'FRANCHISE'],
+      enum: ['TOURGIS', 'ADMIN', 'BUSINESS', 'FRANCHIZE'],
     },
   },
   required: ['email', 'password', 'username', 'name', 'surname', 'patronymic', 'source'],
