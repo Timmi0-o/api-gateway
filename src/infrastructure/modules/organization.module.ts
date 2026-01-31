@@ -2,6 +2,7 @@ import { AddMemberUseCase } from '@application/use-cases/organization-members/ad
 import { GetMembersUseCase } from '@application/use-cases/organization-members/get-members/get-members.usecase';
 import { CreateRolePermissionsUseCase } from '@application/use-cases/organization-roles/create-permissions/create-permissions.usecase';
 import { CreateRoleUseCase } from '@application/use-cases/organization-roles/create/create.usecase';
+import { DeleteRoleUseCase } from '@application/use-cases/organization-roles/delete/delete.usecase';
 import { GetOrganizationRolesUseCase } from '@application/use-cases/organization-roles/get/get.usecase';
 import { CreateOrganizationUseCase } from '@application/use-cases/organization/create/create.usecase';
 import { GetOneOrganizationUseCase } from '@application/use-cases/organization/get-one/get-one.usecase';
@@ -98,6 +99,13 @@ import { UserUsecaseModule } from './user.module';
       provide: CreateRolePermissionsUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
         return new CreateRolePermissionsUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: DeleteRoleUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new DeleteRoleUseCase(clientProxy);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
