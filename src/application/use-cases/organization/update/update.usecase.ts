@@ -12,6 +12,7 @@ export class UpdateOrganizationUseCase {
       name?: string;
       description?: string;
       isActive?: boolean;
+      ownerId: string;
     },
   ): Promise<boolean> {
     try {
@@ -22,6 +23,7 @@ export class UpdateOrganizationUseCase {
           ...(data.name !== undefined ? { name: data.name } : {}),
           ...(data.description !== undefined ? { description: data.description } : {}),
           ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
+          ...(data.ownerId !== undefined ? { ownerId: data.ownerId } : {}),
         },
         metadata: {
           commonUserId: metadata.commonUserId,

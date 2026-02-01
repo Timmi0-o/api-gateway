@@ -23,7 +23,7 @@ export class AddMemberUseCase {
         metadata: { commonUserId },
         data: {
           organizationId: data.organizationId,
-          select: ['id', 'organizationType'],
+          preset: 'SHORT',
         },
       });
 
@@ -35,7 +35,7 @@ export class AddMemberUseCase {
         messagePattern: EAuthSubjects.GET_USERS,
         metadata: { commonUserId },
         data: {
-          select: ['id'],
+          preset: 'MINIMAL',
           filter: {
             email: data.email,
             phone: data.phone,
@@ -69,10 +69,7 @@ export class AddMemberUseCase {
             // @ts-expect-error: any
             source: organization.data.organizationType,
           },
-          select: ['id'],
-          include: {
-            organization: true,
-          },
+          preset: 'BASE',
         },
       });
 

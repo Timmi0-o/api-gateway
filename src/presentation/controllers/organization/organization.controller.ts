@@ -26,13 +26,14 @@ export class OrganizationController {
   async getMany(
     @GetCommonUserId() commonUserId: string,
     @GetUserFromSession() user: IDecodedToken,
-    @Query() query: { select?: string; filter?: string; limit?: number; offset?: number },
+    @Query()
+    query: { filter?: string; limit?: number; offset?: number; preset: 'string' },
   ): Promise<IOrganizationsDataResponse> {
     const formatQuery = {
-      ...(query.select ? { select: query.select.split('_') } : {}),
       ...(query.filter ? { filter: query.filter } : {}),
       ...(query.limit ? { limit: query.limit } : {}),
       ...(query.offset ? { offset: query.offset } : {}),
+      ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
     };
     return this.getOrganizationsUsecase.execute(
       { commonUserId, systemRole: user.systemRole as string },
@@ -46,12 +47,12 @@ export class OrganizationController {
     @GetCommonUserId() commonUserId: string,
     @GetUserFromSession() user: IDecodedToken,
     @Param('id') organizationId: string,
-    @Query() query: { select?: string; include?: string },
+    @Query() query: { select?: string; include?: string; preset: string },
   ): Promise<IOrganizationDto> {
+    console.log('query', query);
     const formatQuery = {
       organizationId,
-      ...(query.select ? { select: query.select.split('_') } : {}),
-      ...(query.include ? { include: query.include.split('_') } : {}),
+      ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
     };
     return this.getOneOrganizationUsecase.execute(
       { commonUserId, systemRole: user.systemRole as string },

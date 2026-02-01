@@ -9,22 +9,21 @@ export class GetUsersUseCase {
   async execute(
     commonUserId: string,
     query: {
-      select?: string[];
       filter?: string;
       limit?: number;
       offset?: number;
-      include?: string;
+      preset: string;
     },
   ): Promise<IQueryAuthUsersDataResponse> {
+    console.log('query GetUsersUseCase', query);
     try {
       const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
         messagePattern: EAuthSubjects.GET_USERS,
         data: {
-          select: query.select ?? undefined,
+          preset: query.preset ?? 'MINIMAL',
           filter: query.filter ? JSON.parse(query.filter) : undefined,
-          limit: query?.limit ? +query.limit : 25,
-          offset: query.offset ?? 0,
-          include: query?.include ? JSON.parse(query?.include) : undefined,
+          take: query?.limit ? +query.limit : 25,
+          skip: query.offset ?? 0,
         },
         metadata: {
           commonUserId,

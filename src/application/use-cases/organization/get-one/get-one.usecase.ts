@@ -10,8 +10,7 @@ export class GetOneOrganizationUseCase {
     metadata: { commonUserId: string; systemRole: string },
     data: {
       organizationId: string;
-      select?: string[];
-      include?: string[];
+      preset: string;
     },
   ): Promise<IOrganizationDto> {
     try {
@@ -19,8 +18,7 @@ export class GetOneOrganizationUseCase {
         messagePattern: EOrganizationSubjects.ORGANIZATION_GET_ONE,
         data: {
           organizationId: data.organizationId,
-          select: data.select ?? undefined,
-          include: data.include ?? undefined,
+          preset: data.preset ?? 'MINIMAL',
         },
         metadata: {
           commonUserId: metadata.commonUserId,

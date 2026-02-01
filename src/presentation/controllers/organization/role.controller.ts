@@ -24,20 +24,18 @@ export class RoleController {
     @Param('organizationId') organizationId: string,
     @Query()
     query: {
-      select?: string;
       filter?: string;
       limit?: number;
       offset?: number;
-      include?: string;
+      preset: string;
     },
   ): Promise<IRoleMinimalDto[]> {
     const formatQuery = {
       organizationId,
-      ...(query.select ? { select: query.select.split('_') } : {}),
+      ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
       ...(query.filter ? { filter: query.filter } : {}),
       ...(query.limit ? { limit: query.limit } : {}),
       ...(query.offset ? { offset: query.offset } : {}),
-      ...(query.include ? { include: query.include } : {}),
     };
 
     return this.getOrganizationRolesUseCase.execute(commonUserId, formatQuery);
@@ -55,6 +53,7 @@ export class RoleController {
 
     const existRole = await this.getOrganizationRolesUseCase.execute(commonUserId, {
       organizationId,
+      preset: 'MINIMAL',
       filter: JSON.stringify({ name: roleData.name, organizationId }),
     });
 

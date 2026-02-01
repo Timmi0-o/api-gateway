@@ -9,12 +9,11 @@ export class GetOrganizationRolesUseCase {
   async execute(
     commonUserId: string,
     query: {
-      select?: string[];
       filter?: string;
       limit?: number;
       offset?: number;
-      include?: string;
       organizationId: string;
+      preset: string;
     },
   ): Promise<IRoleMinimalDto[]> {
     try {
@@ -22,13 +21,12 @@ export class GetOrganizationRolesUseCase {
         messagePattern: EOrganizationSubjects.ROLE_GET_MANY,
         data: {
           organizationId: query.organizationId,
-          select: query.select ?? undefined,
           filter: query.filter
             ? { ...JSON.parse(query.filter), name: { not: 'Владелец' } }
             : undefined,
           limit: query?.limit ? +query.limit : 25,
           offset: query.offset ?? 0,
-          include: query?.include ? JSON.parse(query?.include) : undefined,
+          preset: query.preset ?? 'MINIMAL',
         },
         metadata: {
           commonUserId,

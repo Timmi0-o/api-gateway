@@ -10,16 +10,14 @@ export class GetOneUserUseCase {
     commonUserId: string,
     data: {
       userId: string;
-      select?: string[];
-      include?: string;
+      preset: string;
     },
   ): Promise<{ result: IMergedUserData }> {
     try {
       const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
         messagePattern: EAuthSubjects.GET_USERS,
         data: {
-          select: data.select ?? undefined,
-          include: data?.include ? JSON.parse(data?.include) : undefined,
+          preset: data.preset ?? 'MINIMAL',
           filter: {
             id: data.userId,
           },
@@ -33,8 +31,10 @@ export class GetOneUserUseCase {
         const userByOrganization = await this.clientProxy.send({
           messagePattern: EAuthSubjects.GET_USERS,
           data: {
+            preset: data.preset ?? 'SHORT',
             include: {
               organization: {
+                preset: data.preset ?? 'SHORT',
                 filter: {
                   id: data.userId,
                 },

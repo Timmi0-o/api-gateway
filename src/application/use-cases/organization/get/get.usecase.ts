@@ -10,7 +10,6 @@ export class GetOrganizationsUseCase {
   async execute(
     metadata: { commonUserId: string; systemRole: string },
     data: {
-      select?: string[];
       filter?: string;
       limit?: number;
       offset?: number;
@@ -22,11 +21,9 @@ export class GetOrganizationsUseCase {
         messagePattern: EOrganizationSubjects.ORGANIZATION_GET_MANY,
         data: {
           ...data,
-          select: data.select ?? undefined,
           filter: data.filter ? JSON.parse(data.filter) : undefined,
           limit: data?.limit ? +data.limit : 25,
           offset: data.offset ?? 0,
-          include: data?.include ? JSON.parse(data?.include) : undefined,
         },
         metadata: {
           commonUserId: metadata.commonUserId,

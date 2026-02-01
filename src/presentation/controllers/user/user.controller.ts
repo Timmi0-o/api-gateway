@@ -29,14 +29,13 @@ export class UserController {
   async getMany(
     @GetCommonUserId() commonUserId: string,
     @Query()
-    query: { select?: string; filter?: string; limit?: number; offset?: number; include?: string },
+    query: { filter?: string; limit?: number; offset?: number; preset: string },
   ): Promise<IQueryAuthUsersDataResponse> {
     const formatQuery = {
-      ...(query.select ? { select: query.select.split('_') } : {}),
       ...(query.filter ? { filter: query.filter } : {}),
       ...(query.limit ? { limit: query.limit } : {}),
       ...(query.offset ? { offset: query.offset } : {}),
-      ...(query.include ? { include: query.include } : {}),
+      ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
     };
     return this.getUsersUsecase.execute(commonUserId, formatQuery);
   }
@@ -46,12 +45,11 @@ export class UserController {
   async getOne(
     @GetCommonUserId() commonUserId: string,
     @Param('id') userId: string,
-    @Query() query: { select?: string; include?: string },
+    @Query() query: { preset: string },
   ): Promise<{ result: IMergedUserData }> {
     const formatQuery = {
       userId,
-      ...(query.select ? { select: query.select.split('_') } : {}),
-      ...(query.include ? { include: query.include } : {}),
+      ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
     };
     return this.getOneUserUsecase.execute(commonUserId, formatQuery);
   }

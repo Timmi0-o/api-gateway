@@ -9,25 +9,22 @@ export class GetMembersUseCase {
     metadata: { commonUserId: string },
     data: {
       organizationId: string;
-      select?: string[];
       filter?: string;
       limit?: number;
       offset?: number;
+      preset: string;
     },
   ): Promise<unknown> {
+    console.log('data GetMembersUseCase', data);
     try {
       const res = await this.clientProxy.send({
         messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_GET_MANY,
         data: {
           organizationId: data.organizationId,
-          select: data.select ?? undefined,
           filter: data.filter ? JSON.parse(data.filter) : undefined,
           limit: data?.limit ? +data.limit : 25,
           offset: data.offset ?? 0,
-          include: {
-            user: true,
-            role: true,
-          },
+          preset: data.preset ?? 'MINIMAL',
         },
         metadata: {
           commonUserId: metadata.commonUserId,

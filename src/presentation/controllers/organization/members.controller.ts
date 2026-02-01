@@ -8,7 +8,6 @@ import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { getUserSourceFromRequest } from '@shared/utils/get-user-source-from-request';
 import { Organization } from '@tourgis/contracts';
-import { IQueryAuthUsersDataResponse } from '@tourgis/contracts/dist/auth/v1';
 import { Request } from 'express';
 
 @Controller({ path: 'organization/:organizationId/members', version: '1' })
@@ -24,11 +23,11 @@ export class MembersController {
   async getMany(
     @GetCommonUserId() commonUserId: string,
     @Param('organizationId') organizationId: string,
-    @Query() query: { select?: string; filter?: string; limit?: number; offset?: number },
+    @Query() query: { filter?: string; limit?: number; offset?: number; preset: string },
   ): Promise<unknown> {
     const formatQuery = {
       organizationId,
-      ...(query.select ? { select: query.select.split('_') } : {}),
+      ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
       ...(query.filter ? { filter: query.filter } : {}),
       ...(query.limit ? { limit: query.limit } : {}),
       ...(query.offset ? { offset: query.offset } : {}),
@@ -40,23 +39,7 @@ export class MembersController {
     )) as (Organization.v1.IOrganizationMemberDto &
       Organization.v1.IOrganizationMemberRelationsMap)[];
 
-    const users: IQueryAuthUsersDataResponse['data'] = (
-      await this.getUsersUseCase.execute(commonUserId, {
-        // @ts-expect-error: any
-        filter: JSON.stringify({ id: { in: members.data.map((member) => member.user.commonId) } }),
-      })
-    ).data;
-
-    // @ts-expect-error: any
-    const resMapperObject = members.data?.map((member) => ({
-      ...member,
-      user: {
-        ...member.user,
-        ...users.find((user) => user.auth.id === member.user.commonId),
-      },
-    }));
-
-    return resMapperObject;
+    return members;
   }
 
   @Post()
