@@ -53,8 +53,8 @@ export interface IRpcHttpExceptionMap {
  * Соответствие кодов gRPC ошибка ↔ HTTP статус код + ключ исключения,
  */
 export const RPC_TO_HTTP_EXCEPTION_MAP: Record<ERpcCode, IRpcHttpExceptionMap> = {
-  [ERpcCode.OK]: { code: 200, exceptionKey: 'ok' },
-  [ERpcCode.CANCELLED]: { code: 499, exceptionKey: 'cancelled' }, // Not direct mapping, not in ServiceException
+  [ERpcCode.OK]: { code: 200, exceptionKey: 'internal' }, // OK не должен вызывать исключение
+  [ERpcCode.CANCELLED]: { code: 400, exceptionKey: 'cancelled' },
   [ERpcCode.UNKNOWN]: { code: 500, exceptionKey: 'internal' },
   [ERpcCode.INVALID_ARGUMENT]: { code: 400, exceptionKey: 'validation' },
   [ERpcCode.DEADLINE_EXCEEDED]: { code: 504, exceptionKey: 'timeout' },
@@ -65,7 +65,7 @@ export const RPC_TO_HTTP_EXCEPTION_MAP: Record<ERpcCode, IRpcHttpExceptionMap> =
   [ERpcCode.FAILED_PRECONDITION]: { code: 400, exceptionKey: 'operationNotAllowed' },
   [ERpcCode.ABORTED]: { code: 409, exceptionKey: 'conflict' },
   [ERpcCode.OUT_OF_RANGE]: { code: 400, exceptionKey: 'validation' },
-  [ERpcCode.UNIMPLEMENTED]: { code: 501, exceptionKey: 'unimplemented' }, // Not in ServiceException, fallback
+  [ERpcCode.UNIMPLEMENTED]: { code: 501, exceptionKey: 'unimplemented' },
   [ERpcCode.INTERNAL]: { code: 500, exceptionKey: 'internal' },
   [ERpcCode.UNAVAILABLE]: { code: 503, exceptionKey: 'serviceUnavailable' },
   [ERpcCode.DATA_LOSS]: { code: 500, exceptionKey: 'internal' }, // no direct mapping

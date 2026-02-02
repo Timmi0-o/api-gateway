@@ -15,7 +15,6 @@ export class GetUsersUseCase {
       preset: string;
     },
   ): Promise<IQueryAuthUsersDataResponse> {
-    console.log('query GetUsersUseCase', query);
     try {
       const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
         messagePattern: EAuthSubjects.GET_USERS,

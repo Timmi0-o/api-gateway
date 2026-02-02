@@ -49,12 +49,14 @@ export const ExceptionWIthFormatRpcCode = (err: unknown): ServiceException => {
       exceptionKey: 'internal',
     };
 
-    console.log('exceptionMapping', exceptionMapping);
-    console.log('message', message);
+    const exceptionMethod =
+      ServiceException[exceptionMapping.exceptionKey as keyof typeof ServiceException];
 
-    return ServiceException[exceptionMapping.exceptionKey ?? 'internal'](message);
-  } catch (innerErr) {
-    console.log('innerErr', innerErr);
+    if (typeof exceptionMethod === 'function') {
+      return (exceptionMethod as (msg: string) => ServiceException)(message);
+    }
+    return ServiceException.internal(message);
+  } catch {
     return ServiceException.internal('Ошибка при обработке ошибки микросервиса');
   }
 };

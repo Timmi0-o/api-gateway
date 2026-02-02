@@ -34,47 +34,47 @@ export class ServiceException extends HttpException {
   }
 
   static invalidCredentials(message = 'Invalid credentials'): ServiceException {
-    throw new ServiceException(message, HttpStatus.UNAUTHORIZED);
+    return new ServiceException(message, HttpStatus.UNAUTHORIZED);
   }
 
   static userAlreadyExists(message = 'User already exists'): ServiceException {
-    throw new ServiceException(message, HttpStatus.CONFLICT);
+    return new ServiceException(message, HttpStatus.CONFLICT);
   }
 
   static tokenExpired(message = 'Token expired'): ServiceException {
-    throw new ServiceException(message, HttpStatus.UNAUTHORIZED);
+    return new ServiceException(message, HttpStatus.UNAUTHORIZED);
   }
 
   static invalidToken(message = 'Invalid token'): ServiceException {
-    throw new ServiceException(message, HttpStatus.UNAUTHORIZED);
+    return new ServiceException(message, HttpStatus.UNAUTHORIZED);
   }
 
   static refreshTokenExpired(message = 'Refresh token expired'): ServiceException {
-    throw new ServiceException(message, HttpStatus.UNAUTHORIZED);
+    return new ServiceException(message, HttpStatus.UNAUTHORIZED);
   }
 
   static refreshTokenRevoked(message = 'Refresh token revoked'): ServiceException {
-    throw new ServiceException(message, HttpStatus.UNAUTHORIZED);
+    return new ServiceException(message, HttpStatus.UNAUTHORIZED);
   }
 
   static sessionNotFound(message = 'Session not found'): ServiceException {
-    throw new ServiceException(message, HttpStatus.NOT_FOUND);
+    return new ServiceException(message, HttpStatus.NOT_FOUND);
   }
 
   static unauthorized(message = 'Unauthorized'): ServiceException {
-    throw new ServiceException(message, HttpStatus.UNAUTHORIZED);
+    return new ServiceException(message, HttpStatus.UNAUTHORIZED);
   }
 
   static forbidden(message = 'Forbidden'): ServiceException {
-    throw new ServiceException(message, HttpStatus.FORBIDDEN);
+    return new ServiceException(message, HttpStatus.FORBIDDEN);
   }
 
   static accountLocked(message = 'Account locked'): ServiceException {
-    throw new ServiceException(message, HttpStatus.FORBIDDEN);
+    return new ServiceException(message, HttpStatus.FORBIDDEN);
   }
 
   static accountNotActivated(message = 'Account not activated'): ServiceException {
-    throw new ServiceException(message, HttpStatus.FORBIDDEN);
+    return new ServiceException(message, HttpStatus.FORBIDDEN);
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -82,13 +82,16 @@ export class ServiceException extends HttpException {
   // ─────────────────────────────────────────────────────────────
 
   static validation(
-    errors: Record<string, string[]>,
+    errorsOrMessage: Record<string, string[]> | string,
     message = 'Validation failed',
   ): ServiceException {
-    throw new ServiceException(
-      `${message} (${JSON.stringify(errors)})`,
+    if (typeof errorsOrMessage === 'string') {
+      return new ServiceException(errorsOrMessage, HttpStatus.BAD_REQUEST);
+    }
+    return new ServiceException(
+      `${message} (${JSON.stringify(errorsOrMessage)})`,
       HttpStatus.BAD_REQUEST,
-      errors,
+      errorsOrMessage,
     );
   }
 
@@ -96,18 +99,16 @@ export class ServiceException extends HttpException {
   // Business Logic (NOT_FOUND, FAILED_PRECONDITION, ABORTED)
   // ─────────────────────────────────────────────────────────────
 
-  static entityNotFound(entityName: string, id?: string): ServiceException {
-    const message =
-      id !== undefined ? `${entityName} with id "${id}" not found` : `${entityName} not found`;
+  static entityNotFound(message = 'Entity not found'): ServiceException {
     return new ServiceException(message, HttpStatus.NOT_FOUND);
   }
 
   static operationNotAllowed(message = 'Operation not allowed'): ServiceException {
-    throw new ServiceException(message, HttpStatus.BAD_REQUEST);
+    return new ServiceException(message, HttpStatus.BAD_REQUEST);
   }
 
   static conflict(message = 'Operation conflict'): ServiceException {
-    throw new ServiceException(message, HttpStatus.CONFLICT);
+    return new ServiceException(message, HttpStatus.CONFLICT);
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -115,15 +116,15 @@ export class ServiceException extends HttpException {
   // ─────────────────────────────────────────────────────────────
 
   static databaseError(message = 'Database error'): ServiceException {
-    throw new ServiceException(message, HttpStatus.INTERNAL_SERVER_ERROR);
+    return new ServiceException(message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   static externalServiceError(message = 'External service error'): ServiceException {
-    throw new ServiceException(message, HttpStatus.SERVICE_UNAVAILABLE);
+    return new ServiceException(message, HttpStatus.SERVICE_UNAVAILABLE);
   }
 
   static rateLimitExceeded(message = 'Rate limit exceeded'): ServiceException {
-    throw new ServiceException(message, HttpStatus.TOO_MANY_REQUESTS);
+    return new ServiceException(message, HttpStatus.TOO_MANY_REQUESTS);
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -131,14 +132,26 @@ export class ServiceException extends HttpException {
   // ─────────────────────────────────────────────────────────────
 
   static timeout(message = 'Request timeout'): ServiceException {
-    throw new ServiceException(message, HttpStatus.REQUEST_TIMEOUT);
+    return new ServiceException(message, HttpStatus.REQUEST_TIMEOUT);
   }
 
   static internal(message = 'Internal server error'): ServiceException {
-    throw new ServiceException(message, HttpStatus.INTERNAL_SERVER_ERROR);
+    return new ServiceException(message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   static serviceUnavailable(message = 'Service unavailable'): ServiceException {
-    throw new ServiceException(message, HttpStatus.SERVICE_UNAVAILABLE);
+    return new ServiceException(message, HttpStatus.SERVICE_UNAVAILABLE);
+  }
+
+  // ─────────────────────────────────────────────────────────────
+  // gRPC-specific (для маппинга RPC кодов)
+  // ─────────────────────────────────────────────────────────────
+
+  static cancelled(message = 'Operation cancelled'): ServiceException {
+    return new ServiceException(message, HttpStatus.BAD_REQUEST);
+  }
+
+  static unimplemented(message = 'Not implemented'): ServiceException {
+    return new ServiceException(message, HttpStatus.NOT_IMPLEMENTED);
   }
 }
