@@ -31,9 +31,20 @@ export const registerSchema: JSONSchemaType<IRegisterDto> = {
     },
     source: {
       type: 'string',
-      enum: ['TOURGIS', 'ADMIN', 'BUSINESS', 'FRANCHIZE'],
+      enum: ['TOURGIS', 'ADMIN', 'BUSINESS', 'FRANCHISE'],
+    },
+    identityScopeKey: {
+      type: 'string',
     },
   },
-  required: ['email', 'password', 'username', 'name', 'surname', 'patronymic', 'source'],
-  additionalProperties: false,
+  required: [
+    'email',
+    'password',
+    'username',
+    'name',
+    'surname',
+    'patronymic',
+    'source',
+    'identityScopeKey',
+  ],
 };

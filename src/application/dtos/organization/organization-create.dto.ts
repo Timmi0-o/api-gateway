@@ -1,6 +1,6 @@
 export enum EOrganizationType {
-  FRANCHIZE = 'FRANCHIZE', // Франшиза
-  BUSINESS = 'FRANCHIZE ', // Бизнес
+  FRANCHISE = 'FRANCHISE', // Франшиза
+  BUSINESS = 'BUSINESS ', // Бизнес
 }
 
 export interface ICreateOrganizationDto {

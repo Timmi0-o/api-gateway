@@ -20,6 +20,7 @@ import {
 } from '@domain/types/auth.types';
 import { Body, Controller, Post, Req } from '@nestjs/common';
 import { getIpAndUserAgentFromReq } from '@shared/utils/get-ip-and-user-agent-from-req';
+import { getUserIdentityKeyFromRequest } from '@shared/utils/get-user-identity-key-from-request';
 import { getUserSourceFromRequest } from '@shared/utils/get-user-source-from-request';
 import { Request } from 'express';
 
@@ -36,13 +37,19 @@ export class AuthController {
 
   @Post('login')
   async login(
-    @Body() data: Omit<ILoginDto, 'ipAddress' | 'userAgent'> & { source?: EUserSource },
+    @Body()
+    data: Omit<ILoginDto, 'ipAddress' | 'userAgent'> & {
+      source?: EUserSource;
+    },
     @Req() request: Request,
   ): Promise<ILoginResponse> {
     const { ipAddress, userAgent } = getIpAndUserAgentFromReq(request, { notFoundErrors: true });
 
     const source = getUserSourceFromRequest(request) as EUserSource;
     data.source = source;
+
+    const identityScopeKey = getUserIdentityKeyFromRequest(request) as EUserSource;
+    data.identityScopeKey = identityScopeKey;
 
     return this.loginUsecase.execute({ ...data, ipAddress, userAgent });
   }

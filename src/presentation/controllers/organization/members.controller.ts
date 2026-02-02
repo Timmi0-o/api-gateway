@@ -6,6 +6,7 @@ import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
 import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { getUserIdentityKeyFromRequest } from '@shared/utils/get-user-identity-key-from-request';
 import { getUserSourceFromRequest } from '@shared/utils/get-user-source-from-request';
 import { Organization } from '@tourgis/contracts';
 import { Request } from 'express';
@@ -52,6 +53,9 @@ export class MembersController {
   ): Promise<{ success: boolean }> {
     const source = getUserSourceFromRequest(request) as EUserSource;
     data.source = source;
+
+    const identityScopeKey = getUserIdentityKeyFromRequest(request);
+    data.identityScopeKey = identityScopeKey as string;
 
     return this.addMemberUseCase.execute(commonUserId, {
       ...data,

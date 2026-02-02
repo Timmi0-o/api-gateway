@@ -6,10 +6,11 @@ export enum EUserSource {
 }
 
 export interface ILoginDto {
-  username: string;
+  email: string;
   password: string;
   ipAddress: string;
   userAgent: string;
   fingerprint: string;
   source: EUserSource;
+  identityScopeKey: string;
 }

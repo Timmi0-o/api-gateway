@@ -4,7 +4,7 @@ import { JSONSchemaType } from 'ajv';
 export const loginSchema: JSONSchemaType<ILoginDto> = {
   type: 'object',
   properties: {
-    username: {
+    email: {
       type: 'string',
       minLength: 3,
     },
@@ -25,7 +25,18 @@ export const loginSchema: JSONSchemaType<ILoginDto> = {
       type: 'string',
       enum: [EUserSource.TOURGIS, EUserSource.ADMIN, EUserSource.BUSINESS, EUserSource.FRANCHISE],
     },
+    identityScopeKey: {
+      type: 'string',
+    },
   },
-  required: ['username', 'password', 'fingerprint', 'ipAddress', 'userAgent', 'source'],
+  required: [
+    'email',
+    'password',
+    'fingerprint',
+    'ipAddress',
+    'userAgent',
+    'source',
+    'identityScopeKey',
+  ],
   additionalProperties: false,
 };

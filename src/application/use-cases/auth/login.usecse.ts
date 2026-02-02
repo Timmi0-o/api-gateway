@@ -12,6 +12,7 @@ export class LoginUseCase {
   ) {}
 
   async execute(data: ILoginDto): Promise<ILoginResponse> {
+    console.log('data', data);
     this.authValidator.validateLogin(data);
 
     try {

@@ -27,39 +27,7 @@ export class GetOneUserUseCase {
         },
       });
 
-      if (!res?.data?.[0]) {
-        const userByOrganization = await this.clientProxy.send({
-          messagePattern: EAuthSubjects.GET_USERS,
-          data: {
-            preset: data.preset ?? 'SHORT',
-            include: {
-              organization: {
-                preset: data.preset ?? 'SHORT',
-                filter: {
-                  id: data.userId,
-                },
-              },
-            },
-          },
-          metadata: {
-            commonUserId,
-          },
-        });
-
-        // @ts-expect-error: any
-        if (userByOrganization?.data?.find((item) => item.organization?.id === data.userId)) {
-          return {
-            // @ts-expect-error: any
-            result: userByOrganization.data.find((item) => item.organization?.id === data.userId),
-          };
-        }
-      }
-
-      console.log('res', res);
-
-      const resultMapObject = { result: res?.data?.[0] };
-
-      return resultMapObject;
+      return { result: res?.data?.[0] };
     } catch (err) {
       throw ExceptionWIthFormatRpcCode(err);
     }

@@ -7,8 +7,10 @@ import { UpdateUserUseCase } from '@application/use-cases/user/update/update.use
 import { IRegisterResponse } from '@domain/types/user.types';
 import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
-import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { getUserIdentityKeyFromRequest } from '@shared/utils/get-user-identity-key-from-request';
 import { IMergedUserData, IQueryAuthUsersDataResponse } from '@tourgis/contracts/dist/auth/v1';
+import { Request } from 'express';
 
 @Controller({ path: 'user', version: '1' })
 export class UserController {
@@ -20,7 +22,10 @@ export class UserController {
   ) {}
 
   @Post('register')
-  async register(@Body() data: IRegisterDto): Promise<IRegisterResponse> {
+  async register(@Body() data: IRegisterDto, @Req() request: Request): Promise<IRegisterResponse> {
+    const identityScopeKey = getUserIdentityKeyFromRequest(request);
+    data.identityScopeKey = identityScopeKey as string;
+
     return this.registerUsecase.execute(data);
   }
 
@@ -46,7 +51,7 @@ export class UserController {
     @GetCommonUserId() commonUserId: string,
     @Param('id') userId: string,
     @Query() query: { preset: string },
-  ): Promise<{ result: IMergedUserData }> {
+  ): Promise<{ result: IMergedUserData | null }> {
     const formatQuery = {
       userId,
       ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),

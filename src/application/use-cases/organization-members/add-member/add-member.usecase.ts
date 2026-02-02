@@ -45,21 +45,15 @@ export class AddMemberUseCase {
         },
       });
 
-      if (!existUser?.data?.[0]?.auth?.id) {
+      if (!existUser) {
         await this.registerUseCase.execute({
-          email: data.email,
-          phone: data.phone,
-          username: data.username,
-          password: data.password,
-          name: data.name,
-          surname: data.surname,
-          patronymic: data.patronymic,
+          ...data,
           // @ts-expect-error: any
           source: organization.data.organizationType,
         });
       }
 
-      const user = await this.clientProxy.send({
+      const user: any = await this.clientProxy.send({
         messagePattern: EAuthSubjects.GET_USERS,
         metadata: { commonUserId },
         data: {
@@ -80,8 +74,7 @@ export class AddMemberUseCase {
           // @ts-expect-error: any
           organizationId: organization.data.id,
           commonUserId,
-          // @ts-expect-error: any
-          userId: data.userId ?? user.data[0].organization.id,
+          userId: user.data[0].organizationUser.id,
           roleId: data.roleId,
         },
       });

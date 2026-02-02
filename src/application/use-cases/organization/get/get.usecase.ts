@@ -16,6 +16,7 @@ export class GetOrganizationsUseCase {
       include?: string;
     },
   ): Promise<IOrganizationsDataResponse> {
+    console.log('filters', JSON.parse(data?.filter || '{}'));
     try {
       const res = await this.clientProxy.send<unknown, IQueryOrganizationsDataResponse>({
         messagePattern: EOrganizationSubjects.ORGANIZATION_GET_MANY,

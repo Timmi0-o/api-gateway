@@ -7,4 +7,5 @@ export interface IRegisterDto {
   surname: string;
   patronymic: string;
   source: string;
+  identityScopeKey: string;
 }

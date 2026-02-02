@@ -12,12 +12,16 @@ export class RegisterUseCase {
   ) {}
 
   async execute(data: IRegisterDto): Promise<IRegisterResponse> {
+    console.log('data', data);
     this.userValidator.validateRegister(data);
 
+    const { source, ...restData } = data;
+
     try {
-      return await this.clientProxy.send<IRegisterDto, IRegisterResponse>({
+      return await this.clientProxy.send<Omit<IRegisterDto, 'source'>, IRegisterResponse>({
         messagePattern: EAuthSubjects.REGISTER,
-        data,
+        data: restData,
+        metadata: { source },
       });
     } catch (err) {
       throw ExceptionWIthFormatRpcCode(err);
