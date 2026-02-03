@@ -21,8 +21,8 @@ export class GetUsersUseCase {
         data: {
           preset: query.preset ?? 'MINIMAL',
           filter: query.filter ? JSON.parse(query.filter) : undefined,
-          take: query?.limit ? +query.limit : 25,
-          skip: query.offset ?? 0,
+          limit: query?.limit ? +query.limit : 25,
+          offset: query?.offset ? +query?.offset : 0,
         },
         metadata: {
           commonUserId,
