@@ -1,5 +1,6 @@
 import { TestGrpcUseCase } from '@application/use-cases/test-grpc/test-grpc.usecase';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller({ path: 'test-grpc-endpoints', version: '1' })
 export class TestGrpcEndpointsController {
@@ -10,5 +11,22 @@ export class TestGrpcEndpointsController {
     @Body() data: { messagePattern: string; data: unknown; metadata: Record<string, unknown> },
   ): Promise<{ success: boolean; data: unknown }> {
     return this.testGrpcUseCase.execute(data);
+  }
+
+  @Post('upload-s3')
+  @UseInterceptors(FilesInterceptor('files', 10))
+  async uploadToS3(@UploadedFiles() files: Express.Multer.File[]): Promise<{
+    success: boolean;
+    data: Array<{
+      key: string;
+      location: string;
+      etag: string;
+      originalName: string;
+      size: number;
+      mimetype: string;
+      metadata: Record<string, string>;
+    }>;
+  }> {
+    return this.testGrpcUseCase.uploadFileToS3(files);
   }
 }
