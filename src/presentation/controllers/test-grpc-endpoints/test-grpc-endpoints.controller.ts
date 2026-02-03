@@ -14,7 +14,7 @@ export class TestGrpcEndpointsController {
   }
 
   @Post('upload-s3')
-  @UseInterceptors(FilesInterceptor('files', 10))
+  @UseInterceptors(FilesInterceptor('files', 10, { limits: { fileSize: 500 * 1024 * 1024 } }))
   async uploadToS3(@UploadedFiles() files: Express.Multer.File[]): Promise<{
     success: boolean;
     data: Array<{
