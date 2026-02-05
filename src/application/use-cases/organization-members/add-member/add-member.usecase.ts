@@ -14,13 +14,13 @@ export class AddMemberUseCase {
   ) {}
 
   async execute(
-    commonUserId: string,
+    metadata: { commonUserId: string; isStaffUser: boolean },
     data: IAddOrganizationMemberDto,
   ): Promise<{ success: boolean }> {
     try {
       const organization: IQueryOrganizationsDataResponse = await this.clientProxy.send({
         messagePattern: EOrganizationSubjects.ORGANIZATION_GET_ONE,
-        metadata: { commonUserId },
+        metadata: { ...metadata },
         data: {
           organizationId: data.organizationId,
           preset: 'SHORT',
@@ -33,7 +33,7 @@ export class AddMemberUseCase {
 
       const existUser: IQueryAuthUsersDataResponse = await this.clientProxy.send({
         messagePattern: EAuthSubjects.GET_USERS,
-        metadata: { commonUserId },
+        metadata: { ...metadata },
         data: {
           preset: 'MINIMAL',
           filter: {
@@ -55,7 +55,7 @@ export class AddMemberUseCase {
 
       const user: any = await this.clientProxy.send({
         messagePattern: EAuthSubjects.GET_USERS,
-        metadata: { commonUserId },
+        metadata: { ...metadata },
         data: {
           filter: {
             email: data.email,
@@ -69,11 +69,11 @@ export class AddMemberUseCase {
 
       await this.clientProxy.send({
         messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_CREATE,
-        metadata: { commonUserId },
+        metadata: { ...metadata },
         data: {
           // @ts-expect-error: any
           organizationId: organization.data.id,
-          commonUserId,
+          commonUserId: metadata.commonUserId,
           userId: user.data[0].organizationUser.id,
           roleId: data.roleId,
         },

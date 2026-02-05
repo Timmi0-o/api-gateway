@@ -1,5 +1,8 @@
 import { AddMemberUseCase } from '@application/use-cases/organization-members/add-member/add-member.usecase';
+import { DeleteOrganizationMemberUseCase } from '@application/use-cases/organization-members/delete/delete.usecase';
 import { GetMembersUseCase } from '@application/use-cases/organization-members/get-members/get-members.usecase';
+import { GetOneOrganizationMemberUseCase } from '@application/use-cases/organization-members/get-one/get-one.usecase';
+import { UpdateOrganizationMemberUseCase } from '@application/use-cases/organization-members/update/update.usecase';
 import { CreateRolePermissionsUseCase } from '@application/use-cases/organization-permissions/create/create-permissions.usecase';
 import { GetOrganizationPermissionsUseCase } from '@application/use-cases/organization-permissions/get/get-permissions.usecase';
 import { CreateRoleUseCase } from '@application/use-cases/organization-roles/create/create.usecase';
@@ -77,6 +80,27 @@ import { UserUsecaseModule } from './user.module';
       provide: GetMembersUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
         return new GetMembersUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetOneOrganizationMemberUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new GetOneOrganizationMemberUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateOrganizationMemberUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new UpdateOrganizationMemberUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: DeleteOrganizationMemberUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new DeleteOrganizationMemberUseCase(clientProxy);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
