@@ -4,6 +4,7 @@ import { AddMemberUseCase } from '@application/use-cases/organization-members/ad
 import { GetMembersUseCase } from '@application/use-cases/organization-members/get-members/get-members.usecase';
 import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
 import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
+import { IsStaffUser } from '@infrastructure/decorators/is-staff-user';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { getUserIdentityKeyFromRequest } from '@shared/utils/get-user-identity-key-from-request';
@@ -24,6 +25,7 @@ export class MembersController {
   async getMany(
     @GetCommonUserId() commonUserId: string,
     @Param('organizationId') organizationId: string,
+    @IsStaffUser() isStaffUser: boolean,
     @Query() query: { filter?: string; limit?: number; offset?: number; preset: string },
   ): Promise<unknown> {
     const formatQuery = {
@@ -34,8 +36,11 @@ export class MembersController {
       ...(query.offset ? { offset: query.offset } : {}),
     };
 
+    console.log('isStaffUser', isStaffUser);
+    console.log('commonUserId', commonUserId);
+
     const members = (await this.getMembersUseCase.execute(
-      { commonUserId },
+      { commonUserId, isStaffUser },
       formatQuery,
     )) as (Organization.v1.IOrganizationMemberDto &
       Organization.v1.IOrganizationMemberRelationsMap)[];

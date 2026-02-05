@@ -1,3 +1,4 @@
+import { AdminModule } from '@infrastructure/modules/admin.module';
 import { AuthUsecaseModule } from '@infrastructure/modules/auth.module';
 import { FilesModule } from '@infrastructure/modules/files.module';
 import { OrganizationUsecaseModule } from '@infrastructure/modules/organization.module';
@@ -22,6 +23,7 @@ import { ConfigModule } from '@nestjs/config';
     AuthUsecaseModule,
     UserUsecaseModule,
     OrganizationUsecaseModule,
+    AdminModule,
     S3Module,
     FilesModule,
     TestGrpcModule,

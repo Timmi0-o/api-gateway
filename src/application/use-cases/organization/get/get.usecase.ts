@@ -12,11 +12,10 @@ export class GetOrganizationsUseCase {
     data: {
       filter?: string;
       limit?: number;
-      offset?: number;
+      page?: number;
       include?: string;
     },
   ): Promise<IOrganizationsDataResponse> {
-    console.log('filters', JSON.parse(data?.filter || '{}'));
     try {
       const res = await this.clientProxy.send<unknown, IQueryOrganizationsDataResponse>({
         messagePattern: EOrganizationSubjects.ORGANIZATION_GET_MANY,
@@ -24,7 +23,7 @@ export class GetOrganizationsUseCase {
           ...data,
           filter: data.filter ? JSON.parse(data.filter) : undefined,
           limit: data?.limit ? +data.limit : 25,
-          offset: data.offset ?? 0,
+          page: data.page ?? 1,
         },
         metadata: {
           commonUserId: metadata.commonUserId,

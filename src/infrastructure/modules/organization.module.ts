@@ -1,9 +1,12 @@
 import { AddMemberUseCase } from '@application/use-cases/organization-members/add-member/add-member.usecase';
 import { GetMembersUseCase } from '@application/use-cases/organization-members/get-members/get-members.usecase';
-import { CreateRolePermissionsUseCase } from '@application/use-cases/organization-roles/create-permissions/create-permissions.usecase';
+import { CreateRolePermissionsUseCase } from '@application/use-cases/organization-permissions/create/create-permissions.usecase';
+import { GetOrganizationPermissionsUseCase } from '@application/use-cases/organization-permissions/get/get-permissions.usecase';
 import { CreateRoleUseCase } from '@application/use-cases/organization-roles/create/create.usecase';
 import { DeleteRoleUseCase } from '@application/use-cases/organization-roles/delete/delete.usecase';
+import { GetOneOrganizationRoleUseCase } from '@application/use-cases/organization-roles/get-one/get-one.usecase';
 import { GetOrganizationRolesUseCase } from '@application/use-cases/organization-roles/get/get.usecase';
+import { UpdateRoleUseCase } from '@application/use-cases/organization-roles/update/update.usecase';
 import { CreateOrganizationUseCase } from '@application/use-cases/organization/create/create.usecase';
 import { GetOneOrganizationUseCase } from '@application/use-cases/organization/get-one/get-one.usecase';
 import { GetOrganizationsUseCase } from '@application/use-cases/organization/get/get.usecase';
@@ -17,6 +20,7 @@ import {
 } from '@infrastructure/services/microservice-client-proxy/microservice-client-proxy.module';
 import { Module } from '@nestjs/common';
 import { MembersController } from '@presentation/controllers/organization/members.controller';
+import { OrganizationPermissionsController } from '@presentation/controllers/organization/organization-permissions.controller';
 import { OrganizationController } from '@presentation/controllers/organization/organization.controller';
 import { RoleController } from '@presentation/controllers/organization/role.controller';
 import { NATS_CLIENTS } from '@shared/constants/nats-clients';
@@ -27,7 +31,12 @@ import { UserUsecaseModule } from './user.module';
     MicroserviceClientProxyModule.register(NATS_CLIENTS.ORGANIZATION_CLIENT),
     UserUsecaseModule,
   ],
-  controllers: [OrganizationController, MembersController, RoleController],
+  controllers: [
+    OrganizationController,
+    MembersController,
+    RoleController,
+    OrganizationPermissionsController,
+  ],
   providers: [
     {
       provide: GetOrganizationsUseCase,
@@ -89,6 +98,13 @@ import { UserUsecaseModule } from './user.module';
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
     {
+      provide: GetOneOrganizationRoleUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new GetOneOrganizationRoleUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
       provide: CreateRoleUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
         return new CreateRoleUseCase(clientProxy);
@@ -106,6 +122,20 @@ import { UserUsecaseModule } from './user.module';
       provide: DeleteRoleUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
         return new DeleteRoleUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateRoleUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new UpdateRoleUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetOrganizationPermissionsUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new GetOrganizationPermissionsUseCase(clientProxy);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },

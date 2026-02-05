@@ -7,7 +7,7 @@ export class GetOrganizationRolesUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
-    commonUserId: string,
+    metadata: { commonUserId: string; isStaffUser: boolean },
     query: {
       filter?: string;
       limit?: number;
@@ -29,7 +29,8 @@ export class GetOrganizationRolesUseCase {
           preset: query.preset ?? 'MINIMAL',
         },
         metadata: {
-          commonUserId,
+          commonUserId: metadata.commonUserId,
+          isStaffUser: metadata.isStaffUser,
         },
       });
 

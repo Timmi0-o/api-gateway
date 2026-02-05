@@ -1,19 +1,37 @@
 import { ICreateRoleDto } from '@application/dtos/organization/role-create.dto';
-import { CreateRolePermissionsUseCase } from '@application/use-cases/organization-roles/create-permissions/create-permissions.usecase';
+import { CreateRolePermissionsUseCase } from '@application/use-cases/organization-permissions/create/create-permissions.usecase';
 import { CreateRoleUseCase } from '@application/use-cases/organization-roles/create/create.usecase';
 import { DeleteRoleUseCase } from '@application/use-cases/organization-roles/delete/delete.usecase';
+import { GetOneOrganizationRoleUseCase } from '@application/use-cases/organization-roles/get-one/get-one.usecase';
 import { GetOrganizationRolesUseCase } from '@application/use-cases/organization-roles/get/get.usecase';
+import {
+  IUpdateRoleWithPermissionsDto,
+  UpdateRoleUseCase,
+} from '@application/use-cases/organization-roles/update/update.usecase';
 import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
+import { IsStaffUser } from '@infrastructure/decorators/is-staff-user';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { IRoleMinimalDto } from '@tourgis/contracts/dist/organization/v1';
 
 @Controller({ path: 'organization/:organizationId/role', version: '1' })
 export class RoleController {
   constructor(
     private readonly getOrganizationRolesUseCase: GetOrganizationRolesUseCase,
+    private readonly getOneOrganizationRoleUseCase: GetOneOrganizationRoleUseCase,
     private readonly createRoleUseCase: CreateRoleUseCase,
     private readonly createRolePermissionsUseCase: CreateRolePermissionsUseCase,
+    private readonly updateRoleUseCase: UpdateRoleUseCase,
     private readonly deleteRoleUseCase: DeleteRoleUseCase,
   ) {}
 
@@ -22,6 +40,7 @@ export class RoleController {
   async getMany(
     @GetCommonUserId() commonUserId: string,
     @Param('organizationId') organizationId: string,
+    @IsStaffUser() isStaffUser: boolean,
     @Query()
     query: {
       filter?: string;
@@ -38,7 +57,22 @@ export class RoleController {
       ...(query.offset ? { offset: query.offset } : {}),
     };
 
-    return this.getOrganizationRolesUseCase.execute(commonUserId, formatQuery);
+    return this.getOrganizationRolesUseCase.execute({ commonUserId, isStaffUser }, formatQuery);
+  }
+
+  @Get(':roleId')
+  @UseGuards(RsaAuthGuard)
+  async getOne(
+    @GetCommonUserId() commonUserId: string,
+    @Param('organizationId') organizationId: string,
+    @Param('roleId') roleId: string,
+    @IsStaffUser() isStaffUser: boolean,
+    @Query('preset') preset?: string,
+  ): Promise<unknown> {
+    return this.getOneOrganizationRoleUseCase.execute(
+      { commonUserId, isStaffUser },
+      { organizationId, roleId, preset },
+    );
   }
 
   @Post()
@@ -46,16 +80,20 @@ export class RoleController {
   async create(
     @GetCommonUserId() commonUserId: string,
     @Param('organizationId') organizationId: string,
+    @IsStaffUser() isStaffUser: boolean,
     @Body() data: ICreateRoleDto & { permissionIds?: string[] },
   ): Promise<{ success: boolean; roleId: string }> {
     const { permissionIds, ...roleData } = data;
     let roleId: string;
 
-    const existRole = await this.getOrganizationRolesUseCase.execute(commonUserId, {
-      organizationId,
-      preset: 'MINIMAL',
-      filter: JSON.stringify({ name: roleData.name, organizationId }),
-    });
+    const existRole = await this.getOrganizationRolesUseCase.execute(
+      { commonUserId, isStaffUser },
+      {
+        organizationId,
+        preset: 'MINIMAL',
+        filter: JSON.stringify({ name: roleData.name, organizationId }),
+      },
+    );
 
     // @ts-expect-error: any
     if (!existRole || !existRole?.data.find((role) => role.name === roleData.name)) {
@@ -80,6 +118,25 @@ export class RoleController {
     }
 
     return { success: true, roleId };
+  }
+
+  @Patch(':roleId')
+  @UseGuards(RsaAuthGuard)
+  async update(
+    @GetCommonUserId() commonUserId: string,
+    @Param('organizationId') organizationId: string,
+    @Param('roleId') roleId: string,
+    @IsStaffUser() isStaffUser: boolean,
+    @Body() data: Omit<IUpdateRoleWithPermissionsDto, 'roleId' | 'organizationId'>,
+  ): Promise<{ success: boolean }> {
+    return this.updateRoleUseCase.execute(
+      { commonUserId, isStaffUser },
+      {
+        ...data,
+        roleId,
+        organizationId,
+      },
+    );
   }
 
   @Delete(':roleId')

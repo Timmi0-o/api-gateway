@@ -2,27 +2,19 @@ import { IMicroserviceClientProxyService } from '@domain/services/i-microservice
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EOrganizationSubjects } from '@tourgis/common';
 
-export class GetMembersUseCase {
+export class GetOneOrganizationRoleUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
     metadata: { commonUserId: string; isStaffUser: boolean },
-    data: {
-      organizationId: string;
-      filter?: string;
-      limit?: number;
-      offset?: number;
-      preset: string;
-    },
+    data: { organizationId: string; roleId: string; preset?: string },
   ): Promise<unknown> {
     try {
       const res = await this.clientProxy.send({
-        messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_GET_MANY,
+        messagePattern: EOrganizationSubjects.ROLE_GET_ONE,
         data: {
           organizationId: data.organizationId,
-          filter: data.filter ? JSON.parse(data.filter) : undefined,
-          limit: data?.limit ? +data.limit : 25,
-          offset: data.offset ?? 0,
+          roleId: data.roleId,
           preset: data.preset ?? 'MINIMAL',
         },
         metadata: {

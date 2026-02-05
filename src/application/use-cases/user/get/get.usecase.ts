@@ -11,7 +11,7 @@ export class GetUsersUseCase {
     query: {
       filter?: string;
       limit?: number;
-      offset?: number;
+      page?: number;
       preset: string;
     },
   ): Promise<IQueryAuthUsersDataResponse> {
@@ -22,7 +22,7 @@ export class GetUsersUseCase {
           preset: query.preset ?? 'MINIMAL',
           filter: query.filter ? JSON.parse(query.filter) : undefined,
           limit: query?.limit ? +query.limit : 25,
-          offset: query?.offset ? +query?.offset : 0,
+          page: query?.page ? +query?.page : 1,
         },
         metadata: {
           commonUserId,

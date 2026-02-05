@@ -6,6 +6,7 @@ import { GetOrganizationsUseCase } from '@application/use-cases/organization/get
 import { UpdateOrganizationUseCase } from '@application/use-cases/organization/update/update.usecase';
 import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
 import { GetUserFromSession } from '@infrastructure/decorators/get-user-from-session';
+import { IsStaffUser } from '@infrastructure/decorators/is-staff-user';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import { IDecodedToken } from '@infrastructure/services/auth/rsa-token.service';
 import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
@@ -27,12 +28,12 @@ export class OrganizationController {
     @GetCommonUserId() commonUserId: string,
     @GetUserFromSession() user: IDecodedToken,
     @Query()
-    query: { filter?: string; limit?: number; offset?: number; preset: 'string' },
+    query: { filter?: string; limit?: number; page?: number; preset: 'string' },
   ): Promise<IOrganizationsDataResponse> {
     const formatQuery = {
       ...(query.filter ? { filter: query.filter } : {}),
       ...(query.limit ? { limit: query.limit } : {}),
-      ...(query.offset ? { offset: query.offset } : {}),
+      ...(query.page ? { page: query.page } : {}),
       ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
     };
     return this.getOrganizationsUsecase.execute(
@@ -46,16 +47,16 @@ export class OrganizationController {
   async getOne(
     @GetCommonUserId() commonUserId: string,
     @GetUserFromSession() user: IDecodedToken,
+    @IsStaffUser() isStaffUser: boolean,
     @Param('id') organizationId: string,
     @Query() query: { select?: string; include?: string; preset: string },
   ): Promise<IOrganizationDto> {
-    console.log('query', query);
     const formatQuery = {
       organizationId,
       ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
     };
     return this.getOneOrganizationUsecase.execute(
-      { commonUserId, systemRole: user.systemRole as string },
+      { commonUserId, systemRole: user.systemRole as string, isStaffUser },
       formatQuery,
     );
   }

@@ -6,6 +6,7 @@ import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
 import { UpdateUserUseCase } from '@application/use-cases/user/update/update.usecase';
 import { IRegisterResponse } from '@domain/types/user.types';
 import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
+import { IsStaffUser } from '@infrastructure/decorators/is-staff-user';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { getUserIdentityKeyFromRequest } from '@shared/utils/get-user-identity-key-from-request';
@@ -36,13 +37,14 @@ export class UserController {
   @UseGuards(RsaAuthGuard)
   async getMany(
     @GetCommonUserId() commonUserId: string,
+    @IsStaffUser() isStaffUser: boolean,
     @Query()
-    query: { filter?: string; limit?: number; offset?: number; preset: string },
+    query: { filter?: string; limit?: number; page?: number; preset: string },
   ): Promise<IQueryAuthUsersDataResponse> {
     const formatQuery = {
       ...(query.filter ? { filter: query.filter } : {}),
       ...(query.limit ? { limit: query.limit } : {}),
-      ...(query.offset ? { offset: query.offset } : {}),
+      ...(query.page ? { page: query.page } : {}),
       ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
     };
     return this.getUsersUsecase.execute(commonUserId, formatQuery);
