@@ -24,7 +24,7 @@ export class PermissionGuard implements CanActivate {
 
     const permissions = this.reflector.get<string[]>(PERMISSION_KEY, context.getHandler());
 
-    if (!permissions) {
+    if (!permissions?.length) {
       return true;
     }
 
