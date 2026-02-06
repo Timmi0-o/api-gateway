@@ -126,12 +126,13 @@ export class MembersController {
   @UseGuards(RsaAuthGuard)
   async delete(
     @GetCommonUserId() commonUserId: string,
+    @IsStaffUser() isStaffUser: boolean,
     @Param('organizationId') organizationId: string,
     @Param('userId') userId: string,
   ): Promise<unknown> {
-    return this.deleteOrganizationMemberUseCase.execute(commonUserId, {
-      organizationId,
-      userId,
-    });
+    return this.deleteOrganizationMemberUseCase.execute(
+      { commonUserId, isStaffUser },
+      { organizationId, userId },
+    );
   }
 }

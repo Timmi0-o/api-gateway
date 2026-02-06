@@ -10,7 +10,7 @@ export class GetOneUserUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
-    commonUserId: string,
+    metadata: { commonUserId: string; isStaffUser: boolean },
     data: {
       userId: string;
       preset: string;
@@ -26,7 +26,8 @@ export class GetOneUserUseCase {
           },
         },
         metadata: {
-          commonUserId,
+          commonUserId: metadata.commonUserId,
+          isStaffUser: metadata.isStaffUser,
         },
       });
 

@@ -149,12 +149,13 @@ export class RoleController {
   @UseGuards(RsaAuthGuard)
   async delete(
     @GetCommonUserId() commonUserId: string,
+    @IsStaffUser() isStaffUser: boolean,
     @Param('organizationId') organizationId: string,
     @Param('roleId') roleId: string,
   ): Promise<{ success: boolean }> {
-    return this.deleteRoleUseCase.execute(commonUserId, {
-      roleId,
-      organizationId,
-    });
+    return this.deleteRoleUseCase.execute(
+      { commonUserId, isStaffUser },
+      { roleId, organizationId },
+    );
   }
 }

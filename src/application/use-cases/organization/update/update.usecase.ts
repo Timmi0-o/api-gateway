@@ -6,7 +6,7 @@ export class UpdateOrganizationUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
-    metadata: { commonUserId: string; systemRole: string },
+    metadata: { commonUserId: string; systemRole: string; isStaffUser: boolean },
     data: {
       organizationId: string;
       name?: string;
@@ -28,6 +28,7 @@ export class UpdateOrganizationUseCase {
         metadata: {
           commonUserId: metadata.commonUserId,
           systemRole: metadata.systemRole,
+          isStaffUser: metadata.isStaffUser,
         },
       });
 

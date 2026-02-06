@@ -6,13 +6,17 @@ import { EOrganizationSubjects } from '@tourgis/common';
 export class DeleteRoleUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
-  async execute(commonUserId: string, data: IDeleteRoleDto): Promise<{ success: boolean }> {
+  async execute(
+    metadata: { commonUserId: string; isStaffUser: boolean },
+    data: IDeleteRoleDto,
+  ): Promise<{ success: boolean }> {
     try {
       const res = await this.clientProxy.send<IDeleteRoleDto, { success: boolean }>({
         messagePattern: EOrganizationSubjects.ROLE_DELETE,
         data,
         metadata: {
-          commonUserId,
+          commonUserId: metadata.commonUserId,
+          isStaffUser: metadata.isStaffUser,
         },
       });
 

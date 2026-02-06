@@ -6,13 +6,17 @@ import { EOrganizationSubjects } from '@tourgis/common';
 export class CreateOrganizationUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
-  async execute(commonUserId: string, data: ICreateOrganizationDto): Promise<boolean> {
+  async execute(
+    metadata: { commonUserId: string; isStaffUser: boolean },
+    data: ICreateOrganizationDto,
+  ): Promise<boolean> {
     try {
       const res = await this.clientProxy.send<ICreateOrganizationDto, boolean>({
         messagePattern: EOrganizationSubjects.ORGANIZATION_CREATE,
         data,
         metadata: {
-          commonUserId,
+          commonUserId: metadata.commonUserId,
+          isStaffUser: metadata.isStaffUser,
         },
       });
 

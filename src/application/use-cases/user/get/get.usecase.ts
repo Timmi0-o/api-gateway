@@ -7,7 +7,7 @@ export class GetUsersUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
-    commonUserId: string,
+    metadata: { commonUserId: string; isStaffUser: boolean },
     query: {
       filter?: string;
       limit?: number;
@@ -25,7 +25,8 @@ export class GetUsersUseCase {
           page: query?.page ? +query?.page : 1,
         },
         metadata: {
-          commonUserId,
+          commonUserId: metadata.commonUserId,
+          isStaffUser: metadata.isStaffUser,
         },
       });
 

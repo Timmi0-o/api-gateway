@@ -6,18 +6,18 @@ export class DeleteOrganizationMemberUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
-    commonUserId: string,
+    metadata: { commonUserId: string; isStaffUser: boolean },
     data: { organizationId: string; userId: string },
   ): Promise<unknown> {
     try {
       const res = await this.clientProxy.send({
         messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_DELETE,
         data: {
-          commonUserId,
+          commonUserId: metadata.commonUserId,
           organizationId: data.organizationId,
           userId: data.userId,
         },
-        metadata: { commonUserId },
+        metadata: { commonUserId: metadata.commonUserId, isStaffUser: metadata.isStaffUser },
       });
 
       return res;

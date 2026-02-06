@@ -27,6 +27,7 @@ export class OrganizationController {
   async getMany(
     @GetCommonUserId() commonUserId: string,
     @GetUserFromSession() user: IDecodedToken,
+    @IsStaffUser() isStaffUser: boolean,
     @Query()
     query: { filter?: string; limit?: number; page?: number; preset: 'string' },
   ): Promise<IOrganizationsDataResponse> {
@@ -37,7 +38,7 @@ export class OrganizationController {
       ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
     };
     return this.getOrganizationsUsecase.execute(
-      { commonUserId, systemRole: user.systemRole as string },
+      { commonUserId, systemRole: user.systemRole as string, isStaffUser },
       formatQuery,
     );
   }
@@ -66,11 +67,12 @@ export class OrganizationController {
   async update(
     @GetCommonUserId() commonUserId: string,
     @GetUserFromSession() user: IDecodedToken,
+    @IsStaffUser() isStaffUser: boolean,
     @Param('id') organizationId: string,
     @Body() data: IUpdateOrganizationDto,
   ): Promise<{ success: boolean }> {
     await this.updateOrganizationUsecase.execute(
-      { commonUserId, systemRole: user.systemRole as string },
+      { commonUserId, systemRole: user.systemRole as string, isStaffUser },
       { organizationId, ...data },
     );
 
@@ -81,8 +83,9 @@ export class OrganizationController {
   @UseGuards(RsaAuthGuard)
   async create(
     @GetCommonUserId() commonUserId: string,
+    @IsStaffUser() isStaffUser: boolean,
     @Body() data: ICreateOrganizationDto,
   ): Promise<boolean> {
-    return this.createOrganizationUsecase.execute(commonUserId, data);
+    return this.createOrganizationUsecase.execute({ commonUserId, isStaffUser }, data);
   }
 }

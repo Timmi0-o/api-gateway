@@ -5,7 +5,7 @@ export class UpdateUserUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
-    commonUserId: string,
+    metadata: { commonUserId: string; isStaffUser: boolean },
     data: {
       userId: string;
       name?: string;
@@ -29,7 +29,8 @@ export class UpdateUserUseCase {
           ...(data.status !== undefined ? { status: data.status } : {}),
         },
         metadata: {
-          commonUserId,
+          commonUserId: metadata.commonUserId,
+          isStaffUser: metadata.isStaffUser,
         },
       });
 

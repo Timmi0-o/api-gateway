@@ -47,13 +47,14 @@ export class UserController {
       ...(query.page ? { page: query.page } : {}),
       ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
     };
-    return this.getUsersUsecase.execute(commonUserId, formatQuery);
+    return this.getUsersUsecase.execute({ commonUserId, isStaffUser }, formatQuery);
   }
 
   @Get(':id')
   @UseGuards(RsaAuthGuard)
   async getOne(
     @GetCommonUserId() commonUserId: string,
+    @IsStaffUser() isStaffUser: boolean,
     @Param('id') userId: string,
     @Query() query: { preset: string },
   ): Promise<{ result: IUserWithOrganizationData | null }> {
@@ -61,17 +62,18 @@ export class UserController {
       userId,
       ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
     };
-    return this.getOneUserUsecase.execute(commonUserId, formatQuery);
+    return this.getOneUserUsecase.execute({ commonUserId, isStaffUser }, formatQuery);
   }
 
   @Patch(':id')
   @UseGuards(RsaAuthGuard)
   async update(
     @GetCommonUserId() commonUserId: string,
+    @IsStaffUser() isStaffUser: boolean,
     @Param('id') userId: string,
     @Body() data: IUpdateUserDto,
   ): Promise<{ success: boolean }> {
-    await this.updateUserUsecase.execute(commonUserId, { userId, ...data });
+    await this.updateUserUsecase.execute({ commonUserId, isStaffUser }, { userId, ...data });
 
     return { success: true };
   }

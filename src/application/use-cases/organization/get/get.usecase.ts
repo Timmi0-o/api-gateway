@@ -8,7 +8,7 @@ export class GetOrganizationsUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
-    metadata: { commonUserId: string; systemRole: string },
+    metadata: { commonUserId: string; systemRole: string; isStaffUser: boolean },
     data: {
       filter?: string;
       limit?: number;
@@ -28,6 +28,7 @@ export class GetOrganizationsUseCase {
         metadata: {
           commonUserId: metadata.commonUserId,
           systemRole: metadata.systemRole,
+          isStaffUser: metadata.isStaffUser,
         },
       });
 
