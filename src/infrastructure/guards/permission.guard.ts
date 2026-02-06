@@ -34,8 +34,9 @@ export class PermissionGuard implements CanActivate {
         user.orgId as string,
         permission,
       );
+
       if (!hasPermission) {
-        this.logger.warn(
+        this.logger.error(
           `Permission denied: missing "${permission}" (userId=${user.sub}, orgId=${user.orgId})`,
         );
         return false;

@@ -9,6 +9,8 @@ import { UpdateOrganizationMemberUseCase } from '@application/use-cases/organiza
 import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
 import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
 import { IsStaffUser } from '@infrastructure/decorators/is-staff-user';
+import { Permission } from '@infrastructure/decorators/permission.decorator';
+import { PermissionGuard } from '@infrastructure/guards/permission.guard';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import {
   Body,
@@ -24,6 +26,7 @@ import {
 } from '@nestjs/common';
 import { getUserIdentityKeyFromRequest } from '@shared/utils/get-user-identity-key-from-request';
 import { getUserSourceFromRequest } from '@shared/utils/get-user-source-from-request';
+import { Permissions } from '@tourgis/common';
 import { Organization } from '@tourgis/contracts';
 import { Request } from 'express';
 
@@ -39,7 +42,8 @@ export class MembersController {
   ) {}
 
   @Get()
-  @UseGuards(RsaAuthGuard)
+  @UseGuards(RsaAuthGuard, PermissionGuard)
+  @Permission(Permissions.member.read)
   async getMany(
     @GetCommonUserId() commonUserId: string,
     @Param('organizationId') organizationId: string,

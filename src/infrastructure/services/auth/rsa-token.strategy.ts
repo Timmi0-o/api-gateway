@@ -23,7 +23,7 @@ export class RsaTokenStrategy extends PassportStrategy(Strategy, 'rsa-bearer') {
 
       if (!decodedToken.sub) ServiceException.forbidden('INVALID_TOKEN');
 
-      this.logger.debug(`✓ Token validated for user: ${decodedToken.sub as string}`);
+      // this.logger.debug(`✓ Token validated for user: ${decodedToken.sub as string}`);
       return await Promise.resolve(decodedToken);
     } catch (error) {
       this.logger.warn(
