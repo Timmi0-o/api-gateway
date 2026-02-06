@@ -7,16 +7,14 @@ export class CreateRolePermissionsUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
-    commonUserId: string,
+    metadata: { commonUserId: string; isStaffUser: boolean },
     data: ICreateRolePermissionsDto,
   ): Promise<{ success: boolean }> {
     try {
       await this.clientProxy.send<ICreateRolePermissionsDto, void>({
         messagePattern: EOrganizationSubjects.ROLE_PERMISSION_CREATE,
         data,
-        metadata: {
-          commonUserId,
-        },
+        metadata: metadata,
       });
 
       return { success: true };

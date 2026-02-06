@@ -6,14 +6,15 @@ import { EOrganizationSubjects } from '@tourgis/common';
 export class CreateRoleUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
-  async execute(commonUserId: string, data: ICreateRoleDto): Promise<{ id: string }> {
+  async execute(
+    metadata: { commonUserId: string; isStaffUser: boolean },
+    data: ICreateRoleDto,
+  ): Promise<{ id: string }> {
     try {
       const res = await this.clientProxy.send<ICreateRoleDto, { id: string }>({
         messagePattern: EOrganizationSubjects.ROLE_CREATE,
         data,
-        metadata: {
-          commonUserId,
-        },
+        metadata: metadata,
       });
 
       return res;

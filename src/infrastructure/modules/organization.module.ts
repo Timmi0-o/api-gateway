@@ -3,6 +3,8 @@ import { DeleteOrganizationMemberUseCase } from '@application/use-cases/organiza
 import { GetMembersUseCase } from '@application/use-cases/organization-members/get-members/get-members.usecase';
 import { GetOneOrganizationMemberUseCase } from '@application/use-cases/organization-members/get-one/get-one.usecase';
 import { UpdateOrganizationMemberUseCase } from '@application/use-cases/organization-members/update/update.usecase';
+import { EditOrganizationModulesUseCase } from '@application/use-cases/organization-modules/edit/edit.usecase';
+import { GetOrganizationModulesUseCase } from '@application/use-cases/organization-modules/get-modules/get-modules.usecase';
 import { CreateRolePermissionsUseCase } from '@application/use-cases/organization-permissions/create/create-permissions.usecase';
 import { GetOrganizationPermissionsUseCase } from '@application/use-cases/organization-permissions/get/get-permissions.usecase';
 import { CreateRoleUseCase } from '@application/use-cases/organization-roles/create/create.usecase';
@@ -23,6 +25,7 @@ import {
 } from '@infrastructure/services/microservice-client-proxy/microservice-client-proxy.module';
 import { Module } from '@nestjs/common';
 import { MembersController } from '@presentation/controllers/organization/members.controller';
+import { OrganizationModulesController } from '@presentation/controllers/organization/organization-modules.controller';
 import { OrganizationPermissionsController } from '@presentation/controllers/organization/organization-permissions.controller';
 import { OrganizationController } from '@presentation/controllers/organization/organization.controller';
 import { RoleController } from '@presentation/controllers/organization/role.controller';
@@ -39,6 +42,7 @@ import { UserUsecaseModule } from './user.module';
     MembersController,
     RoleController,
     OrganizationPermissionsController,
+    OrganizationModulesController,
   ],
   providers: [
     {
@@ -160,6 +164,20 @@ import { UserUsecaseModule } from './user.module';
       provide: GetOrganizationPermissionsUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
         return new GetOrganizationPermissionsUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetOrganizationModulesUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new GetOrganizationModulesUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: EditOrganizationModulesUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new EditOrganizationModulesUseCase(clientProxy);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },

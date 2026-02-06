@@ -97,10 +97,13 @@ export class RoleController {
 
     // @ts-expect-error: any
     if (!existRole || !existRole?.data.find((role) => role.name === roleData.name)) {
-      const newRole = await this.createRoleUseCase.execute(commonUserId, {
-        ...roleData,
-        organizationId,
-      });
+      const newRole = await this.createRoleUseCase.execute(
+        { commonUserId, isStaffUser },
+        {
+          ...roleData,
+          organizationId,
+        },
+      );
 
       // @ts-expect-error: any
       roleId = newRole.data.id;
@@ -110,11 +113,14 @@ export class RoleController {
     }
 
     if (permissionIds?.length) {
-      await this.createRolePermissionsUseCase.execute(commonUserId, {
-        roleId,
-        organizationId,
-        permissionIds,
-      });
+      await this.createRolePermissionsUseCase.execute(
+        { commonUserId, isStaffUser },
+        {
+          roleId,
+          organizationId,
+          permissionIds,
+        },
+      );
     }
 
     return { success: true, roleId };
