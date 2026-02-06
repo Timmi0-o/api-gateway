@@ -1,13 +1,12 @@
 import { GetOneUserUseCase } from '@application/use-cases/user/get-one/get-one.usecase';
+import {
+  IUserCacheDataService,
+  IUserPermissionsCacheItem,
+} from '@domain/services/i-user-cache-data.service';
 import { RedisService } from '@infrastructure/services/redis/redis.service';
 import { Injectable } from '@nestjs/common';
 
 const CACHE_KEY_PREFIX = 'user-permissions:';
-
-export interface IUserPermissionsCacheItem {
-  roleId: string;
-  permissions: string[];
-}
 
 type MemberWithRolePermissions = {
   isActive: boolean;
@@ -16,7 +15,7 @@ type MemberWithRolePermissions = {
 };
 
 @Injectable()
-export class UserCacheDataService {
+export class UserCacheDataService implements IUserCacheDataService {
   constructor(
     private readonly redis: RedisService,
     private readonly getOneUserUseCase: GetOneUserUseCase,
