@@ -24,7 +24,7 @@ import {
   MicroserviceClientProxyModule,
 } from '@infrastructure/services/microservice-client-proxy/microservice-client-proxy.module';
 import { Module } from '@nestjs/common';
-import { MembersController } from '@presentation/controllers/organization/members.controller';
+import { MembersController } from '@presentation/controllers/organization/organization-members.controller';
 import { OrganizationModulesController } from '@presentation/controllers/organization/organization-modules.controller';
 import { OrganizationPermissionsController } from '@presentation/controllers/organization/organization-permissions.controller';
 import { OrganizationController } from '@presentation/controllers/organization/organization.controller';
