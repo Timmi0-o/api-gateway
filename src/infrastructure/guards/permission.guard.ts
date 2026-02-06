@@ -1,12 +1,14 @@
 import { PERMISSION_KEY } from '@infrastructure/decorators/permission.decorator';
 import { IDecodedToken } from '@infrastructure/services/auth/rsa-token.service';
 import { UserCacheDataService } from '@infrastructure/services/user-cache-data/user-cache-data.service';
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, Logger } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { EAuthUserRole } from '@tourgis/contracts/dist/auth/v1';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
+  private readonly logger = new Logger(PermissionGuard.name);
+
   constructor(
     private readonly userCacheDataService: UserCacheDataService,
     private readonly reflector: Reflector,
@@ -33,6 +35,9 @@ export class PermissionGuard implements CanActivate {
         permission,
       );
       if (!hasPermission) {
+        this.logger.warn(
+          `Permission denied: missing "${permission}" (userId=${user.sub}, orgId=${user.orgId})`,
+        );
         return false;
       }
     }
