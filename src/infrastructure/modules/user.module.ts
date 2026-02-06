@@ -46,6 +46,6 @@ import { ValidatorsModule } from '../../validations/validators.module';
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
   ],
-  exports: [RegisterUseCase],
+  exports: [RegisterUseCase, GetOneUserUseCase],
 })
 export class UserUsecaseModule {}

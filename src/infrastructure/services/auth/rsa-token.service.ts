@@ -7,7 +7,8 @@ import { JwtService } from '../jwt/jwt.service';
 export interface IDecodedToken {
   sub?: string;
   systemRole?: string;
-  roleid?: string;
+  roleId?: string;
+  orgId?: string;
   [key: string]: unknown;
 }
 

@@ -7,9 +7,12 @@ import { UpdateOrganizationUseCase } from '@application/use-cases/organization/u
 import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
 import { GetUserFromSession } from '@infrastructure/decorators/get-user-from-session';
 import { IsStaffUser } from '@infrastructure/decorators/is-staff-user';
+import { Permission } from '@infrastructure/decorators/permission.decorator';
+import { PermissionGuard } from '@infrastructure/guards/permission.guard';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import { IDecodedToken } from '@infrastructure/services/auth/rsa-token.service';
 import { Body, Controller, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Permissions } from '@tourgis/common';
 import { IOrganizationsDataResponse } from '@tourgis/contracts/dist/api-gateway/organization/v1/contracts/organization/organizations-data.contract';
 import { IOrganizationDto } from '@tourgis/contracts/dist/organization/v1';
 
@@ -23,7 +26,13 @@ export class OrganizationController {
   ) {}
 
   @Get()
-  @UseGuards(RsaAuthGuard)
+  @UseGuards(RsaAuthGuard, PermissionGuard)
+  @Permission(
+    Permissions.organization.read,
+    Permissions.organization.create,
+    Permissions.organization.update,
+    Permissions.organization.delete,
+  )
   async getMany(
     @GetCommonUserId() commonUserId: string,
     @GetUserFromSession() user: IDecodedToken,
@@ -44,7 +53,8 @@ export class OrganizationController {
   }
 
   @Get(':id')
-  @UseGuards(RsaAuthGuard)
+  @UseGuards(RsaAuthGuard, PermissionGuard)
+  @Permission(Permissions.organization.read)
   async getOne(
     @GetCommonUserId() commonUserId: string,
     @GetUserFromSession() user: IDecodedToken,
@@ -63,7 +73,8 @@ export class OrganizationController {
   }
 
   @Patch(':id')
-  @UseGuards(RsaAuthGuard)
+  @UseGuards(RsaAuthGuard, PermissionGuard)
+  @Permission(Permissions.organization.update)
   async update(
     @GetCommonUserId() commonUserId: string,
     @GetUserFromSession() user: IDecodedToken,
@@ -80,7 +91,8 @@ export class OrganizationController {
   }
 
   @Post()
-  @UseGuards(RsaAuthGuard)
+  @UseGuards(RsaAuthGuard, PermissionGuard)
+  @Permission(Permissions.organization.create)
   async create(
     @GetCommonUserId() commonUserId: string,
     @IsStaffUser() isStaffUser: boolean,

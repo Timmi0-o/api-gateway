@@ -33,6 +33,7 @@
     "@tourgis/contracts": "file:../tourgis-contracts",
     "@tourgis/errors": "file:../tourgis-errors",
     "ajv": "^8.17.1",
+    "ioredis": "^5.9.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
     "nats": "^2.29.3",

@@ -2,8 +2,10 @@ import { AdminModule } from '@infrastructure/modules/admin.module';
 import { AuthUsecaseModule } from '@infrastructure/modules/auth.module';
 import { FilesModule } from '@infrastructure/modules/files.module';
 import { OrganizationUsecaseModule } from '@infrastructure/modules/organization.module';
+import { RedisModule } from '@infrastructure/modules/redis.module';
 import { S3Module } from '@infrastructure/modules/s3.module';
 import { TestGrpcModule } from '@infrastructure/modules/test-grpc.module';
+import { UserCacheDataModule } from '@infrastructure/modules/user-cache-data.module';
 import { UserUsecaseModule } from '@infrastructure/modules/user.module';
 import { AuthServiceModule } from '@infrastructure/services/auth/auth.module';
 import { JwtModule } from '@infrastructure/services/jwt/jwt.module';
@@ -22,9 +24,11 @@ import { ConfigModule } from '@nestjs/config';
     JwtModule,
     AuthUsecaseModule,
     UserUsecaseModule,
+    UserCacheDataModule,
     OrganizationUsecaseModule,
     AdminModule,
     S3Module,
+    RedisModule,
     FilesModule,
     TestGrpcModule,
   ],

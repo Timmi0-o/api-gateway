@@ -6,25 +6,37 @@ import { SendResetPasswordEmailUseCase } from '@application/use-cases/auth/send-
 import { ValidateResetPasswordTokenUseCase } from '@application/use-cases/auth/validate-reset-password-token.usecase';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { AUTH_VALIDATOR_TOKEN, IAuthValidator } from '@domain/validators/auth-validator.interface';
+import { RedisModule } from '@infrastructure/modules/redis.module';
+import { UserCacheDataModule } from '@infrastructure/modules/user-cache-data.module';
 import {
   MICROSERVICE_CLIENT_PROXY_SERVICE,
   MicroserviceClientProxyModule,
 } from '@infrastructure/services/microservice-client-proxy/microservice-client-proxy.module';
+import { UserCacheDataService } from '@infrastructure/services/user-cache-data/user-cache-data.service';
 import { Module } from '@nestjs/common';
 import { AuthController } from '@presentation/controllers/auth/auth.controller';
 import { NATS_CLIENTS } from '@shared/constants/nats-clients';
 import { ValidatorsModule } from '../../validations/validators.module';
 
 @Module({
-  imports: [MicroserviceClientProxyModule.register(NATS_CLIENTS.AUTH_CLIENT), ValidatorsModule],
+  imports: [
+    MicroserviceClientProxyModule.register(NATS_CLIENTS.AUTH_CLIENT),
+    RedisModule,
+    UserCacheDataModule,
+    ValidatorsModule,
+  ],
   controllers: [AuthController],
   providers: [
     {
       provide: LoginUseCase,
-      useFactory: (authValidator: IAuthValidator, clientProxy: IMicroserviceClientProxyService) => {
-        return new LoginUseCase(authValidator, clientProxy);
+      useFactory: (
+        authValidator: IAuthValidator,
+        clientProxy: IMicroserviceClientProxyService,
+        userCacheDataService: UserCacheDataService,
+      ) => {
+        return new LoginUseCase(authValidator, clientProxy, userCacheDataService);
       },
-      inject: [AUTH_VALIDATOR_TOKEN, MICROSERVICE_CLIENT_PROXY_SERVICE],
+      inject: [AUTH_VALIDATOR_TOKEN, MICROSERVICE_CLIENT_PROXY_SERVICE, UserCacheDataService],
     },
     {
       provide: LogoutUseCase,

@@ -1,6 +1,10 @@
 export interface ILoginResponse {
-  sid: string;
-  accessToken: string;
+  success: boolean;
+  data: {
+    sid: string;
+    accessToken: string;
+    commonUserId: string;
+  };
 }
 
 export interface IRefreshResponse {
