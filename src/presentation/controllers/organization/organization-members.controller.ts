@@ -108,14 +108,18 @@ export class MembersController {
     @GetCommonUserId() commonUserId: string,
     @Param('organizationId') organizationId: string,
     @Param('userId') userId: string,
+    @IsStaffUser() isStaffUser: boolean,
     @Body() data: Pick<IUpdateOrganizationMemberDto, 'roleId' | 'isActive'>,
   ): Promise<unknown> {
-    return this.updateOrganizationMemberUseCase.execute(commonUserId, {
-      organizationId,
-      userId,
-      roleId: data.roleId,
-      ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
-    });
+    return this.updateOrganizationMemberUseCase.execute(
+      { commonUserId, isStaffUser },
+      {
+        organizationId,
+        userId,
+        roleId: data.roleId,
+        ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
+      },
+    );
   }
 
   @Delete(':userId')

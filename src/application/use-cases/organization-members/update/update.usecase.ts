@@ -7,20 +7,20 @@ export class UpdateOrganizationMemberUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(
-    commonUserId: string,
+    metadata: { commonUserId: string; isStaffUser: boolean },
     data: Omit<IUpdateOrganizationMemberDto, 'commonUserId'>,
   ): Promise<unknown> {
     try {
       const res = await this.clientProxy.send({
         messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_UPDATE,
         data: {
-          commonUserId,
+          commonUserId: metadata.commonUserId,
           organizationId: data.organizationId,
           userId: data.userId,
           roleId: data.roleId,
           ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
         },
-        metadata: { commonUserId },
+        metadata: { ...metadata },
       });
 
       return res;
