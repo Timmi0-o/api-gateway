@@ -15,6 +15,7 @@ import { UpdateRoleUseCase } from '@application/use-cases/organization-roles/upd
 import { CreateOrganizationUseCase } from '@application/use-cases/organization/create/create.usecase';
 import { GetOneOrganizationUseCase } from '@application/use-cases/organization/get-one/get-one.usecase';
 import { GetOrganizationsUseCase } from '@application/use-cases/organization/get/get.usecase';
+import { GetOrganizationFilesUseCase } from '@application/use-cases/organization-files/get-organization-files/get-organization-files.usecase';
 import { UpdateOrganizationUseCase } from '@application/use-cases/organization/update/update.usecase';
 import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
@@ -28,6 +29,7 @@ import { MembersController } from '@presentation/controllers/organization/organi
 import { OrganizationModulesController } from '@presentation/controllers/organization/organization-modules.controller';
 import { OrganizationPermissionsController } from '@presentation/controllers/organization/organization-permissions.controller';
 import { OrganizationController } from '@presentation/controllers/organization/organization.controller';
+import { OrganizationFilesController } from '@presentation/controllers/organization/organization-files.controller';
 import { RoleController } from '@presentation/controllers/organization/role.controller';
 import { NATS_CLIENTS } from '@shared/constants/nats-clients';
 import { UserUsecaseModule } from './user.module';
@@ -43,6 +45,7 @@ import { UserUsecaseModule } from './user.module';
     RoleController,
     OrganizationPermissionsController,
     OrganizationModulesController,
+    OrganizationFilesController,
   ],
   providers: [
     {
@@ -178,6 +181,13 @@ import { UserUsecaseModule } from './user.module';
       provide: EditOrganizationModulesUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
         return new EditOrganizationModulesUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetOrganizationFilesUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new GetOrganizationFilesUseCase(clientProxy);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
