@@ -1,4 +1,5 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
+import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EOrganizationSubjects } from '@tourgis/common';
 
@@ -10,10 +11,12 @@ export interface IEditOrganizationModulesDto {
 export class EditOrganizationModulesUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
-  async execute(
-    metadata: { commonUserId: string; isStaffUser: boolean },
-    data: { organizationId: string } & IEditOrganizationModulesDto,
-  ): Promise<{ success: boolean }> {
+  async execute(params: {
+    data: { organizationId: string } & IEditOrganizationModulesDto;
+    metadata: IMetadataObjectForGrpcRequest;
+  }): Promise<{ success: boolean }> {
+    const { data, metadata } = params;
+
     try {
       if (data.added?.length) {
         await this.clientProxy.send({
@@ -22,10 +25,7 @@ export class EditOrganizationModulesUseCase {
             organizationId: data.organizationId,
             modules: data.added,
           },
-          metadata: {
-            commonUserId: metadata.commonUserId,
-            isStaffUser: metadata.isStaffUser,
-          },
+          metadata,
         });
       }
 
@@ -36,10 +36,7 @@ export class EditOrganizationModulesUseCase {
             organizationId: data.organizationId,
             modules: data.deleted,
           },
-          metadata: {
-            commonUserId: metadata.commonUserId,
-            isStaffUser: metadata.isStaffUser,
-          },
+          metadata,
         });
       }
 

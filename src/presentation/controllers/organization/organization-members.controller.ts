@@ -7,8 +7,10 @@ import { GetMembersUseCase } from '@application/use-cases/organization-members/g
 import { GetOneOrganizationMemberUseCase } from '@application/use-cases/organization-members/get-one/get-one.usecase';
 import { UpdateOrganizationMemberUseCase } from '@application/use-cases/organization-members/update/update.usecase';
 import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
-import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
-import { IsStaffUser } from '@infrastructure/decorators/is-staff-user';
+import {
+  GetMetadataObjectForGrpcRequest,
+  IMetadataObjectForGrpcRequest,
+} from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { Permission } from '@infrastructure/decorators/permission.decorator';
 import { PermissionGuard } from '@infrastructure/guards/permission.guard';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
@@ -45,9 +47,8 @@ export class MembersController {
   @UseGuards(RsaAuthGuard, PermissionGuard)
   @Permission(Permissions.member.read)
   async getMany(
-    @GetCommonUserId() commonUserId: string,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
-    @IsStaffUser() isStaffUser: boolean,
     @Query() query: { filter?: string; limit?: number; offset?: number; preset: string },
   ): Promise<unknown> {
     const formatQuery = {
@@ -58,10 +59,10 @@ export class MembersController {
       ...(query.offset ? { offset: query.offset } : {}),
     };
 
-    const members = (await this.getMembersUseCase.execute(
-      { commonUserId, isStaffUser },
-      formatQuery,
-    )) as (Organization.v1.IOrganizationMemberDto &
+    const members = (await this.getMembersUseCase.execute({
+      data: formatQuery,
+      metadata,
+    })) as (Organization.v1.IOrganizationMemberDto &
       Organization.v1.IOrganizationMemberRelationsMap)[];
 
     return members;
@@ -70,23 +71,21 @@ export class MembersController {
   @Get(':userId')
   @UseGuards(RsaAuthGuard)
   async getOne(
-    @GetCommonUserId() commonUserId: string,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @Param('userId') userId: string,
-    @IsStaffUser() isStaffUser: boolean,
     @Query('preset') preset?: string,
   ): Promise<unknown> {
-    return this.getOneOrganizationMemberUseCase.execute(
-      { commonUserId, isStaffUser },
-      { organizationId, userId, preset },
-    );
+    return this.getOneOrganizationMemberUseCase.execute({
+      data: { organizationId, userId, preset },
+      metadata,
+    });
   }
 
   @Post()
   @UseGuards(RsaAuthGuard)
   async addMember(
-    @GetCommonUserId() commonUserId: string,
-    @IsStaffUser() isStaffUser: boolean,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @Body() data: IAddOrganizationMemberDto,
     @Req() request: Request,
@@ -97,46 +96,44 @@ export class MembersController {
     const identityScopeKey = getUserIdentityKeyFromRequest(request);
     data.identityScopeKey = identityScopeKey as string;
 
-    return this.addMemberUseCase.execute(
-      { commonUserId, isStaffUser },
-      {
+    return this.addMemberUseCase.execute({
+      data: {
         ...data,
         organizationId,
       },
-    );
+      metadata,
+    });
   }
 
   @Patch(':userId')
   @UseGuards(RsaAuthGuard)
   async update(
-    @GetCommonUserId() commonUserId: string,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @Param('userId') userId: string,
-    @IsStaffUser() isStaffUser: boolean,
     @Body() data: Pick<IUpdateOrganizationMemberDto, 'roleId' | 'isActive'>,
   ): Promise<unknown> {
-    return this.updateOrganizationMemberUseCase.execute(
-      { commonUserId, isStaffUser },
-      {
+    return this.updateOrganizationMemberUseCase.execute({
+      data: {
         organizationId,
         userId,
         roleId: data.roleId,
         ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
       },
-    );
+      metadata,
+    });
   }
 
   @Delete(':userId')
   @UseGuards(RsaAuthGuard)
   async delete(
-    @GetCommonUserId() commonUserId: string,
-    @IsStaffUser() isStaffUser: boolean,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @Param('userId') userId: string,
   ): Promise<unknown> {
-    return this.deleteOrganizationMemberUseCase.execute(
-      { commonUserId, isStaffUser },
-      { organizationId, userId },
-    );
+    return this.deleteOrganizationMemberUseCase.execute({
+      data: { organizationId, userId },
+      metadata,
+    });
   }
 }

@@ -8,8 +8,10 @@ import {
   IUpdateRoleWithPermissionsDto,
   UpdateRoleUseCase,
 } from '@application/use-cases/organization-roles/update/update.usecase';
-import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
-import { IsStaffUser } from '@infrastructure/decorators/is-staff-user';
+import {
+  GetMetadataObjectForGrpcRequest,
+  IMetadataObjectForGrpcRequest,
+} from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import {
   Body,
@@ -38,9 +40,8 @@ export class RoleController {
   @Get()
   @UseGuards(RsaAuthGuard)
   async getMany(
-    @GetCommonUserId() commonUserId: string,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
-    @IsStaffUser() isStaffUser: boolean,
     @Query()
     query: {
       filter?: string;
@@ -57,53 +58,51 @@ export class RoleController {
       ...(query.offset ? { offset: query.offset } : {}),
     };
 
-    return this.getOrganizationRolesUseCase.execute({ commonUserId, isStaffUser }, formatQuery);
+    return this.getOrganizationRolesUseCase.execute({ data: formatQuery, metadata });
   }
 
   @Get(':roleId')
   @UseGuards(RsaAuthGuard)
   async getOne(
-    @GetCommonUserId() commonUserId: string,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @Param('roleId') roleId: string,
-    @IsStaffUser() isStaffUser: boolean,
     @Query('preset') preset?: string,
   ): Promise<unknown> {
-    return this.getOneOrganizationRoleUseCase.execute(
-      { commonUserId, isStaffUser },
-      { organizationId, roleId, preset },
-    );
+    return this.getOneOrganizationRoleUseCase.execute({
+      data: { organizationId, roleId, preset },
+      metadata,
+    });
   }
 
   @Post()
   @UseGuards(RsaAuthGuard)
   async create(
-    @GetCommonUserId() commonUserId: string,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
-    @IsStaffUser() isStaffUser: boolean,
     @Body() data: ICreateRoleDto & { permissionIds?: string[] },
   ): Promise<{ success: boolean; roleId: string }> {
     const { permissionIds, ...roleData } = data;
     let roleId: string;
 
-    const existRole = await this.getOrganizationRolesUseCase.execute(
-      { commonUserId, isStaffUser },
-      {
+    const existRole = await this.getOrganizationRolesUseCase.execute({
+      data: {
         organizationId,
         preset: 'MINIMAL',
         filter: JSON.stringify({ name: roleData.name, organizationId }),
       },
-    );
+      metadata,
+    });
 
     // @ts-expect-error: any
     if (!existRole || !existRole?.data.find((role) => role.name === roleData.name)) {
-      const newRole = await this.createRoleUseCase.execute(
-        { commonUserId, isStaffUser },
-        {
+      const newRole = await this.createRoleUseCase.execute({
+        data: {
           ...roleData,
           organizationId,
         },
-      );
+        metadata,
+      });
 
       // @ts-expect-error: any
       roleId = newRole.data.id;
@@ -113,14 +112,14 @@ export class RoleController {
     }
 
     if (permissionIds?.length) {
-      await this.createRolePermissionsUseCase.execute(
-        { commonUserId, isStaffUser },
-        {
+      await this.createRolePermissionsUseCase.execute({
+        data: {
           roleId,
           organizationId,
           permissionIds,
         },
-      );
+        metadata,
+      });
     }
 
     return { success: true, roleId };
@@ -129,33 +128,31 @@ export class RoleController {
   @Patch(':roleId')
   @UseGuards(RsaAuthGuard)
   async update(
-    @GetCommonUserId() commonUserId: string,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @Param('roleId') roleId: string,
-    @IsStaffUser() isStaffUser: boolean,
     @Body() data: Omit<IUpdateRoleWithPermissionsDto, 'roleId' | 'organizationId'>,
   ): Promise<{ success: boolean }> {
-    return this.updateRoleUseCase.execute(
-      { commonUserId, isStaffUser },
-      {
+    return this.updateRoleUseCase.execute({
+      data: {
         ...data,
         roleId,
         organizationId,
       },
-    );
+      metadata,
+    });
   }
 
   @Delete(':roleId')
   @UseGuards(RsaAuthGuard)
   async delete(
-    @GetCommonUserId() commonUserId: string,
-    @IsStaffUser() isStaffUser: boolean,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @Param('roleId') roleId: string,
   ): Promise<{ success: boolean }> {
-    return this.deleteRoleUseCase.execute(
-      { commonUserId, isStaffUser },
-      { roleId, organizationId },
-    );
+    return this.deleteRoleUseCase.execute({
+      data: { roleId, organizationId },
+      metadata,
+    });
   }
 }

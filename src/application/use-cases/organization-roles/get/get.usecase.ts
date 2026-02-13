@@ -1,4 +1,5 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
+import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EOrganizationSubjects } from '@tourgis/common';
 import { IRoleMinimalDto } from '@tourgis/contracts/dist/organization/v1';
@@ -6,16 +7,18 @@ import { IRoleMinimalDto } from '@tourgis/contracts/dist/organization/v1';
 export class GetOrganizationRolesUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
-  async execute(
-    metadata: { commonUserId: string; isStaffUser: boolean },
-    query: {
+  async execute(params: {
+    data: {
       filter?: string;
       limit?: number;
       offset?: number;
       organizationId: string;
       preset: string;
-    },
-  ): Promise<IRoleMinimalDto[]> {
+    };
+    metadata: IMetadataObjectForGrpcRequest;
+  }): Promise<IRoleMinimalDto[]> {
+    const { data: query, metadata } = params;
+
     try {
       const res = await this.clientProxy.send<unknown, IRoleMinimalDto[]>({
         messagePattern: EOrganizationSubjects.ROLE_GET_MANY,
@@ -28,10 +31,7 @@ export class GetOrganizationRolesUseCase {
           offset: query.offset ?? 0,
           preset: query.preset ?? 'MINIMAL',
         },
-        metadata: {
-          commonUserId: metadata.commonUserId,
-          isStaffUser: metadata.isStaffUser,
-        },
+        metadata,
       });
 
       return res;

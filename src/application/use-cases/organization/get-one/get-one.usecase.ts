@@ -1,4 +1,5 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
+import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EOrganizationSubjects } from '@tourgis/common';
 import { IOrganizationDto } from '@tourgis/contracts/dist/organization/v1';
@@ -6,13 +7,15 @@ import { IOrganizationDto } from '@tourgis/contracts/dist/organization/v1';
 export class GetOneOrganizationUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
-  async execute(
-    metadata: { commonUserId: string; systemRole: string; isStaffUser: boolean },
+  async execute(params: {
     data: {
       organizationId: string;
       preset: string;
-    },
-  ): Promise<IOrganizationDto> {
+    };
+    metadata: IMetadataObjectForGrpcRequest;
+  }): Promise<IOrganizationDto> {
+    const { data, metadata } = params;
+
     try {
       const res = await this.clientProxy.send<unknown, IOrganizationDto>({
         messagePattern: EOrganizationSubjects.ORGANIZATION_GET_ONE,
@@ -20,11 +23,7 @@ export class GetOneOrganizationUseCase {
           organizationId: data.organizationId,
           preset: data.preset ?? 'MINIMAL',
         },
-        metadata: {
-          commonUserId: metadata.commonUserId,
-          systemRole: metadata.systemRole,
-          isStaffUser: metadata.isStaffUser,
-        },
+        metadata,
       });
 
       return res;

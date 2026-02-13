@@ -1,6 +1,7 @@
 import { IAddOrganizationMemberDto } from '@application/dtos/organization/organization-member-add.dto';
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
+import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ServiceException } from '@shared/exceptions/service.exception';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EAuthSubjects, EOrganizationSubjects } from '@tourgis/common';
@@ -13,14 +14,16 @@ export class AddMemberUseCase {
     private readonly clientProxy: IMicroserviceClientProxyService,
   ) {}
 
-  async execute(
-    metadata: { commonUserId: string; isStaffUser: boolean },
-    data: IAddOrganizationMemberDto,
-  ): Promise<{ success: boolean }> {
+  async execute(params: {
+    data: IAddOrganizationMemberDto;
+    metadata: IMetadataObjectForGrpcRequest;
+  }): Promise<{ success: boolean }> {
+    const { data, metadata } = params;
+
     try {
       const organization: IQueryOrganizationsDataResponse = await this.clientProxy.send({
         messagePattern: EOrganizationSubjects.ORGANIZATION_GET_ONE,
-        metadata: { ...metadata },
+        metadata,
         data: {
           organizationId: data.organizationId,
           preset: 'SHORT',
@@ -33,7 +36,7 @@ export class AddMemberUseCase {
 
       const existUser: IQueryAuthUsersDataResponse = await this.clientProxy.send({
         messagePattern: EAuthSubjects.GET_USERS,
-        metadata: { ...metadata },
+        metadata,
         data: {
           preset: 'MINIMAL',
           filter: {
@@ -55,7 +58,7 @@ export class AddMemberUseCase {
 
       const user: any = await this.clientProxy.send({
         messagePattern: EAuthSubjects.GET_USERS,
-        metadata: { ...metadata },
+        metadata,
         data: {
           filter: {
             email: data.email,
@@ -69,7 +72,7 @@ export class AddMemberUseCase {
 
       await this.clientProxy.send({
         messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_CREATE,
-        metadata: { ...metadata },
+        metadata,
         data: {
           // @ts-expect-error: any
           organizationId: organization.data.id,

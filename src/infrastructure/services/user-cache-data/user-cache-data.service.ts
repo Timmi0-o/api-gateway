@@ -32,10 +32,13 @@ export class UserCacheDataService implements IUserCacheDataService {
   private async fetchAndFillCache(
     commonUserId: string,
   ): Promise<Map<string, IUserPermissionsCacheItem>> {
-    const { result: user } = await this.getOneUserUseCase.execute(
-      { commonUserId, isStaffUser: false },
-      { userId: commonUserId, preset: 'BASE' },
-    );
+    const { result: user } = await this.getOneUserUseCase.execute({
+      data: { userId: commonUserId, preset: 'BASE' },
+      metadata: {
+        commonUserId,
+        isStaffUser: false,
+      },
+    });
 
     const map = new Map<string, IUserPermissionsCacheItem>();
 

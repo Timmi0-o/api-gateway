@@ -1,6 +1,8 @@
 import { GetAdminPermissionsUseCase } from '@application/use-cases/admin/permissions/get-permissions.usecase';
-import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
-import { IsStaffUser } from '@infrastructure/decorators/is-staff-user';
+import {
+  GetMetadataObjectForGrpcRequest,
+  IMetadataObjectForGrpcRequest,
+} from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import { Controller, Get, Query, UseGuards } from '@nestjs/common';
 
@@ -11,17 +13,16 @@ export class AdminPermissionsController {
 
   @Get()
   async getMany(
-    @GetCommonUserId() commonUserId: string,
-    @IsStaffUser() isStaffUser: boolean,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Query() query: { preset?: string; limit?: number; offset?: number },
   ): Promise<unknown> {
-    return this.getAdminPermissionsUseCase.execute(
-      { commonUserId, isStaffUser },
-      {
+    return this.getAdminPermissionsUseCase.execute({
+      data: {
         preset: query.preset,
         limit: query.limit,
         offset: query.offset,
       },
-    );
+      metadata,
+    });
   }
 }

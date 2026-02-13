@@ -1,11 +1,11 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
+import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 
 export class UpdateUserUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
-  async execute(
-    metadata: { commonUserId: string; isStaffUser: boolean },
+  async execute(params: {
     data: {
       userId: string;
       name?: string;
@@ -14,8 +14,11 @@ export class UpdateUserUseCase {
       phone?: string;
       language?: string;
       status?: string;
-    },
-  ): Promise<boolean> {
+    };
+    metadata: IMetadataObjectForGrpcRequest;
+  }): Promise<boolean> {
+    const { data, metadata } = params;
+
     try {
       await this.clientProxy.send({
         messagePattern: 'auth.v1.user.update-user',
@@ -28,10 +31,7 @@ export class UpdateUserUseCase {
           ...(data.language !== undefined ? { language: data.language } : {}),
           ...(data.status !== undefined ? { status: data.status } : {}),
         },
-        metadata: {
-          commonUserId: metadata.commonUserId,
-          isStaffUser: metadata.isStaffUser,
-        },
+        metadata,
       });
 
       return true;

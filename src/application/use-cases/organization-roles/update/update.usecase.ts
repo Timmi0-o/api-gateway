@@ -1,5 +1,6 @@
 import { IUpdateRoleDto } from '@application/dtos/organization/role-update.dto';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
+import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EOrganizationSubjects } from '@tourgis/common';
 
@@ -13,10 +14,12 @@ export interface IUpdateRoleWithPermissionsDto extends IUpdateRoleDto {
 export class UpdateRoleUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
-  async execute(
-    metadata: { commonUserId: string; isStaffUser: boolean },
-    data: IUpdateRoleWithPermissionsDto,
-  ): Promise<{ success: boolean }> {
+  async execute(params: {
+    data: IUpdateRoleWithPermissionsDto;
+    metadata: IMetadataObjectForGrpcRequest;
+  }): Promise<{ success: boolean }> {
+    const { data, metadata } = params;
+
     try {
       await this.clientProxy.send({
         messagePattern: EOrganizationSubjects.ROLE_UPDATE,
@@ -26,7 +29,7 @@ export class UpdateRoleUseCase {
           name: data.name,
           description: data.description ?? null,
         },
-        metadata: { ...metadata },
+        metadata,
       });
 
       if (data.permissions?.added?.length) {
@@ -37,7 +40,7 @@ export class UpdateRoleUseCase {
             organizationId: data.organizationId,
             permissionIds: data.permissions.added,
           },
-          metadata: { ...metadata },
+          metadata,
         });
       }
 
@@ -51,7 +54,7 @@ export class UpdateRoleUseCase {
                 roleId: data.roleId,
                 rolePermissionId,
               },
-              metadata: { ...metadata },
+              metadata,
             }),
           ),
         );

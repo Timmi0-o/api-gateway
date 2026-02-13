@@ -1,6 +1,8 @@
 import { GetOrganizationPermissionsUseCase } from '@application/use-cases/organization-permissions/get/get-permissions.usecase';
-import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
-import { IsStaffUser } from '@infrastructure/decorators/is-staff-user';
+import {
+  GetMetadataObjectForGrpcRequest,
+  IMetadataObjectForGrpcRequest,
+} from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 
@@ -13,19 +15,18 @@ export class OrganizationPermissionsController {
   @Get()
   @UseGuards(RsaAuthGuard)
   async getMany(
-    @GetCommonUserId() commonUserId: string,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
-    @IsStaffUser() isStaffUser: boolean,
     @Query() query: { preset?: string; limit?: number; offset?: number },
   ): Promise<unknown> {
-    return this.getOrganizationPermissionsUseCase.execute(
-      { commonUserId, isStaffUser },
-      {
+    return this.getOrganizationPermissionsUseCase.execute({
+      data: {
         organizationId,
         preset: query.preset,
         limit: query.limit,
         offset: query.offset,
       },
-    );
+      metadata,
+    });
   }
 }

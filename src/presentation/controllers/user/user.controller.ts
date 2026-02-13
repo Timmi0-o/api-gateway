@@ -5,8 +5,10 @@ import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
 import { UpdateUserUseCase } from '@application/use-cases/user/update/update.usecase';
 import { IRegisterResponse } from '@domain/types/user.types';
-import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
-import { IsStaffUser } from '@infrastructure/decorators/is-staff-user';
+import {
+  GetMetadataObjectForGrpcRequest,
+  IMetadataObjectForGrpcRequest,
+} from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import { Body, Controller, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { getUserIdentityKeyFromRequest } from '@shared/utils/get-user-identity-key-from-request';
@@ -36,8 +38,7 @@ export class UserController {
   @Get()
   @UseGuards(RsaAuthGuard)
   async getMany(
-    @GetCommonUserId() commonUserId: string,
-    @IsStaffUser() isStaffUser: boolean,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Query()
     query: { filter?: string; limit?: number; page?: number; preset: string },
   ): Promise<IQueryAuthUsersDataResponse> {
@@ -47,14 +48,13 @@ export class UserController {
       ...(query.page ? { page: query.page } : {}),
       ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
     };
-    return this.getUsersUsecase.execute({ commonUserId, isStaffUser }, formatQuery);
+    return this.getUsersUsecase.execute({ data: formatQuery, metadata });
   }
 
   @Get(':id')
   @UseGuards(RsaAuthGuard)
   async getOne(
-    @GetCommonUserId() commonUserId: string,
-    @IsStaffUser() isStaffUser: boolean,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') userId: string,
     @Query() query: { preset: string },
   ): Promise<{ result: IUserWithOrganizationData | null }> {
@@ -62,18 +62,17 @@ export class UserController {
       userId,
       ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
     };
-    return this.getOneUserUsecase.execute({ commonUserId, isStaffUser }, formatQuery);
+    return this.getOneUserUsecase.execute({ data: formatQuery, metadata });
   }
 
   @Patch(':id')
   @UseGuards(RsaAuthGuard)
   async update(
-    @GetCommonUserId() commonUserId: string,
-    @IsStaffUser() isStaffUser: boolean,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') userId: string,
     @Body() data: IUpdateUserDto,
   ): Promise<{ success: boolean }> {
-    await this.updateUserUsecase.execute({ commonUserId, isStaffUser }, { userId, ...data });
+    await this.updateUserUsecase.execute({ data: { userId, ...data }, metadata });
 
     return { success: true };
   }

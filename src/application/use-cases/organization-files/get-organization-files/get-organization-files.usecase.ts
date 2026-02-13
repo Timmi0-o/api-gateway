@@ -1,13 +1,8 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
+import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EOrganizationSubjects } from '@tourgis/common';
 import { IGetOrganizationFilesResponse } from '@tourgis/contracts/dist/files/v1';
-
-export interface IGetOrganizationFilesMetadata {
-  commonUserId: string;
-  isStaffUser: boolean;
-  systemRole: string;
-}
 
 export interface IGetOrganizationFilesData {
   path?: string;
@@ -19,10 +14,12 @@ export interface IGetOrganizationFilesData {
 export class GetOrganizationFilesUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
-  async execute(
-    metadata: IGetOrganizationFilesMetadata,
-    data: IGetOrganizationFilesData,
-  ): Promise<IGetOrganizationFilesResponse> {
+  async execute(params: {
+    data: IGetOrganizationFilesData;
+    metadata: IMetadataObjectForGrpcRequest;
+  }): Promise<IGetOrganizationFilesResponse> {
+    const { data, metadata } = params;
+
     try {
       const res = await this.clientProxy.send<
         IGetOrganizationFilesData,
@@ -35,11 +32,7 @@ export class GetOrganizationFilesUseCase {
           preset: data.preset ?? 'MINIMAL',
           organizationId: data.organizationId,
         },
-        metadata: {
-          commonUserId: metadata.commonUserId,
-          isStaffUser: metadata.isStaffUser,
-          systemRole: metadata.systemRole,
-        },
+        metadata,
       });
 
       return res;

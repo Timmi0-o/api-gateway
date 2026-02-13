@@ -1,4 +1,5 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
+import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EOrganizationSubjects } from '@tourgis/common';
 import { IOrganizationsDataResponse } from '@tourgis/contracts/dist/api-gateway/organization/v1/contracts/organization/organizations-data.contract';
@@ -7,15 +8,17 @@ import { IQueryOrganizationsDataResponse } from '@tourgis/contracts/dist/organiz
 export class GetOrganizationsUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
-  async execute(
-    metadata: { commonUserId: string; systemRole: string; isStaffUser: boolean },
+  async execute(params: {
     data: {
       filter?: string;
       limit?: number;
       page?: number;
       include?: string;
-    },
-  ): Promise<IOrganizationsDataResponse> {
+    };
+    metadata: IMetadataObjectForGrpcRequest;
+  }): Promise<IOrganizationsDataResponse> {
+    const { data, metadata } = params;
+
     try {
       const res = await this.clientProxy.send<unknown, IQueryOrganizationsDataResponse>({
         messagePattern: EOrganizationSubjects.ORGANIZATION_GET_MANY,
@@ -25,11 +28,7 @@ export class GetOrganizationsUseCase {
           limit: data?.limit ? +data.limit : 25,
           page: data.page ?? 1,
         },
-        metadata: {
-          commonUserId: metadata.commonUserId,
-          systemRole: metadata.systemRole,
-          isStaffUser: metadata.isStaffUser,
-        },
+        metadata,
       });
 
       // return getOrganizationsFormatResultData({ data: res });

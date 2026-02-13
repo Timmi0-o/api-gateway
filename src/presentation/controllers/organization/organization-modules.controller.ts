@@ -1,10 +1,10 @@
 import { EditOrganizationModulesUseCase } from '@application/use-cases/organization-modules/edit/edit.usecase';
 import { GetOrganizationModulesUseCase } from '@application/use-cases/organization-modules/get-modules/get-modules.usecase';
-import { GetCommonUserId } from '@infrastructure/decorators/get-common-user-id.decorator';
-import { GetUserFromSession } from '@infrastructure/decorators/get-user-from-session';
-import { IsStaffUser } from '@infrastructure/decorators/is-staff-user';
+import {
+  GetMetadataObjectForGrpcRequest,
+  IMetadataObjectForGrpcRequest,
+} from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
-import { IDecodedToken } from '@infrastructure/services/auth/rsa-token.service';
 import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
 
 @Controller({ path: 'organization/:organizationId/modules', version: '1' })
@@ -17,32 +17,25 @@ export class OrganizationModulesController {
 
   @Get()
   async getMany(
-    @GetCommonUserId() commonUserId: string,
-    @GetUserFromSession() user: IDecodedToken,
-    @IsStaffUser() isStaffUser: boolean,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @Query('preset') preset?: string,
   ): Promise<unknown> {
-    return this.getOrganizationModulesUseCase.execute(
-      {
-        commonUserId,
-        systemRole: user.systemRole as string,
-        isStaffUser,
-      },
-      { organizationId, preset: preset ?? 'MINIMAL' },
-    );
+    return this.getOrganizationModulesUseCase.execute({
+      data: { organizationId, preset: preset ?? 'MINIMAL' },
+      metadata,
+    });
   }
 
   @Patch()
   async edit(
-    @GetCommonUserId() commonUserId: string,
-    @IsStaffUser() isStaffUser: boolean,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @Body() data: { added: string[]; deleted: string[] },
   ): Promise<{ success: boolean }> {
-    return this.editOrganizationModulesUseCase.execute(
-      { commonUserId, isStaffUser },
-      { organizationId, added: data.added ?? [], deleted: data.deleted ?? [] },
-    );
+    return this.editOrganizationModulesUseCase.execute({
+      data: { organizationId, added: data.added ?? [], deleted: data.deleted ?? [] },
+      metadata,
+    });
   }
 }

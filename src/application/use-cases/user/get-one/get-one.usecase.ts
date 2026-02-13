@@ -1,4 +1,5 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
+import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EAuthSubjects } from '@tourgis/common';
 import {
@@ -9,13 +10,15 @@ import {
 export class GetOneUserUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
-  async execute(
-    metadata: { commonUserId: string; isStaffUser: boolean },
+  async execute(params: {
     data: {
       userId: string;
       preset: string;
-    },
-  ): Promise<{ result: IUserWithOrganizationData | null }> {
+    };
+    metadata: IMetadataObjectForGrpcRequest;
+  }): Promise<{ result: IUserWithOrganizationData | null }> {
+    const { data, metadata } = params;
+
     try {
       const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
         messagePattern: EAuthSubjects.GET_USERS,
@@ -25,10 +28,7 @@ export class GetOneUserUseCase {
             id: data.userId,
           },
         },
-        metadata: {
-          commonUserId: metadata.commonUserId,
-          isStaffUser: metadata.isStaffUser,
-        },
+        metadata,
       });
 
       return { result: res?.data?.[0] ?? null };

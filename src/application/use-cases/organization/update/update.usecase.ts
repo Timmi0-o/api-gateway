@@ -1,20 +1,23 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
+import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EOrganizationSubjects } from '@tourgis/common';
 
 export class UpdateOrganizationUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
-  async execute(
-    metadata: { commonUserId: string; systemRole: string; isStaffUser: boolean },
+  async execute(params: {
     data: {
       organizationId: string;
       name?: string;
       description?: string;
       isActive?: boolean;
       ownerId: string;
-    },
-  ): Promise<boolean> {
+    };
+    metadata: IMetadataObjectForGrpcRequest;
+  }): Promise<boolean> {
+    const { data, metadata } = params;
+
     try {
       await this.clientProxy.send<unknown, unknown>({
         messagePattern: EOrganizationSubjects.ORGANIZATION_UPDATE,
@@ -25,11 +28,7 @@ export class UpdateOrganizationUseCase {
           ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
           ...(data.ownerId !== undefined ? { ownerId: data.ownerId } : {}),
         },
-        metadata: {
-          commonUserId: metadata.commonUserId,
-          systemRole: metadata.systemRole,
-          isStaffUser: metadata.isStaffUser,
-        },
+        metadata,
       });
 
       return true;
