@@ -21,7 +21,9 @@ import {
   Query,
   UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { Permissions } from '@tourgis/common';
 import { IGetOrganizationFilesResponse } from '@tourgis/contracts/dist/files/v1';
 
@@ -58,6 +60,7 @@ export class OrganizationFilesController {
   @Post()
   @UseGuards(RsaAuthGuard, PermissionGuard)
   @Permission(Permissions.file.create)
+  @UseInterceptors(FilesInterceptor('files', 10, { limits: { fileSize: 500 * 1024 * 1024 } }))
   async createMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,

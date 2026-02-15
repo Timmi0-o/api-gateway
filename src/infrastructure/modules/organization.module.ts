@@ -42,8 +42,8 @@ import { OrganizationPermissionsController } from '@presentation/controllers/org
 import { OrganizationController } from '@presentation/controllers/organization/organization.controller';
 import { RoleController } from '@presentation/controllers/organization/role.controller';
 import { NATS_CLIENTS } from '@shared/constants/nats-clients';
-import { UserUsecaseModule } from './user.module';
 import { S3Module } from './s3.module';
+import { UserUsecaseModule } from './user.module';
 
 @Module({
   imports: [
