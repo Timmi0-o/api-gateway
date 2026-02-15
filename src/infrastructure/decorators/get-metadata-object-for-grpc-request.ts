@@ -6,7 +6,7 @@ import { EAuthUserRole } from '@tourgis/contracts/dist/auth/v1';
 import { Request } from 'express';
 
 export interface IMetadataObjectForGrpcRequest extends Record<string, unknown> {
-  commonUserId?: string;
+  commonUserId: string;
   isStaffUser?: boolean;
   systemRole?: string;
   source?: EUserSource;

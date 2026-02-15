@@ -16,6 +16,14 @@ import { CreateOrganizationUseCase } from '@application/use-cases/organization/c
 import { GetOneOrganizationUseCase } from '@application/use-cases/organization/get-one/get-one.usecase';
 import { GetOrganizationsUseCase } from '@application/use-cases/organization/get/get.usecase';
 import { GetOrganizationFilesUseCase } from '@application/use-cases/organization-files/get-organization-files/get-organization-files.usecase';
+import { CreateOrganizationFilesUseCase } from '@application/use-cases/organization-files/create-many/create-many.usecase';
+import { UpdateOrganizationFileUseCase } from '@application/use-cases/organization-files/update/update.usecase';
+import { MoveOrganizationFileUseCase } from '@application/use-cases/organization-files/move/move.usecase';
+import { DeleteOrganizationFilesUseCase } from '@application/use-cases/organization-files/delete-many/delete-many.usecase';
+import { CreateOrganizationFolderUseCase } from '@application/use-cases/organization-folders/create/create.usecase';
+import { UpdateOrganizationFolderUseCase } from '@application/use-cases/organization-folders/update/update.usecase';
+import { MoveOrganizationFolderUseCase } from '@application/use-cases/organization-folders/move/move.usecase';
+import { DeleteOrganizationFolderUseCase } from '@application/use-cases/organization-folders/delete/delete.usecase';
 import { UpdateOrganizationUseCase } from '@application/use-cases/organization/update/update.usecase';
 import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
@@ -30,6 +38,7 @@ import { OrganizationModulesController } from '@presentation/controllers/organiz
 import { OrganizationPermissionsController } from '@presentation/controllers/organization/organization-permissions.controller';
 import { OrganizationController } from '@presentation/controllers/organization/organization.controller';
 import { OrganizationFilesController } from '@presentation/controllers/organization/organization-files.controller';
+import { OrganizationFoldersController } from '@presentation/controllers/organization/organization-folders.controller';
 import { RoleController } from '@presentation/controllers/organization/role.controller';
 import { NATS_CLIENTS } from '@shared/constants/nats-clients';
 import { UserUsecaseModule } from './user.module';
@@ -46,6 +55,7 @@ import { UserUsecaseModule } from './user.module';
     OrganizationPermissionsController,
     OrganizationModulesController,
     OrganizationFilesController,
+    OrganizationFoldersController,
   ],
   providers: [
     {
@@ -188,6 +198,62 @@ import { UserUsecaseModule } from './user.module';
       provide: GetOrganizationFilesUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
         return new GetOrganizationFilesUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: CreateOrganizationFilesUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new CreateOrganizationFilesUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateOrganizationFileUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new UpdateOrganizationFileUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: MoveOrganizationFileUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new MoveOrganizationFileUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: DeleteOrganizationFilesUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new DeleteOrganizationFilesUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: CreateOrganizationFolderUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new CreateOrganizationFolderUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateOrganizationFolderUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new UpdateOrganizationFolderUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: MoveOrganizationFolderUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new MoveOrganizationFolderUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: DeleteOrganizationFolderUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new DeleteOrganizationFolderUseCase(clientProxy);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
