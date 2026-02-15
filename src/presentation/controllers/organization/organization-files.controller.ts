@@ -19,6 +19,7 @@ import {
   Patch,
   Post,
   Query,
+  Request,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -65,14 +66,16 @@ export class OrganizationFilesController {
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @UploadedFiles() files: Express.Multer.File[],
-    @Body() body: { folderId?: string },
+    @Request() req: any,
   ): Promise<{ success: boolean }> {
+    const folderId = req.body?.folderId;
+
     return this.createOrganizationFilesUseCase.execute({
       data: {
         commonUserId: metadata.commonUserId ?? '',
         organizationId,
         files,
-        folderId: body.folderId,
+        folderId,
       },
       metadata,
     });
