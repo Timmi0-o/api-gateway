@@ -1,3 +1,12 @@
+import { CreateOrganizationFilesUseCase } from '@application/use-cases/organization-files/create-many/create-many.usecase';
+import { DeleteOrganizationFilesUseCase } from '@application/use-cases/organization-files/delete-many/delete-many.usecase';
+import { GetOrganizationFilesUseCase } from '@application/use-cases/organization-files/get-organization-files/get-organization-files.usecase';
+import { MoveOrganizationFileUseCase } from '@application/use-cases/organization-files/move/move.usecase';
+import { UpdateOrganizationFileUseCase } from '@application/use-cases/organization-files/update/update.usecase';
+import { CreateOrganizationFolderUseCase } from '@application/use-cases/organization-folders/create/create.usecase';
+import { DeleteOrganizationFolderUseCase } from '@application/use-cases/organization-folders/delete/delete.usecase';
+import { MoveOrganizationFolderUseCase } from '@application/use-cases/organization-folders/move/move.usecase';
+import { UpdateOrganizationFolderUseCase } from '@application/use-cases/organization-folders/update/update.usecase';
 import { AddMemberUseCase } from '@application/use-cases/organization-members/add-member/add-member.usecase';
 import { DeleteOrganizationMemberUseCase } from '@application/use-cases/organization-members/delete/delete.usecase';
 import { GetMembersUseCase } from '@application/use-cases/organization-members/get-members/get-members.usecase';
@@ -15,38 +24,32 @@ import { UpdateRoleUseCase } from '@application/use-cases/organization-roles/upd
 import { CreateOrganizationUseCase } from '@application/use-cases/organization/create/create.usecase';
 import { GetOneOrganizationUseCase } from '@application/use-cases/organization/get-one/get-one.usecase';
 import { GetOrganizationsUseCase } from '@application/use-cases/organization/get/get.usecase';
-import { GetOrganizationFilesUseCase } from '@application/use-cases/organization-files/get-organization-files/get-organization-files.usecase';
-import { CreateOrganizationFilesUseCase } from '@application/use-cases/organization-files/create-many/create-many.usecase';
-import { UpdateOrganizationFileUseCase } from '@application/use-cases/organization-files/update/update.usecase';
-import { MoveOrganizationFileUseCase } from '@application/use-cases/organization-files/move/move.usecase';
-import { DeleteOrganizationFilesUseCase } from '@application/use-cases/organization-files/delete-many/delete-many.usecase';
-import { CreateOrganizationFolderUseCase } from '@application/use-cases/organization-folders/create/create.usecase';
-import { UpdateOrganizationFolderUseCase } from '@application/use-cases/organization-folders/update/update.usecase';
-import { MoveOrganizationFolderUseCase } from '@application/use-cases/organization-folders/move/move.usecase';
-import { DeleteOrganizationFolderUseCase } from '@application/use-cases/organization-folders/delete/delete.usecase';
 import { UpdateOrganizationUseCase } from '@application/use-cases/organization/update/update.usecase';
 import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
+import { FileUploadService } from '@infrastructure/services/file-upload/file-upload.service';
 import {
   MICROSERVICE_CLIENT_PROXY_SERVICE,
   MicroserviceClientProxyModule,
 } from '@infrastructure/services/microservice-client-proxy/microservice-client-proxy.module';
 import { Module } from '@nestjs/common';
+import { OrganizationFilesController } from '@presentation/controllers/organization/organization-files.controller';
+import { OrganizationFoldersController } from '@presentation/controllers/organization/organization-folders.controller';
 import { MembersController } from '@presentation/controllers/organization/organization-members.controller';
 import { OrganizationModulesController } from '@presentation/controllers/organization/organization-modules.controller';
 import { OrganizationPermissionsController } from '@presentation/controllers/organization/organization-permissions.controller';
 import { OrganizationController } from '@presentation/controllers/organization/organization.controller';
-import { OrganizationFilesController } from '@presentation/controllers/organization/organization-files.controller';
-import { OrganizationFoldersController } from '@presentation/controllers/organization/organization-folders.controller';
 import { RoleController } from '@presentation/controllers/organization/role.controller';
 import { NATS_CLIENTS } from '@shared/constants/nats-clients';
 import { UserUsecaseModule } from './user.module';
+import { S3Module } from './s3.module';
 
 @Module({
   imports: [
     MicroserviceClientProxyModule.register(NATS_CLIENTS.ORGANIZATION_CLIENT),
     UserUsecaseModule,
+    S3Module,
   ],
   controllers: [
     OrganizationController,
@@ -203,10 +206,13 @@ import { UserUsecaseModule } from './user.module';
     },
     {
       provide: CreateOrganizationFilesUseCase,
-      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
-        return new CreateOrganizationFilesUseCase(clientProxy);
+      useFactory: (
+        clientProxy: IMicroserviceClientProxyService,
+        fileUploadService: FileUploadService,
+      ) => {
+        return new CreateOrganizationFilesUseCase(clientProxy, fileUploadService);
       },
-      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE, FileUploadService],
     },
     {
       provide: UpdateOrganizationFileUseCase,

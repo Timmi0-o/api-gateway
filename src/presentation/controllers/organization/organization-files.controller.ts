@@ -19,6 +19,7 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFiles,
   UseGuards,
 } from '@nestjs/common';
 import { Permissions } from '@tourgis/common';
@@ -60,14 +61,15 @@ export class OrganizationFilesController {
   async createMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
-    @Body() body: { filesIds: string[] },
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body() body: { folderId?: string },
   ): Promise<{ success: boolean }> {
     return this.createOrganizationFilesUseCase.execute({
       data: {
         commonUserId: metadata.commonUserId ?? '',
         organizationId,
-        filesIds: body.filesIds,
-        uploadedBy: metadata.commonUserId,
+        files,
+        folderId: body.folderId,
       },
       metadata,
     });

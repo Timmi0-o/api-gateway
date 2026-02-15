@@ -1,5 +1,8 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
-import { IS3Service } from '@domain/services/i-s3.service';
+import {
+  FileUploadService,
+  IUploadedFile,
+} from '@infrastructure/services/file-upload/file-upload.service';
 import { Injectable } from '@nestjs/common';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 
@@ -7,7 +10,7 @@ import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-
 export class TestGrpcUseCase {
   constructor(
     private readonly clientProxy: IMicroserviceClientProxyService,
-    private readonly s3Service: IS3Service,
+    private readonly fileUploadService: FileUploadService,
   ) {}
 
   async execute(data: {
@@ -53,37 +56,9 @@ export class TestGrpcUseCase {
 
   async uploadFileToS3(files: Express.Multer.File[]): Promise<{
     success: boolean;
-    data: Array<{
-      key: string;
-      location: string;
-      etag: string;
-      originalName: string;
-      size: number;
-      mimetype: string;
-      metadata: Record<string, string>;
-    }>;
+    data: IUploadedFile[];
   }> {
-    const uploadPromises = files.map(async (file) => {
-      const fileKey = `test/${Date.now()}-${file.originalname}`;
-      const result = await this.s3Service.uploadFile(fileKey, Buffer.from(file.buffer), {
-        contentType: file.mimetype,
-        metadata: {
-          originalName: file.originalname,
-          size: file.size.toString(),
-        },
-      });
-      const metadata = await this.s3Service.getFileMetadata(fileKey);
-      return {
-        key: fileKey,
-        location: result.location,
-        etag: result.etag,
-        originalName: file.originalname,
-        size: file.size,
-        mimetype: file.mimetype,
-        metadata,
-      };
-    });
-    const data = await Promise.all(uploadPromises);
+    const data = await this.fileUploadService.uploadFiles(files);
     return { success: true, data };
   }
 }
