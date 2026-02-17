@@ -1,4 +1,5 @@
 import { TestGrpcUseCase } from '@application/use-cases/test-grpc/test-grpc.usecase';
+import { IUploadedFile } from '@infrastructure/services/file-upload/file-upload.service';
 import { Body, Controller, Post, UploadedFiles, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 
@@ -17,15 +18,7 @@ export class TestGrpcEndpointsController {
   @UseInterceptors(FilesInterceptor('files', 10, { limits: { fileSize: 500 * 1024 * 1024 } }))
   async uploadToS3(@UploadedFiles() files: Express.Multer.File[]): Promise<{
     success: boolean;
-    data: Array<{
-      key: string;
-      location: string;
-      etag: string;
-      originalName: string;
-      size: number;
-      mimetype: string;
-      metadata: Record<string, string>;
-    }>;
+    data: IUploadedFile[];
   }> {
     return this.testGrpcUseCase.uploadFileToS3(files);
   }

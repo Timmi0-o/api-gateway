@@ -32,10 +32,20 @@ export class CreateOrganizationFilesUseCase {
 
     try {
       const uploadedFiles = await this.uploadFileToS3(files, organizationId, commonUserId);
+
       createdFilesMetadata.push(
         ...uploadedFiles.data.map((file) => ({
           ...file,
           folderId,
+          uploadedBy: commonUserId,
+          fileName: file.originalName,
+          fileUrl: `http://localhost:9000/${file.location}`,
+          fileSize: file.size,
+          accessLevel: 'PUBLIC',
+          ownerType: 'ORGANIZATION',
+          fileType: 'IMAGE',
+          tags: [],
+          deletedAt: null,
         })),
       );
     } catch (err) {

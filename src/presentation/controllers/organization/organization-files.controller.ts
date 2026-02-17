@@ -66,7 +66,7 @@ export class OrganizationFilesController {
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @UploadedFiles() files: Express.Multer.File[],
-    @Request() req: any,
+    @Request() req: Request & { body: { folderId?: string } },
   ): Promise<{ success: boolean }> {
     const folderId = req.body?.folderId;
 

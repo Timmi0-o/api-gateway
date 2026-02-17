@@ -17,7 +17,8 @@ export class MicroserviceClientProxyService implements IMicroserviceClientProxyS
   async send<TInput, TOutput>(options: ISendOptions<TInput>): Promise<TOutput> {
     const { messagePattern, data, metadata } = options;
 
-    const payload = metadata ? [data ?? null, metadata] : (data ?? null);
+    const dataPayload = data !== undefined && data !== null ? data : {};
+    const payload = metadata ? [dataPayload, metadata] : dataPayload;
 
     try {
       return await firstValueFrom<TOutput>(this.client.send(messagePattern, payload));

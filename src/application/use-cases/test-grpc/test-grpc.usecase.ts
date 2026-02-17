@@ -58,7 +58,10 @@ export class TestGrpcUseCase {
     success: boolean;
     data: IUploadedFile[];
   }> {
-    const data = await this.fileUploadService.uploadFiles(files);
+    const data = await this.fileUploadService.uploadFiles(files, {
+      organizationId: '123',
+      uploadedBy: 'test',
+    });
     return { success: true, data };
   }
 }
