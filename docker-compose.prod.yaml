@@ -1,0 +1,57 @@
+# Продакшен-структура сервера: api.tourgis.ru и microservices — соседи в www.
+# Запуск из каталога api.tourgis.ru: docker compose -f docker-compose.prod.yaml up -d --build
+
+services:
+  app:
+    image: ${APP_NAME}
+    container_name: ${APP_NAME}-app
+    build:
+      context: ..
+      dockerfile: api.tourgis.ru/Dockerfile.dev.prod
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    volumes:
+      - ../microservices/tourgis-contracts:/tourgis-contracts
+      - ../microservices/tourgis-errors:/tourgis-errors
+      - ../microservices/tourgis-common:/tourgis-common
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - ./.env
+    environment:
+      - NATS_URL=${NATS_URL}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - S3_ENDPOINT=http://files-minio:9000
+      - S3_REGION=${S3_REGION:-us-east-1}
+      - S3_ACCESS_KEY=${S3_ACCESS_KEY:-minioadmin}
+      - S3_SECRET_KEY=${S3_SECRET_KEY:-minioadmin}
+      - S3_BUCKET=${S3_BUCKET:-files}
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - tourgis-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: ${APP_NAME}-redis
+    ports:
+      - '${REDIS_PORT:-6380}:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - tourgis-network
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis_data:
+
+networks:
+  tourgis-network:
+    name: tourgis-network
+    external: true

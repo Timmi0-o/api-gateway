@@ -1,0 +1,24 @@
+# Сборка под сервер: /var/www/www-root/data/www/api.tourgis.ru и ../microservices
+# Контекст сборки — родитель (www), запуск: docker build -f api.tourgis.ru/Dockerfile.dev.prod ..
+
+FROM node:22-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y procps && rm -rf /var/lib/apt/lists/*
+
+COPY api.tourgis.ru/package*.json ./
+COPY api.tourgis.ru/.npmrc ./
+
+COPY microservices/tourgis-contracts/package.json microservices/tourgis-contracts/package-lock.json microservices/tourgis-contracts/tsconfig.json microservices/tourgis-contracts/tsconfig.build.json /tourgis-contracts/
+COPY microservices/tourgis-errors/package.json microservices/tourgis-errors/package-lock.json microservices/tourgis-errors/tsconfig.json /tourgis-errors/
+COPY microservices/tourgis-common/package.json microservices/tourgis-common/package-lock.json microservices/tourgis-common/tsconfig.json /tourgis-common/
+
+RUN npm install
+RUN cd /tourgis-contracts && npm ci 2>/dev/null || npm install
+RUN cd /tourgis-errors && npm ci 2>/dev/null || npm install
+RUN cd /tourgis-common && npm ci 2>/dev/null || npm install
+
+EXPOSE 3000
+
+CMD ["sh", "-c", "npm run start:dev"]
