@@ -1,0 +1,86 @@
+import { ICreateCountryDto } from '@application/dtos/geo/country/create-country.dto';
+import { IUpdateCountryDto } from '@application/dtos/geo/country/update-country.dto';
+import { CreateCountryUseCase } from '@application/use-cases/geo/country/create/create.usecase';
+import { DeleteCountryUseCase } from '@application/use-cases/geo/country/delete/delete.usecase';
+import { GetCountriesUseCase } from '@application/use-cases/geo/country/get-many/get-many.usecase';
+import { GetCountryUseCase } from '@application/use-cases/geo/country/get-one/get-one.usecase';
+import { UpdateCountryUseCase } from '@application/use-cases/geo/country/update/update.usecase';
+import { ICountryResponse } from '@application/dtos/geo/response/country.response';
+import {
+  GetMetadataObjectForGrpcRequest,
+  IMetadataObjectForGrpcRequest,
+} from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
+import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+
+@Controller({ path: 'geo/countries', version: '1' })
+export class CountryController {
+  constructor(
+    private readonly getCountryUseCase: GetCountryUseCase,
+    private readonly getCountriesUseCase: GetCountriesUseCase,
+    private readonly createCountryUseCase: CreateCountryUseCase,
+    private readonly updateCountryUseCase: UpdateCountryUseCase,
+    private readonly deleteCountryUseCase: DeleteCountryUseCase,
+  ) {}
+
+  @Get()
+  @UseGuards(RsaAuthGuard)
+  async getMany(
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
+    @Query() query: { preset?: string; filter?: string; limit?: number; offset?: number },
+  ): Promise<ICountryResponse[]> {
+    return this.getCountriesUseCase.execute({
+      data: {
+        preset: query.preset ?? 'BASE',
+        limit: query.limit ?? 25,
+        offset: query.offset ?? 0,
+        filter: query.filter ? (JSON.parse(query.filter) as Record<string, unknown>) : undefined,
+      },
+      metadata,
+    });
+  }
+
+  @Get(':id')
+  @UseGuards(RsaAuthGuard)
+  async getOne(
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
+    @Param('id') id: string,
+    @Query() query: { preset?: string },
+  ): Promise<ICountryResponse> {
+    return this.getCountryUseCase.execute({
+      data: { slug: id, preset: query.preset ?? 'BASE' },
+      metadata,
+    });
+  }
+
+  @Post()
+  @UseGuards(RsaAuthGuard)
+  async create(
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
+    @Body() data: ICreateCountryDto,
+  ): Promise<ICountryResponse> {
+    return this.createCountryUseCase.execute({ data, metadata });
+  }
+
+  @Patch(':id')
+  @UseGuards(RsaAuthGuard)
+  async update(
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
+    @Param('id') id: string,
+    @Body() body: Omit<IUpdateCountryDto, 'slug'>,
+  ): Promise<ICountryResponse> {
+    return this.updateCountryUseCase.execute({
+      data: { slug: id, ...body },
+      metadata,
+    });
+  }
+
+  @Delete(':id')
+  @UseGuards(RsaAuthGuard)
+  async delete(
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
+    @Param('id') id: string,
+  ): Promise<ICountryResponse> {
+    return this.deleteCountryUseCase.execute({ data: { slug: id }, metadata });
+  }
+}

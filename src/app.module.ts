@@ -1,5 +1,6 @@
 import { AdminModule } from '@infrastructure/modules/admin.module';
 import { AuthUsecaseModule } from '@infrastructure/modules/auth.module';
+import { GeoModule } from '@infrastructure/modules/geo.module';
 import { OrganizationUsecaseModule } from '@infrastructure/modules/organization.module';
 import { RedisModule } from '@infrastructure/modules/redis.module';
 import { TestGrpcModule } from '@infrastructure/modules/test-grpc.module';
@@ -24,6 +25,7 @@ import { ConfigModule } from '@nestjs/config';
     UserUsecaseModule,
     UserCacheDataModule,
     OrganizationUsecaseModule,
+    GeoModule,
     AdminModule,
     RedisModule,
     TestGrpcModule,

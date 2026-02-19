@@ -25,6 +25,13 @@ const clientsModule = ClientsModule.register([
     },
   },
   {
+    name: NATS_CLIENTS.GEO_CLIENT,
+    transport: Transport.NATS,
+    options: {
+      servers: [process.env.NATS_URL || 'nats://nats-server:4222'],
+    },
+  },
+  {
     name: NATS_CLIENTS.TEST_GRPC_CLIENT,
     transport: Transport.NATS,
     options: {
