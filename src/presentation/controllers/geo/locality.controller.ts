@@ -1,17 +1,27 @@
 import { ICreateLocalityDto } from '@application/dtos/geo/locality/create-locality.dto';
 import { IUpdateLocalityDto } from '@application/dtos/geo/locality/update-locality.dto';
+import { ILocalityResponse } from '@application/dtos/geo/response/locality.response';
 import { CreateLocalityUseCase } from '@application/use-cases/geo/locality/create/create.usecase';
 import { DeleteLocalityUseCase } from '@application/use-cases/geo/locality/delete/delete.usecase';
 import { GetLocalitiesUseCase } from '@application/use-cases/geo/locality/get-many/get-many.usecase';
 import { GetLocalityUseCase } from '@application/use-cases/geo/locality/get-one/get-one.usecase';
 import { UpdateLocalityUseCase } from '@application/use-cases/geo/locality/update/update.usecase';
-import { ILocalityResponse } from '@application/dtos/geo/response/locality.response';
 import {
   GetMetadataObjectForGrpcRequest,
   IMetadataObjectForGrpcRequest,
 } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 
 @Controller({ path: 'geo/localities', version: '1' })
 export class LocalityController {
@@ -48,7 +58,7 @@ export class LocalityController {
     @Query() query: { preset?: string },
   ): Promise<ILocalityResponse> {
     return this.getLocalityUseCase.execute({
-      data: { slug: id, preset: query.preset ?? 'BASE' },
+      data: { slugOrId: id, preset: query.preset ?? 'BASE' },
       metadata,
     });
   }
@@ -67,10 +77,10 @@ export class LocalityController {
   async update(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
-    @Body() body: Omit<IUpdateLocalityDto, 'slug'>,
+    @Body() body: Omit<IUpdateLocalityDto, 'slugOrId'>,
   ): Promise<ILocalityResponse> {
     return this.updateLocalityUseCase.execute({
-      data: { slug: id, ...body },
+      data: { slugOrId: id, ...body },
       metadata,
     });
   }
@@ -81,6 +91,6 @@ export class LocalityController {
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
   ): Promise<ILocalityResponse> {
-    return this.deleteLocalityUseCase.execute({ data: { slug: id }, metadata });
+    return this.deleteLocalityUseCase.execute({ data: { slugOrId: id }, metadata });
   }
 }

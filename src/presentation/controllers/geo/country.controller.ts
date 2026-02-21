@@ -1,17 +1,27 @@
 import { ICreateCountryDto } from '@application/dtos/geo/country/create-country.dto';
 import { IUpdateCountryDto } from '@application/dtos/geo/country/update-country.dto';
+import { ICountryResponse } from '@application/dtos/geo/response/country.response';
 import { CreateCountryUseCase } from '@application/use-cases/geo/country/create/create.usecase';
 import { DeleteCountryUseCase } from '@application/use-cases/geo/country/delete/delete.usecase';
 import { GetCountriesUseCase } from '@application/use-cases/geo/country/get-many/get-many.usecase';
 import { GetCountryUseCase } from '@application/use-cases/geo/country/get-one/get-one.usecase';
 import { UpdateCountryUseCase } from '@application/use-cases/geo/country/update/update.usecase';
-import { ICountryResponse } from '@application/dtos/geo/response/country.response';
 import {
   GetMetadataObjectForGrpcRequest,
   IMetadataObjectForGrpcRequest,
 } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 
 @Controller({ path: 'geo/countries', version: '1' })
 export class CountryController {
@@ -48,7 +58,7 @@ export class CountryController {
     @Query() query: { preset?: string },
   ): Promise<ICountryResponse> {
     return this.getCountryUseCase.execute({
-      data: { slug: id, preset: query.preset ?? 'BASE' },
+      data: { slugOrId: id, preset: query.preset ?? 'BASE' },
       metadata,
     });
   }
@@ -67,10 +77,10 @@ export class CountryController {
   async update(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
-    @Body() body: Omit<IUpdateCountryDto, 'slug'>,
+    @Body() body: Omit<IUpdateCountryDto, 'slugOrId'>,
   ): Promise<ICountryResponse> {
     return this.updateCountryUseCase.execute({
-      data: { slug: id, ...body },
+      data: { slugOrId: id, ...body },
       metadata,
     });
   }
@@ -81,6 +91,6 @@ export class CountryController {
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
   ): Promise<ICountryResponse> {
-    return this.deleteCountryUseCase.execute({ data: { slug: id }, metadata });
+    return this.deleteCountryUseCase.execute({ data: { slugOrId: id }, metadata });
   }
 }

@@ -1,17 +1,27 @@
 import { ICreateDistrictRegionDto } from '@application/dtos/geo/district-region/create-district-region.dto';
 import { IUpdateDistrictRegionDto } from '@application/dtos/geo/district-region/update-district-region.dto';
+import { IDistrictRegionResponse } from '@application/dtos/geo/response/district-region.response';
 import { CreateDistrictRegionUseCase } from '@application/use-cases/geo/district-region/create/create.usecase';
 import { DeleteDistrictRegionUseCase } from '@application/use-cases/geo/district-region/delete/delete.usecase';
 import { GetDistrictRegionsUseCase } from '@application/use-cases/geo/district-region/get-many/get-many.usecase';
 import { GetDistrictRegionUseCase } from '@application/use-cases/geo/district-region/get-one/get-one.usecase';
 import { UpdateDistrictRegionUseCase } from '@application/use-cases/geo/district-region/update/update.usecase';
-import { IDistrictRegionResponse } from '@application/dtos/geo/response/district-region.response';
 import {
   GetMetadataObjectForGrpcRequest,
   IMetadataObjectForGrpcRequest,
 } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 
 @Controller({ path: 'geo/district-regions', version: '1' })
 export class DistrictRegionController {
@@ -48,7 +58,7 @@ export class DistrictRegionController {
     @Query() query: { preset?: string },
   ): Promise<IDistrictRegionResponse> {
     return this.getDistrictRegionUseCase.execute({
-      data: { slug: id, preset: query.preset ?? 'BASE' },
+      data: { slugOrId: id, preset: query.preset ?? 'BASE' },
       metadata,
     });
   }
@@ -67,10 +77,10 @@ export class DistrictRegionController {
   async update(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
-    @Body() body: Omit<IUpdateDistrictRegionDto, 'slug'>,
+    @Body() body: Omit<IUpdateDistrictRegionDto, 'slugOrId'>,
   ): Promise<IDistrictRegionResponse> {
     return this.updateDistrictRegionUseCase.execute({
-      data: { slug: id, ...body },
+      data: { slugOrId: id, ...body },
       metadata,
     });
   }
@@ -81,6 +91,6 @@ export class DistrictRegionController {
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
   ): Promise<IDistrictRegionResponse> {
-    return this.deleteDistrictRegionUseCase.execute({ data: { slug: id }, metadata });
+    return this.deleteDistrictRegionUseCase.execute({ data: { slugOrId: id }, metadata });
   }
 }

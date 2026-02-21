@@ -1,3 +1,3 @@
 export interface IDeleteRegionDto {
-  slug: string;
+  slugOrId: string;
 }

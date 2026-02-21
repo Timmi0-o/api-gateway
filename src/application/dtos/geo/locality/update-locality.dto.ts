@@ -1,7 +1,7 @@
 import { IGeoPoint, LangRecord } from '@application/dtos/geo/types';
 
 export interface IUpdateLocalityDto {
-  slug: string;
+  slugOrId: string;
   countryId?: string;
   regionId?: string;
   type?: number;

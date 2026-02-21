@@ -17,7 +17,7 @@ export class GetLocalityDistrictUseCase {
     try {
       return await this.clientProxy.send<IGetLocalityDistrictDto, ILocalityDistrictResponse>({
         messagePattern: EGeoSubjects.LOCALITY_DISTRICT_GET_ONE,
-        data: { slug: data.slug, preset: data.preset ?? 'BASE' },
+        data: { slugOrId: data.slugOrId, preset: data.preset ?? 'BASE' },
         metadata,
       });
     } catch (err) {

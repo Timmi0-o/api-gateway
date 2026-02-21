@@ -1,4 +1,4 @@
 export interface IGetRegionDto {
-  slug: string;
+  slugOrId: string;
   preset?: string;
 }

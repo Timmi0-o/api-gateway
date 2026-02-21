@@ -1,17 +1,27 @@
 import { ICreateRegionDto } from '@application/dtos/geo/region/create-region.dto';
 import { IUpdateRegionDto } from '@application/dtos/geo/region/update-region.dto';
+import { IRegionResponse } from '@application/dtos/geo/response/region.response';
 import { CreateRegionUseCase } from '@application/use-cases/geo/region/create/create.usecase';
 import { DeleteRegionUseCase } from '@application/use-cases/geo/region/delete/delete.usecase';
 import { GetRegionsUseCase } from '@application/use-cases/geo/region/get-many/get-many.usecase';
 import { GetRegionUseCase } from '@application/use-cases/geo/region/get-one/get-one.usecase';
 import { UpdateRegionUseCase } from '@application/use-cases/geo/region/update/update.usecase';
-import { IRegionResponse } from '@application/dtos/geo/response/region.response';
 import {
   GetMetadataObjectForGrpcRequest,
   IMetadataObjectForGrpcRequest,
 } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 
 @Controller({ path: 'geo/regions', version: '1' })
 export class RegionController {
@@ -48,7 +58,7 @@ export class RegionController {
     @Query() query: { preset?: string },
   ): Promise<IRegionResponse> {
     return this.getRegionUseCase.execute({
-      data: { slug: id, preset: query.preset ?? 'BASE' },
+      data: { slugOrId: id, preset: query.preset ?? 'BASE' },
       metadata,
     });
   }
@@ -67,10 +77,10 @@ export class RegionController {
   async update(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
-    @Body() body: Omit<IUpdateRegionDto, 'slug'>,
+    @Body() body: Omit<IUpdateRegionDto, 'slugOrId'>,
   ): Promise<IRegionResponse> {
     return this.updateRegionUseCase.execute({
-      data: { slug: id, ...body },
+      data: { slugOrId: id, ...body },
       metadata,
     });
   }
@@ -81,6 +91,6 @@ export class RegionController {
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
   ): Promise<IRegionResponse> {
-    return this.deleteRegionUseCase.execute({ data: { slug: id }, metadata });
+    return this.deleteRegionUseCase.execute({ data: { slugOrId: id }, metadata });
   }
 }

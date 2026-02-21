@@ -1,3 +1,3 @@
 export interface IDeleteCountryDto {
-  slug: string;
+  slugOrId: string;
 }

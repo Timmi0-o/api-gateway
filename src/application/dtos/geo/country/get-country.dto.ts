@@ -1,4 +1,4 @@
 export interface IGetCountryDto {
-  slug: string;
+  slugOrId: string;
   preset?: string;
 }

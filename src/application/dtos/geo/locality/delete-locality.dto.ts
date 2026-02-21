@@ -1,3 +1,3 @@
 export interface IDeleteLocalityDto {
-  slug: string;
+  slugOrId: string;
 }
