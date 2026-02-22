@@ -1,0 +1,614 @@
+{
+  "info": {
+    "name": "API Gateway GEO and Transports",
+    "description": "Endpoints: geo (countries, regions, localities, district-regions, locality-districts) and transports (airports, bus-stops, train-stations, wharves). API version v1.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "id",
+      "value": "slug-or-uuid"
+    }
+  ],
+  "item": [
+    {
+      "name": "Geo",
+      "item": [
+        {
+          "name": "Countries",
+          "item": [
+            {
+              "name": "Get many",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/countries?preset=BASE&limit=25&offset=0"
+              }
+            },
+            {
+              "name": "Get one",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/countries/{{id}}?preset=BASE"
+              }
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"coordinates\": { \"type\": \"Point\", \"coordinates\": [37.6, 55.75] },\n  \"name\": { \"ru\": \"Russia\", \"en\": \"Russia\" },\n  \"descriptions\": { \"ru\": \"\", \"en\": \"\" },\n  \"metaTitle\": { \"ru\": \"\", \"en\": \"\" },\n  \"metaDescriptions\": { \"ru\": \"\", \"en\": \"\" },\n  \"metaKeywords\": { \"ru\": \"\", \"en\": \"\" }\n}"
+                },
+                "url": "{{url}}/geo/countries"
+              }
+            },
+            {
+              "name": "Update",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": { \"ru\": \"Russia\", \"en\": \"Russia\" }\n}"
+                },
+                "url": "{{url}}/geo/countries/{{id}}"
+              }
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{url}}/geo/countries/{{id}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Regions",
+          "item": [
+            {
+              "name": "Get many",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/regions?preset=BASE&limit=25&offset=0"
+              }
+            },
+            {
+              "name": "Get one",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/regions/{{id}}?preset=BASE"
+              }
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"countryId\": \"uuid\",\n  \"name\": { \"ru\": \"Moscow\", \"en\": \"Moscow\" },\n  \"coordinates\": { \"type\": \"Point\", \"coordinates\": [37.6, 55.75] }\n}"
+                },
+                "url": "{{url}}/geo/regions"
+              }
+            },
+            {
+              "name": "Update",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": { \"ru\": \"Moscow\", \"en\": \"Moscow\" }\n}"
+                },
+                "url": "{{url}}/geo/regions/{{id}}"
+              }
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{url}}/geo/regions/{{id}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Localities",
+          "item": [
+            {
+              "name": "Get many",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/localities?preset=BASE&limit=25&offset=0"
+              }
+            },
+            {
+              "name": "Get one",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/localities/{{id}}?preset=BASE"
+              }
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"countryId\": \"uuid\",\n  \"regionId\": \"uuid\",\n  \"name\": { \"ru\": \"Moscow\", \"en\": \"Moscow\" },\n  \"coordinates\": { \"type\": \"Point\", \"coordinates\": [37.6, 55.75] }\n}"
+                },
+                "url": "{{url}}/geo/localities"
+              }
+            },
+            {
+              "name": "Update",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": { \"ru\": \"Moscow\", \"en\": \"Moscow\" }\n}"
+                },
+                "url": "{{url}}/geo/localities/{{id}}"
+              }
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{url}}/geo/localities/{{id}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "District Regions",
+          "item": [
+            {
+              "name": "Get many",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url}}/geo/district-regions?preset=BASE&limit=25&offset=0"
+                }
+              }
+            },
+            {
+              "name": "Get one",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/district-regions/{{id}}?preset=BASE"
+              }
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"regionId\": \"uuid\",\n  \"countryId\": \"uuid\",\n  \"name\": { \"ru\": \"Central\", \"en\": \"Central\" },\n  \"coordinates\": { \"type\": \"Point\", \"coordinates\": [37.6, 55.75] }\n}"
+                },
+                "url": "{{url}}/geo/district-regions"
+              }
+            },
+            {
+              "name": "Update",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": { \"ru\": \"Central\", \"en\": \"Central\" }\n}"
+                },
+                "url": "{{url}}/geo/district-regions/{{id}}"
+              }
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{url}}/geo/district-regions/{{id}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Locality Districts",
+          "item": [
+            {
+              "name": "Get many",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{url}}/geo/locality-districts?preset=BASE&limit=25&offset=0"
+                }
+              }
+            },
+            {
+              "name": "Get one",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/locality-districts/{{id}}?preset=BASE"
+              }
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"regionId\": \"uuid\",\n  \"localityId\": \"uuid\",\n  \"countryId\": \"uuid\",\n  \"name\": { \"ru\": \"Arbat\", \"en\": \"Arbat\" },\n  \"coordinates\": { \"type\": \"Point\", \"coordinates\": [37.6, 55.75] }\n}"
+                },
+                "url": "{{url}}/geo/locality-districts"
+              }
+            },
+            {
+              "name": "Update",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": { \"ru\": \"Arbat\", \"en\": \"Arbat\" }\n}"
+                },
+                "url": "{{url}}/geo/locality-districts/{{id}}"
+              }
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{url}}/geo/locality-districts/{{id}}"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Transports",
+      "item": [
+        {
+          "name": "Airports",
+          "item": [
+            {
+              "name": "Get many",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/airports?preset=BASE&limit=25&offset=0"
+              }
+            },
+            {
+              "name": "Get one",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/airports/{{id}}?preset=BASE"
+              }
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Sheremetyevo\",\n  \"regionId\": \"uuid\",\n  \"localityId\": \"uuid\",\n  \"coordinates\": { \"type\": \"Point\", \"coordinates\": [37.414, 55.973] },\n  \"direction\": null,\n  \"codes\": { \"iata\": \"SVO\", \"icao\": \"UUEE\" },\n  \"title\": null,\n  \"descriptions\": null,\n  \"metaDescriptions\": null,\n  \"metaKeywords\": null\n}"
+                },
+                "url": "{{url}}/geo/airports"
+              }
+            },
+            {
+              "name": "Update",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Sheremetyevo International\"\n}"
+                },
+                "url": "{{url}}/geo/airports/{{id}}"
+              }
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{url}}/geo/airports/{{id}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Bus Stops",
+          "item": [
+            {
+              "name": "Get many",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/bus-stops?preset=BASE&limit=25&offset=0"
+              }
+            },
+            {
+              "name": "Get one",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/bus-stops/{{id}}?preset=BASE"
+              }
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Bus stop Center\",\n  \"regionId\": \"uuid\",\n  \"localityId\": \"uuid\",\n  \"coordinates\": { \"type\": \"Point\", \"coordinates\": [37.6, 55.75] },\n  \"direction\": \"to metro\",\n  \"codes\": { \"code\": \"123\" },\n  \"title\": null,\n  \"descriptions\": null,\n  \"metaDescriptions\": null,\n  \"metaKeywords\": null\n}"
+                },
+                "url": "{{url}}/geo/bus-stops"
+              }
+            },
+            {
+              "name": "Update",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Bus stop Center (updated)\"\n}"
+                },
+                "url": "{{url}}/geo/bus-stops/{{id}}"
+              }
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{url}}/geo/bus-stops/{{id}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Train Stations",
+          "item": [
+            {
+              "name": "Get many",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/train-stations?preset=BASE&limit=25&offset=0"
+              }
+            },
+            {
+              "name": "Get one",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/train-stations/{{id}}?preset=BASE"
+              }
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Moscow Passazhirskaya\",\n  \"regionId\": \"uuid\",\n  \"localityId\": \"uuid\",\n  \"coordinates\": { \"type\": \"Point\", \"coordinates\": [37.65, 55.76] },\n  \"direction\": null,\n  \"codes\": { \"esr\": \"060000\" },\n  \"title\": null,\n  \"descriptions\": null,\n  \"metaDescriptions\": null,\n  \"metaKeywords\": null\n}"
+                },
+                "url": "{{url}}/geo/train-stations"
+              }
+            },
+            {
+              "name": "Update",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Moscow Passazhirskaya (updated)\"\n}"
+                },
+                "url": "{{url}}/geo/train-stations/{{id}}"
+              }
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{url}}/geo/train-stations/{{id}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Wharves",
+          "item": [
+            {
+              "name": "Get many",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/wharves?preset=BASE&limit=25&offset=0"
+              }
+            },
+            {
+              "name": "Get one",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": "{{url}}/geo/wharves/{{id}}?preset=BASE"
+              }
+            },
+            {
+              "name": "Create",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Northern River Station\",\n  \"regionId\": \"uuid\",\n  \"localityId\": \"uuid\",\n  \"coordinates\": { \"type\": \"Point\", \"coordinates\": [37.55, 55.85] },\n  \"direction\": null,\n  \"codes\": null,\n  \"title\": null,\n  \"descriptions\": null,\n  \"metaDescriptions\": null,\n  \"metaKeywords\": null\n}"
+                },
+                "url": "{{url}}/geo/wharves"
+              }
+            },
+            {
+              "name": "Update",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Northern River Station (updated)\"\n}"
+                },
+                "url": "{{url}}/geo/wharves/{{id}}"
+              }
+            },
+            {
+              "name": "Delete",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": "{{url}}/geo/wharves/{{id}}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

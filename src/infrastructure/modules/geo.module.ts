@@ -1,3 +1,13 @@
+import { CreateAirportUseCase } from '@application/use-cases/geo/airport/create/create.usecase';
+import { DeleteAirportUseCase } from '@application/use-cases/geo/airport/delete/delete.usecase';
+import { GetAirportsUseCase } from '@application/use-cases/geo/airport/get-many/get-many.usecase';
+import { GetAirportUseCase } from '@application/use-cases/geo/airport/get-one/get-one.usecase';
+import { UpdateAirportUseCase } from '@application/use-cases/geo/airport/update/update.usecase';
+import { CreateBusStopUseCase } from '@application/use-cases/geo/bus-stop/create/create.usecase';
+import { DeleteBusStopUseCase } from '@application/use-cases/geo/bus-stop/delete/delete.usecase';
+import { GetBusStopsUseCase } from '@application/use-cases/geo/bus-stop/get-many/get-many.usecase';
+import { GetBusStopUseCase } from '@application/use-cases/geo/bus-stop/get-one/get-one.usecase';
+import { UpdateBusStopUseCase } from '@application/use-cases/geo/bus-stop/update/update.usecase';
 import { CreateCountryUseCase } from '@application/use-cases/geo/country/create/create.usecase';
 import { DeleteCountryUseCase } from '@application/use-cases/geo/country/delete/delete.usecase';
 import { GetCountriesUseCase } from '@application/use-cases/geo/country/get-many/get-many.usecase';
@@ -23,17 +33,31 @@ import { DeleteRegionUseCase } from '@application/use-cases/geo/region/delete/de
 import { GetRegionsUseCase } from '@application/use-cases/geo/region/get-many/get-many.usecase';
 import { GetRegionUseCase } from '@application/use-cases/geo/region/get-one/get-one.usecase';
 import { UpdateRegionUseCase } from '@application/use-cases/geo/region/update/update.usecase';
+import { CreateTrainStationUseCase } from '@application/use-cases/geo/train-station/create/create.usecase';
+import { DeleteTrainStationUseCase } from '@application/use-cases/geo/train-station/delete/delete.usecase';
+import { GetTrainStationsUseCase } from '@application/use-cases/geo/train-station/get-many/get-many.usecase';
+import { GetTrainStationUseCase } from '@application/use-cases/geo/train-station/get-one/get-one.usecase';
+import { UpdateTrainStationUseCase } from '@application/use-cases/geo/train-station/update/update.usecase';
+import { CreateWharfUseCase } from '@application/use-cases/geo/wharf/create/create.usecase';
+import { DeleteWharfUseCase } from '@application/use-cases/geo/wharf/delete/delete.usecase';
+import { GetWharvesUseCase } from '@application/use-cases/geo/wharf/get-many/get-many.usecase';
+import { GetWharfUseCase } from '@application/use-cases/geo/wharf/get-one/get-one.usecase';
+import { UpdateWharfUseCase } from '@application/use-cases/geo/wharf/update/update.usecase';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import {
   MICROSERVICE_CLIENT_PROXY_SERVICE,
   MicroserviceClientProxyModule,
 } from '@infrastructure/services/microservice-client-proxy/microservice-client-proxy.module';
 import { Module } from '@nestjs/common';
+import { AirportController } from '@presentation/controllers/geo/airport.controller';
+import { BusStopController } from '@presentation/controllers/geo/bus-stop.controller';
 import { CountryController } from '@presentation/controllers/geo/country.controller';
 import { DistrictRegionController } from '@presentation/controllers/geo/district-region.controller';
 import { LocalityDistrictController } from '@presentation/controllers/geo/locality-district.controller';
 import { LocalityController } from '@presentation/controllers/geo/locality.controller';
 import { RegionController } from '@presentation/controllers/geo/region.controller';
+import { TrainStationController } from '@presentation/controllers/geo/train-station.controller';
+import { WharfController } from '@presentation/controllers/geo/wharf.controller';
 import { NATS_CLIENTS } from '@shared/constants/nats-clients';
 
 @Module({
@@ -44,6 +68,10 @@ import { NATS_CLIENTS } from '@shared/constants/nats-clients';
     LocalityController,
     LocalityDistrictController,
     DistrictRegionController,
+    AirportController,
+    BusStopController,
+    TrainStationController,
+    WharfController,
   ],
   providers: [
     {
@@ -194,6 +222,126 @@ import { NATS_CLIENTS } from '@shared/constants/nats-clients';
       provide: DeleteDistrictRegionUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) =>
         new DeleteDistrictRegionUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetAirportUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new GetAirportUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetAirportsUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new GetAirportsUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: CreateAirportUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new CreateAirportUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateAirportUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new UpdateAirportUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: DeleteAirportUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new DeleteAirportUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetBusStopUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new GetBusStopUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetBusStopsUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new GetBusStopsUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: CreateBusStopUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new CreateBusStopUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateBusStopUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new UpdateBusStopUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: DeleteBusStopUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new DeleteBusStopUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetTrainStationUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new GetTrainStationUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetTrainStationsUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new GetTrainStationsUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: CreateTrainStationUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new CreateTrainStationUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateTrainStationUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new UpdateTrainStationUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: DeleteTrainStationUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new DeleteTrainStationUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetWharfUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new GetWharfUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetWharvesUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new GetWharvesUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: CreateWharfUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new CreateWharfUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateWharfUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new UpdateWharfUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: DeleteWharfUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new DeleteWharfUseCase(clientProxy),
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
   ],
