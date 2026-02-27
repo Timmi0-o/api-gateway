@@ -9,6 +9,8 @@ const USER_SOURCE_WHITELIST = [
   'https://api.tourgis.ru',
   'http://api.tourgis.ru',
   'https://api.tourgis.ru',
+  'http://localhost:2044',
+  'https://localhost:2044',
 ];
 
 const USER_SOURCE_MAP = {
@@ -17,15 +19,16 @@ const USER_SOURCE_MAP = {
   'http://localhost:1099': 'ADMIN',
   'https://api.tourgis.ru': 'ADMIN',
   'http://api.tourgis.ru': 'ADMIN',
+  'https://localhost:2044': 'FRANCHISE',
+  'http://localhost:2044': 'FRANCHISE',
 } as const;
 
 export const getUserSourceFromRequest = (
   req: Request,
 ): keyof typeof USER_SOURCE_MAP | undefined => {
-  const protocol = req.protocol;
-  const host = req.get('host');
-
-  const origin = `${protocol}://${host}`;
+  const origin =
+    req.get('origin') ||
+    (req.get('referer')?.replace(/\/$/, '').split('/').slice(0, 3).join('/') as string);
 
   if (!USER_SOURCE_WHITELIST.includes(origin) || !USER_SOURCE_MAP[origin]) {
     return undefined;
