@@ -1,3 +1,4 @@
+import { ServiceException } from '@shared/exceptions/service.exception';
 import { Request } from 'express';
 
 const USER_IDENTITY_KEY_MAP: Record<string, string> = {
@@ -16,7 +17,7 @@ export const getUserIdentityKeyFromRequest = (req: Request): string | undefined 
     req.get('origin') || req.get('referer')?.replace(/\/$/, '').split('/').slice(0, 3).join('/');
 
   if (!origin || !USER_IDENTITY_KEY_MAP[origin]) {
-    return undefined;
+    throw ServiceException.forbidden('CANNOT_GET_USER_IDENTITY_KEY');
   }
 
   return USER_IDENTITY_KEY_MAP[origin];

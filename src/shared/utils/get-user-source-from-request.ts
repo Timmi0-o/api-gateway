@@ -1,3 +1,4 @@
+import { ServiceException } from '@shared/exceptions/service.exception';
 import { Request } from 'express';
 
 const USER_SOURCE_WHITELIST = [
@@ -31,7 +32,7 @@ export const getUserSourceFromRequest = (
     (req.get('referer')?.replace(/\/$/, '').split('/').slice(0, 3).join('/') as string);
 
   if (!USER_SOURCE_WHITELIST.includes(origin) || !USER_SOURCE_MAP[origin]) {
-    return undefined;
+    throw ServiceException.forbidden('CANNOT_GET_USER_SOURCE');
   }
   return USER_SOURCE_MAP[origin];
 };

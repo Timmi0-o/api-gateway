@@ -71,7 +71,6 @@ export class AuthController {
   }
 
   @Post('reset-password')
-  @UseGuards(RsaAuthGuard)
   async resetPassword(
     @Body() data: Omit<IResetPasswordDto, 'meta'>,
     @Req() request: Request,
@@ -93,7 +92,6 @@ export class AuthController {
   }
 
   @Post('send-reset-password-email')
-  @UseGuards(RsaAuthGuard)
   async sendResetPasswordEmail(
     @Body() data: ISendResetPasswordEmailDto,
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
@@ -102,7 +100,6 @@ export class AuthController {
   }
 
   @Post('validate-reset-password-token')
-  @UseGuards(RsaAuthGuard)
   async validateResetPasswordToken(
     @Body() data: IValidateResetPasswordTokenDto,
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,

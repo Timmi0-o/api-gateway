@@ -25,12 +25,12 @@ export const GetMetadataObjectForGrpcRequest = createParamDecorator(
     const user = request.user;
 
     const metadata: IMetadataObjectForGrpcRequest = {
-      commonUserId: user.sub as string,
+      commonUserId: user?.sub as string,
       isStaffUser:
-        user.systemRole === EAuthUserRole.ADMIN || user.systemRole === EAuthUserRole.SUPER_ADMIN,
-      systemRole: user.systemRole as string,
+        user?.systemRole === EAuthUserRole.ADMIN || user?.systemRole === EAuthUserRole.SUPER_ADMIN,
+      systemRole: user?.systemRole as string,
       source: getUserSourceFromRequest(request) as EUserSource,
-      orgId: user.orgId as string,
+      orgId: user?.orgId as string,
       identityScopeKey: getUserIdentityKeyFromRequest(request),
     };
 
