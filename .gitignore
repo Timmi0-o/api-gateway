@@ -55,6 +55,9 @@ pids
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 docker-compose.yaml
+docker-compose.prod.yaml
+Dockerfile.dev
+Dockerfile.prod
 package-lock.json
 
 keys/private.key
