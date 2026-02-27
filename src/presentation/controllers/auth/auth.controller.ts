@@ -18,7 +18,12 @@ import {
   ISendResetPasswordEmailResponse,
   IValidateResetPasswordTokenResponse,
 } from '@domain/types/auth.types';
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import {
+  GetMetadataObjectForGrpcRequest,
+  IMetadataObjectForGrpcRequest,
+} from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
+import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { getIpAndUserAgentFromReq } from '@shared/utils/get-ip-and-user-agent-from-req';
 import { getUserIdentityKeyFromRequest } from '@shared/utils/get-user-identity-key-from-request';
 import { getUserSourceFromRequest } from '@shared/utils/get-user-source-from-request';
@@ -60,38 +65,48 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @UseGuards(RsaAuthGuard)
   async refresh(@Body() data: IRefreshDto): Promise<IRefreshResponse> {
     return this.refreshUsecase.execute(data);
   }
 
   @Post('reset-password')
+  @UseGuards(RsaAuthGuard)
   async resetPassword(
     @Body() data: Omit<IResetPasswordDto, 'meta'>,
     @Req() request: Request,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
   ): Promise<IResetPasswordResponse> {
     const { ipAddress, userAgent } = getIpAndUserAgentFromReq(request, { notFoundErrors: true });
 
     return this.resetPasswordUsecase.execute({
-      ...data,
-      meta: {
-        ipAddress,
-        userAgent,
-        location: '', // TODO: локацию потом нужно будет брать из другого микросевиса (GEO)
+      data: {
+        ...data,
+        meta: {
+          ipAddress,
+          userAgent,
+          location: '', // TODO: локацию потом нужно будет брать из другого микросевиса (GEO)
+        },
       },
+      metadata,
     });
   }
 
   @Post('send-reset-password-email')
+  @UseGuards(RsaAuthGuard)
   async sendResetPasswordEmail(
     @Body() data: ISendResetPasswordEmailDto,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
   ): Promise<ISendResetPasswordEmailResponse> {
-    return this.sendResetPasswordEmailUsecase.execute(data);
+    return this.sendResetPasswordEmailUsecase.execute({ data, metadata });
   }
 
   @Post('validate-reset-password-token')
+  @UseGuards(RsaAuthGuard)
   async validateResetPasswordToken(
     @Body() data: IValidateResetPasswordTokenDto,
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
   ): Promise<IValidateResetPasswordTokenResponse> {
-    return this.validateResetPasswordTokenUsecase.execute(data);
+    return this.validateResetPasswordTokenUsecase.execute({ data, metadata });
   }
 }

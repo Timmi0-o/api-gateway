@@ -16,7 +16,7 @@ export class RsaAuthGuard extends AuthGuard('rsa-bearer') {
 
   handleRequest<TUser>(err: unknown, user: TUser): TUser | ServiceException {
     if (err || !user) {
-      return ServiceException.unauthorized('INVALID_OR_EXPIRED_TOKEN');
+      throw ServiceException.unauthorized('EXPIRED_OR_INVALID_ACCESS_TOKEN');
     }
 
     return user;
