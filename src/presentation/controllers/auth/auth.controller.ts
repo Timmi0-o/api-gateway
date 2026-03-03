@@ -22,8 +22,7 @@ import {
   GetMetadataObjectForGrpcRequest,
   IMetadataObjectForGrpcRequest,
 } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
-import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
 import { getIpAndUserAgentFromReq } from '@shared/utils/get-ip-and-user-agent-from-req';
 import { getUserIdentityKeyFromRequest } from '@shared/utils/get-user-identity-key-from-request';
 import { getUserSourceFromRequest } from '@shared/utils/get-user-source-from-request';
@@ -65,7 +64,6 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @UseGuards(RsaAuthGuard)
   async refresh(@Body() data: IRefreshDto): Promise<IRefreshResponse> {
     return this.refreshUsecase.execute(data);
   }
