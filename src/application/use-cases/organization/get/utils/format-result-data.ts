@@ -4,7 +4,7 @@ import { IQueryOrganizationsDataResponse } from '@tourgis/contracts/dist/organiz
 export const getOrganizationsFormatResultData = ({
   data,
 }: {
-  data: IQueryOrganizationsDataResponse;
+      data: IQueryOrganizationsDataResponse;
 }): IOrganizationsDataResponse => {
   return {
     meta: {

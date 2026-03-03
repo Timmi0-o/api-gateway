@@ -3,7 +3,6 @@ import { IMicroserviceClientProxyService } from '@domain/services/i-microservice
 import { IResetPasswordResponse } from '@domain/types/auth.types';
 import { IAuthValidator } from '@domain/validators/auth-validator.interface';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
-import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EAuthSubjects } from '@tourgis/common';
 
 export class ResetPasswordUseCase {
@@ -20,14 +19,10 @@ export class ResetPasswordUseCase {
 
     this.authValidator.validateResetPassword(data);
 
-    try {
-      return await this.clientProxy.send<IResetPasswordDto, IResetPasswordResponse>({
-        messagePattern: EAuthSubjects.RESET_PASSWORD,
-        data,
-        metadata,
-      });
-    } catch (err) {
-      throw ExceptionWIthFormatRpcCode(err);
-    }
+    return await this.clientProxy.send<IResetPasswordDto, IResetPasswordResponse>({
+    messagePattern: EAuthSubjects.RESET_PASSWORD,
+    data,
+    metadata,
+    })
   }
 }

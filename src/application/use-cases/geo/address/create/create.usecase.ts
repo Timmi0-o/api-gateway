@@ -17,6 +17,6 @@ export class CreateAddressUseCase {
       messagePattern: EGeoSubjects.ADDRESS_CREATE,
       data,
       metadata,
-    });
+        });
   }
 }

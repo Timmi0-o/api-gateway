@@ -1,6 +1,5 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
-import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EAuthSubjects } from '@tourgis/common';
 import {
   IQueryAuthUsersDataResponse,
@@ -19,21 +18,17 @@ export class GetOneUserUseCase {
   }): Promise<{ result: IUserWithOrganizationData | null }> {
     const { data, metadata } = params;
 
-    try {
-      const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
-        messagePattern: EAuthSubjects.GET_USERS,
-        data: {
-          preset: data.preset ?? 'MINIMAL',
-          filter: {
-            id: data.userId,
-          },
-        },
-        metadata,
-      });
+    const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
+    messagePattern: EAuthSubjects.GET_USERS,
+    data: {
+      preset: data.preset ?? 'MINIMAL',
+      filter: {
+        id: data.userId,
+      },
+    },
+    metadata,
+  });
 
-      return { result: res?.data?.[0] ?? null };
-    } catch (err) {
-      throw ExceptionWIthFormatRpcCode(err);
-    }
+  return { result: res?.data?.[0] ?? null };
   }
 }

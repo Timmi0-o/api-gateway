@@ -4,7 +4,6 @@ import {
   IUploadedFile,
 } from '@infrastructure/services/file-upload/file-upload.service';
 import { Injectable } from '@nestjs/common';
-import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 
 @Injectable()
 export class TestGrpcUseCase {
@@ -36,22 +35,18 @@ export class TestGrpcUseCase {
       resObject.metadata = data.metadata;
     }
 
-    try {
-      const result = await this.clientProxy.send<unknown, unknown>(
-        resObject as unknown as {
-          messagePattern: string;
-          data?: unknown;
-          metadata?: Record<string, unknown>;
-        },
-      );
+    const result = await this.clientProxy.send<unknown, unknown>(
+    resObject as unknown as {
+      messagePattern: string;
+      data?: unknown;
+      metadata?: Record<string, unknown>;
+    },
+  );
 
-      return {
-        success: true,
-        data: result,
-      };
-    } catch (err) {
-      throw ExceptionWIthFormatRpcCode(err);
-    }
+  return {
+    success: true,
+    data: result,
+  };
   }
 
   async uploadFileToS3(files: Express.Multer.File[]): Promise<{
@@ -61,7 +56,7 @@ export class TestGrpcUseCase {
     const data = await this.fileUploadService.uploadFiles(files, {
       organizationId: '123',
       uploadedBy: 'test',
-    });
+        });
     return { success: true, data };
   }
 }

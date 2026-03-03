@@ -2,7 +2,6 @@ import { IUpdateLocalityDto } from '@application/dtos/geo/locality/update-locali
 import { ILocalityResponse } from '@application/dtos/geo/response/locality.response';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
-import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EGeoSubjects } from '@tourgis/common';
 
 export class UpdateLocalityUseCase {
@@ -14,14 +13,10 @@ export class UpdateLocalityUseCase {
   }): Promise<ILocalityResponse> {
     const { data, metadata } = params;
 
-    try {
-      return await this.clientProxy.send<IUpdateLocalityDto, ILocalityResponse>({
-        messagePattern: EGeoSubjects.LOCALITY_UPDATE,
-        data,
-        metadata,
-      });
-    } catch (err) {
-      throw ExceptionWIthFormatRpcCode(err);
-    }
+    return await this.clientProxy.send<IUpdateLocalityDto, ILocalityResponse>({
+    messagePattern: EGeoSubjects.LOCALITY_UPDATE,
+    data,
+    metadata,
+    })
   }
 }

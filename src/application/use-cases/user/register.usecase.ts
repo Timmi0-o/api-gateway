@@ -2,7 +2,6 @@ import { IRegisterDto } from '@application/dtos/user/register.dto';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IRegisterResponse } from '@domain/types/user.types';
 import { IUserValidator } from '@domain/validators/user-validator.interface';
-import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EAuthSubjects } from '@tourgis/common';
 
 export class RegisterUseCase {
@@ -17,14 +16,10 @@ export class RegisterUseCase {
 
     const { source, ...restData } = data;
 
-    try {
-      return await this.clientProxy.send<Omit<IRegisterDto, 'source'>, IRegisterResponse>({
-        messagePattern: EAuthSubjects.REGISTER,
-        data: restData,
-        metadata: { source },
-      });
-    } catch (err) {
-      throw ExceptionWIthFormatRpcCode(err);
-    }
+    return this.clientProxy.send<Omit<IRegisterDto, 'source'>, IRegisterResponse>({
+      messagePattern: EAuthSubjects.REGISTER,
+      data: restData,
+      metadata: { source },
+    });
   }
 }

@@ -4,7 +4,6 @@ import {
   FileUploadService,
   IUploadedFile,
 } from '@infrastructure/services/file-upload/file-upload.service';
-import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EOrganizationSubjects } from '@tourgis/common';
 
 export interface ICreateOrganizationFilesData {
@@ -30,42 +29,34 @@ export class CreateOrganizationFilesUseCase {
 
     const createdFilesMetadata: IUploadedFile[] = [];
 
-    try {
-      const uploadedFiles = await this.uploadFileToS3(files, organizationId, commonUserId);
+    const uploadedFiles = await this.uploadFileToS3(files, organizationId, commonUserId);
 
-      createdFilesMetadata.push(
-        ...uploadedFiles.data.map((file) => ({
-          ...file,
-          folderId,
-          uploadedBy: commonUserId,
-          fileName: file.originalName,
-          fileUrl: `http://localhost:9000/${file.location}`,
-          fileSize: file.size,
-          accessLevel: 'PUBLIC',
-          ownerType: 'ORGANIZATION',
-          fileType: 'IMAGE',
-          tags: [],
-          deletedAt: null,
-        })),
-      );
-    } catch (err) {
-      throw ExceptionWIthFormatRpcCode(err);
-    }
+    createdFilesMetadata.push(
+      ...uploadedFiles.data.map((file) => ({
+        ...file,
+        folderId,
+        uploadedBy: commonUserId,
+        fileName: file.originalName,
+        fileUrl: `http://localhost:9000/${file.location}`,
+        fileSize: file.size,
+        accessLevel: 'PUBLIC',
+        ownerType: 'ORGANIZATION',
+        fileType: 'IMAGE',
+        tags: [],
+        deletedAt: null,
+      })),
+    );
 
-    try {
-      await this.clientProxy.send({
-        messagePattern: EOrganizationSubjects.ORGANIZATION_FILE_CREATE_MANY,
-        data: {
-          files: createdFilesMetadata,
-          organizationId,
-        },
-        metadata,
-      });
+    await this.clientProxy.send({
+      messagePattern: EOrganizationSubjects.ORGANIZATION_FILE_CREATE_MANY,
+      data: {
+        files: createdFilesMetadata,
+        organizationId,
+      },
+      metadata,
+        });
 
-      return { success: true };
-    } catch (err) {
-      throw ExceptionWIthFormatRpcCode(err);
-    }
+    return { success: true };
   }
 
   async uploadFileToS3(
@@ -76,7 +67,7 @@ export class CreateOrganizationFilesUseCase {
     const data = await this.fileUploadService.uploadFiles(files, {
       organizationId,
       uploadedBy: commonUserId,
-    });
+        });
     return { success: true, data };
   }
 }

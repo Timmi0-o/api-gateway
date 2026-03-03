@@ -1,6 +1,5 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
-import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EOrganizationSubjects } from '@tourgis/common';
 
 export class UpdateOrganizationUseCase {
@@ -18,22 +17,18 @@ export class UpdateOrganizationUseCase {
   }): Promise<boolean> {
     const { data, metadata } = params;
 
-    try {
-      await this.clientProxy.send<unknown, unknown>({
-        messagePattern: EOrganizationSubjects.ORGANIZATION_UPDATE,
-        data: {
-          organizationId: data.organizationId,
-          ...(data.name !== undefined ? { name: data.name } : {}),
-          ...(data.description !== undefined ? { description: data.description } : {}),
-          ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
-          ...(data.ownerId !== undefined ? { ownerId: data.ownerId } : {}),
-        },
-        metadata,
-      });
+    await this.clientProxy.send<unknown, unknown>({
+    messagePattern: EOrganizationSubjects.ORGANIZATION_UPDATE,
+    data: {
+      organizationId: data.organizationId,
+      ...(data.name !== undefined ? { name: data.name } : {}),
+      ...(data.description !== undefined ? { description: data.description } : {}),
+      ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
+      ...(data.ownerId !== undefined ? { ownerId: data.ownerId } : {}),
+    },
+    metadata,
+  });
 
-      return true;
-    } catch (err) {
-      throw ExceptionWIthFormatRpcCode(err);
-    }
+  return true;
   }
 }

@@ -1,6 +1,5 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
-import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EAuthSubjects } from '@tourgis/common';
 import { IQueryAuthUsersDataResponse } from '@tourgis/contracts/dist/auth/v1';
 
@@ -18,21 +17,17 @@ export class GetUsersUseCase {
   }): Promise<IQueryAuthUsersDataResponse> {
     const { data: query, metadata } = params;
 
-    try {
-      const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
-        messagePattern: EAuthSubjects.GET_USERS,
-        data: {
-          preset: query.preset ?? 'MINIMAL',
-          filter: query.filter ? JSON.parse(query.filter) : undefined,
-          limit: query?.limit ? +query.limit : 25,
-          page: query?.page ? +query?.page : 1,
-        },
-        metadata,
-      });
+    const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
+    messagePattern: EAuthSubjects.GET_USERS,
+    data: {
+      preset: query.preset ?? 'MINIMAL',
+      filter: query.filter ? JSON.parse(query.filter) : undefined,
+      limit: query?.limit ? +query.limit : 25,
+      page: query?.page ? +query?.page : 1,
+    },
+    metadata,
+  });
 
-      return res;
-    } catch (err) {
-      throw ExceptionWIthFormatRpcCode(err);
-    }
+  return res;
   }
 }

@@ -3,7 +3,6 @@ import { IMicroserviceClientProxyService } from '@domain/services/i-microservice
 import { ILoginResponse } from '@domain/types/auth.types';
 import { IAuthValidator } from '@domain/validators/auth-validator.interface';
 import { UserCacheDataService } from '@infrastructure/services/user-cache-data/user-cache-data.service';
-import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EAuthSubjects } from '@tourgis/common';
 
 export class LoginUseCase {
@@ -16,19 +15,15 @@ export class LoginUseCase {
   async execute(data: ILoginDto): Promise<ILoginResponse> {
     this.authValidator.validateLogin(data);
 
-    try {
-      const response = await this.clientProxy.send<ILoginDto, ILoginResponse>({
-        messagePattern: EAuthSubjects.LOGIN,
-        data,
-      });
+    const response = await this.clientProxy.send<ILoginDto, ILoginResponse>({
+      messagePattern: EAuthSubjects.LOGIN,
+      data,
+    });
 
-      await this.userCacheDataService.fillUserPermissionsForAllOrganizations(
-        response.data.commonUserId,
-      );
+    await this.userCacheDataService.fillUserPermissionsForAllOrganizations(
+      response.data.commonUserId,
+    );
 
-      return response;
-    } catch (err) {
-      throw ExceptionWIthFormatRpcCode(err);
-    }
+    return response;
   }
 }

@@ -25,6 +25,13 @@ import { CreateOrganizationUseCase } from '@application/use-cases/organization/c
 import { GetOneOrganizationUseCase } from '@application/use-cases/organization/get-one/get-one.usecase';
 import { GetOrganizationsUseCase } from '@application/use-cases/organization/get/get.usecase';
 import { UpdateOrganizationUseCase } from '@application/use-cases/organization/update/update.usecase';
+import { ChangeRegisterRequestStatusUseCase } from '@application/use-cases/register-requests/change-status/change-status.usecase';
+import { CreateRegisterRequestUseCase } from '@application/use-cases/register-requests/create/create.usecase';
+import { DeleteRegisterRequestsUseCase } from '@application/use-cases/register-requests/delete/delete.usecase';
+import { GetRegisterRequestsUseCase } from '@application/use-cases/register-requests/get-many/get-many.usecase';
+import { GetRegisterRequestUseCase } from '@application/use-cases/register-requests/get-one/get-one.usecase';
+import { SoftDeleteRegisterRequestsUseCase } from '@application/use-cases/register-requests/soft-delete/soft-delete.usecase';
+import { UpdateRegisterRequestUseCase } from '@application/use-cases/register-requests/update/update.usecase';
 import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
@@ -40,6 +47,7 @@ import { MembersController } from '@presentation/controllers/organization/organi
 import { OrganizationModulesController } from '@presentation/controllers/organization/organization-modules.controller';
 import { OrganizationPermissionsController } from '@presentation/controllers/organization/organization-permissions.controller';
 import { OrganizationController } from '@presentation/controllers/organization/organization.controller';
+import { RegisterRequestsController } from '@presentation/controllers/organization/register-requests.controller';
 import { RoleController } from '@presentation/controllers/organization/role.controller';
 import { NATS_CLIENTS } from '@shared/constants/nats-clients';
 import { S3Module } from './s3.module';
@@ -52,6 +60,7 @@ import { UserUsecaseModule } from './user.module';
     S3Module,
   ],
   controllers: [
+    RegisterRequestsController,
     OrganizationController,
     MembersController,
     RoleController,
@@ -260,6 +269,55 @@ import { UserUsecaseModule } from './user.module';
       provide: DeleteOrganizationFolderUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
         return new DeleteOrganizationFolderUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetRegisterRequestUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new GetRegisterRequestUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetRegisterRequestsUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new GetRegisterRequestsUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: CreateRegisterRequestUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new CreateRegisterRequestUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateRegisterRequestUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new UpdateRegisterRequestUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: ChangeRegisterRequestStatusUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new ChangeRegisterRequestStatusUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: DeleteRegisterRequestsUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new DeleteRegisterRequestsUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: SoftDeleteRegisterRequestsUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new SoftDeleteRegisterRequestsUseCase(clientProxy);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },

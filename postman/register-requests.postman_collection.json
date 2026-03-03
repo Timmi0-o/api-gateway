@@ -1,0 +1,179 @@
+{
+  "info": {
+    "name": "Register Requests (Organization)",
+    "description": "Запросы на регистрацию организации. GET/PATCH/DELETE — только для staff (Bearer token). POST Create — без авторизации.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "registerRequestId",
+      "value": "uuid-of-register-request"
+    }
+  ],
+  "item": [
+    {
+      "name": "Get many",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{url}}/v1/organization/register-requests?preset=MINIMAL&limit=20&page=1",
+          "host": ["{{url}}"],
+          "path": ["v1", "organization", "register-requests"],
+          "query": [
+            { "key": "preset", "value": "MINIMAL" },
+            { "key": "filter", "value": "", "disabled": true },
+            { "key": "orderBy", "value": "", "disabled": true },
+            { "key": "limit", "value": "20" },
+            { "key": "page", "value": "1" },
+            { "key": "registerRequestId", "value": "", "disabled": true }
+          ]
+        },
+        "description": "Список заявок. Staff only."
+      }
+    },
+    {
+      "name": "Get one",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{url}}/v1/organization/register-requests/{{registerRequestId}}?preset=MINIMAL",
+          "host": ["{{url}}"],
+          "path": ["v1", "organization", "register-requests", "{{registerRequestId}}"],
+          "query": [{ "key": "preset", "value": "MINIMAL" }]
+        },
+        "description": "Одна заявка по id. Staff only."
+      }
+    },
+    {
+      "name": "Create",
+      "request": {
+        "auth": { "type": "noauth" },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"organizationName\": \"ООО Ромашка\",\n  \"email\": \"contact@example.com\",\n  \"phone\": \"+79001234567\",\n  \"name\": \"Иван\",\n  \"surname\": \"Петров\",\n  \"patronymic\": \"Сергеевич\",\n  \"comment\": \"Комментарий к заявке\",\n  \"inn\": \"7707083893\",\n  \"organizationType\": \"BUSINESS\",\n  \"modules\": [\"BOOKING\", \"RENT\"]\n}"
+        },
+        "url": {
+          "raw": "{{url}}/v1/organization/register-requests",
+          "host": ["{{url}}"],
+          "path": ["v1", "organization", "register-requests"]
+        },
+        "description": "Создать заявку на регистрацию. Без авторизации."
+      }
+    },
+    {
+      "name": "Update",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"organizationName\": \"ООО Ромашка (обновлено)\",\n  \"comment\": \"Обновлённый комментарий\"\n}"
+        },
+        "url": {
+          "raw": "{{url}}/v1/organization/register-requests/{{registerRequestId}}",
+          "host": ["{{url}}"],
+          "path": ["v1", "organization", "register-requests", "{{registerRequestId}}"]
+        },
+        "description": "Обновить заявку. Staff only."
+      }
+    },
+    {
+      "name": "Change status",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"APPROVED\",\n  \"rejectionReason\": null\n}"
+        },
+        "url": {
+          "raw": "{{url}}/v1/organization/register-requests/{{registerRequestId}}/status",
+          "host": ["{{url}}"],
+          "path": ["v1", "organization", "register-requests", "{{registerRequestId}}", "status"]
+        },
+        "description": "Изменить статус: PENDING | APPROVED | REJECTED. При REJECTED можно указать rejectionReason. Staff only."
+      }
+    },
+    {
+      "name": "Delete (hard)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"registerRequestIds\": [\"{{registerRequestId}}\"]\n}"
+        },
+        "url": {
+          "raw": "{{url}}/v1/organization/register-requests",
+          "host": ["{{url}}"],
+          "path": ["v1", "organization", "register-requests"]
+        },
+        "description": "Жёсткое удаление заявок по списку id. Staff only."
+      }
+    },
+    {
+      "name": "Delete (soft)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"registerRequestIds\": [\"{{registerRequestId}}\"]\n}"
+        },
+        "url": {
+          "raw": "{{url}}/v1/organization/register-requests/soft",
+          "host": ["{{url}}"],
+          "path": ["v1", "organization", "register-requests", "soft"]
+        },
+        "description": "Мягкое удаление заявок по списку id. Staff only."
+      }
+    }
+  ]
+}

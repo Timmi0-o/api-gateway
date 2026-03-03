@@ -1,7 +1,6 @@
 import { IUpdateRoleDto } from '@application/dtos/organization/role-update.dto';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
-import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EOrganizationSubjects } from '@tourgis/common';
 
 export interface IUpdateRoleWithPermissionsDto extends IUpdateRoleDto {
@@ -20,49 +19,45 @@ export class UpdateRoleUseCase {
   }): Promise<{ success: boolean }> {
     const { data, metadata } = params;
 
-    try {
-      await this.clientProxy.send({
-        messagePattern: EOrganizationSubjects.ROLE_UPDATE,
-        data: {
-          roleId: data.roleId,
-          organizationId: data.organizationId,
-          name: data.name,
-          description: data.description ?? null,
-        },
-        metadata,
-      });
+    await this.clientProxy.send({
+    messagePattern: EOrganizationSubjects.ROLE_UPDATE,
+    data: {
+      roleId: data.roleId,
+      organizationId: data.organizationId,
+      name: data.name,
+      description: data.description ?? null,
+    },
+    metadata,
+  });
 
-      if (data.permissions?.added?.length) {
-        await this.clientProxy.send({
-          messagePattern: EOrganizationSubjects.ROLE_PERMISSION_CREATE,
-          data: {
-            roleId: data.roleId,
-            organizationId: data.organizationId,
-            permissionIds: data.permissions.added,
-          },
-          metadata,
+  if (data.permissions?.added?.length) {
+    await this.clientProxy.send({
+      messagePattern: EOrganizationSubjects.ROLE_PERMISSION_CREATE,
+      data: {
+        roleId: data.roleId,
+        organizationId: data.organizationId,
+        permissionIds: data.permissions.added,
+      },
+      metadata,
         });
-      }
+  }
 
-      if (data.permissions?.deleted?.length) {
-        await Promise.all(
-          data.permissions.deleted.map((rolePermissionId) =>
-            this.clientProxy.send({
-              messagePattern: EOrganizationSubjects.ROLE_PERMISSION_DELETE,
-              data: {
-                organizationId: data.organizationId,
-                roleId: data.roleId,
-                rolePermissionId,
-              },
-              metadata,
-            }),
-          ),
-        );
-      }
+  if (data.permissions?.deleted?.length) {
+    await Promise.all(
+      data.permissions.deleted.map((rolePermissionId) =>
+        this.clientProxy.send({
+      messagePattern: EOrganizationSubjects.ROLE_PERMISSION_DELETE,
+      data: {
+        organizationId: data.organizationId,
+        roleId: data.roleId,
+        rolePermissionId,
+      },
+      metadata,
+        }),
+      ),
+    );
+  }
 
-      return { success: true };
-    } catch (err) {
-      throw ExceptionWIthFormatRpcCode(err);
-    }
+  return { success: true };
   }
 }

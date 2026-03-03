@@ -1,7 +1,6 @@
 import { IUpdateOrganizationMemberDto } from '@application/dtos/organization/organization-member-update.dto';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
-import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { EOrganizationSubjects } from '@tourgis/common';
 
 export class UpdateOrganizationMemberUseCase {
@@ -13,22 +12,18 @@ export class UpdateOrganizationMemberUseCase {
   }): Promise<unknown> {
     const { data, metadata } = params;
 
-    try {
-      const res = await this.clientProxy.send({
-        messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_UPDATE,
-        data: {
-          commonUserId: metadata.commonUserId,
-          organizationId: data.organizationId,
-          userId: data.userId,
-          roleId: data.roleId,
-          ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
-        },
-        metadata,
-      });
+    const res = await this.clientProxy.send({
+    messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_UPDATE,
+    data: {
+      commonUserId: metadata.commonUserId,
+      organizationId: data.organizationId,
+      userId: data.userId,
+      roleId: data.roleId,
+      ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
+    },
+    metadata,
+  });
 
-      return res;
-    } catch (err) {
-      throw ExceptionWIthFormatRpcCode(err);
-    }
+  return res;
   }
 }
