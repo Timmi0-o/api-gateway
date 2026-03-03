@@ -1,23 +1,27 @@
-import { ITrainStationResponse } from '@application/dtos/geo/response/train-station.response';
-import { IGetTrainStationDto } from '@application/dtos/geo/train-station/get-train-station.dto';
+import { IGetOneAddressDto } from '@application/dtos/geo/address/get-one-address.dto';
+import { IAddress } from '@application/dtos/geo/response/address.response';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
-import { EGeoTransportSubjects } from '@tourgis/common';
+import { EGeoSubjects } from '@tourgis/common';
 
-export class GetTrainStationUseCase {
+export class GetAddressUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(params: {
-    data: IGetTrainStationDto;
+    data: IGetOneAddressDto;
     metadata?: IMetadataObjectForGrpcRequest;
-  }): Promise<ITrainStationResponse> {
+  }): Promise<IAddress> {
     const { data, metadata } = params;
 
     try {
-      return await this.clientProxy.send<IGetTrainStationDto, ITrainStationResponse>({
-        messagePattern: EGeoTransportSubjects.TRAIN_STATION_GET_ONE,
-        data: { slugOrId: data.slugOrId, preset: data.preset ?? 'BASE' },
+      return await this.clientProxy.send<IGetOneAddressDto, IAddress>({
+        messagePattern: EGeoSubjects.ADDRESS_GET_ONE,
+        data: {
+          entityId: data.entityId,
+          entityType: data.entityType,
+          preset: data.preset ?? 'MINIMAL',
+        },
         metadata,
       });
     } catch (err) {

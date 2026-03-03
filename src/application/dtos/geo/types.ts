@@ -21,3 +21,16 @@ export interface ITransportBase {
   metaDescriptions?: string | null;
   metaKeywords?: string | null;
 }
+
+export interface IListResponseMeta {
+  total: number;
+  totalCount: number;
+  offset: number;
+  limit: number;
+  page: number;
+}
+
+export interface IListResponse<T> {
+  data: T[];
+  meta: IListResponseMeta;
+}

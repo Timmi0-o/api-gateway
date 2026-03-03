@@ -1,5 +1,6 @@
 import { ICreateWharfDto } from '@application/dtos/geo/wharf/create-wharf.dto';
 import { IUpdateWharfDto } from '@application/dtos/geo/wharf/update-wharf.dto';
+import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
 import { IWharfResponse } from '@application/dtos/geo/response/wharf.response';
 import { CreateWharfUseCase } from '@application/use-cases/geo/wharf/create/create.usecase';
 import { DeleteWharfUseCase } from '@application/use-cases/geo/wharf/delete/delete.usecase';
@@ -37,14 +38,15 @@ export class WharfController {
   @UseGuards(RsaAuthGuard)
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: { preset?: string; filter?: string; limit?: number; offset?: number },
+    @Query() query: IBaseArrayQuery,
   ): Promise<IWharfResponse[]> {
     return this.getWharvesUseCase.execute({
       data: {
         preset: query.preset ?? 'BASE',
         limit: query.limit ?? 25,
         offset: query.offset ?? 0,
-        filter: query.filter ? (JSON.parse(query.filter) as Record<string, unknown>) : undefined,
+        filter: query.filter,
+        orderBy: query.orderBy,
       },
       metadata,
     });
@@ -55,7 +57,7 @@ export class WharfController {
   async getOne(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
-    @Query() query: { preset?: string },
+    @Query() query: IBaseQuery,
   ): Promise<IWharfResponse> {
     return this.getWharfUseCase.execute({
       data: { slugOrId: id, preset: query.preset ?? 'BASE' },

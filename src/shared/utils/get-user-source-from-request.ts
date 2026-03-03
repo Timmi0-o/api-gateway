@@ -12,6 +12,7 @@ const USER_SOURCE_WHITELIST = [
   'https://api.tourgis.ru',
   'http://localhost:2044',
   'https://localhost:2044',
+  'Postman',
 ];
 
 const USER_SOURCE_MAP = {
@@ -22,6 +23,7 @@ const USER_SOURCE_MAP = {
   'http://api.tourgis.ru': 'ADMIN',
   'https://localhost:2044': 'FRANCHISE',
   'http://localhost:2044': 'FRANCHISE',
+  Postman: 'POSTMAN',
 } as const;
 
 export const getUserSourceFromRequest = (
@@ -31,8 +33,12 @@ export const getUserSourceFromRequest = (
     req.get('origin') ||
     (req.get('referer')?.replace(/\/$/, '').split('/').slice(0, 3).join('/') as string);
 
-  if (!USER_SOURCE_WHITELIST.includes(origin) || !USER_SOURCE_MAP[origin]) {
+  const secretSource = req.get('tourgis-custom-user-source');
+
+  const source = secretSource || USER_SOURCE_MAP[origin];
+
+  if (!secretSource && (!USER_SOURCE_WHITELIST.includes(origin) || !source)) {
     throw ServiceException.forbidden('CANNOT_GET_USER_SOURCE');
   }
-  return USER_SOURCE_MAP[origin];
+  return source;
 };

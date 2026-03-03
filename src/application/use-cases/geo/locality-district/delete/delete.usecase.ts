@@ -15,10 +15,7 @@ export class DeleteLocalityDistrictUseCase {
     const { data, metadata } = params;
 
     try {
-      return await this.clientProxy.send<
-        IDeleteLocalityDistrictDto,
-        ILocalityDistrictResponse
-      >({
+      return await this.clientProxy.send<IDeleteLocalityDistrictDto, ILocalityDistrictResponse>({
         messagePattern: EGeoSubjects.LOCALITY_DISTRICT_DELETE,
         data,
         metadata,

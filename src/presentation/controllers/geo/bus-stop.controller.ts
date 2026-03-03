@@ -1,5 +1,6 @@
 import { ICreateBusStopDto } from '@application/dtos/geo/bus-stop/create-bus-stop.dto';
 import { IUpdateBusStopDto } from '@application/dtos/geo/bus-stop/update-bus-stop.dto';
+import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
 import { IBusStopResponse } from '@application/dtos/geo/response/bus-stop.response';
 import { CreateBusStopUseCase } from '@application/use-cases/geo/bus-stop/create/create.usecase';
 import { DeleteBusStopUseCase } from '@application/use-cases/geo/bus-stop/delete/delete.usecase';
@@ -37,14 +38,15 @@ export class BusStopController {
   @UseGuards(RsaAuthGuard)
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: { preset?: string; filter?: string; limit?: number; offset?: number },
+    @Query() query: IBaseArrayQuery,
   ): Promise<IBusStopResponse[]> {
     return this.getBusStopsUseCase.execute({
       data: {
         preset: query.preset ?? 'BASE',
         limit: query.limit ?? 25,
         offset: query.offset ?? 0,
-        filter: query.filter ? (JSON.parse(query.filter) as Record<string, unknown>) : undefined,
+        filter: query.filter,
+        orderBy: query.orderBy,
       },
       metadata,
     });
@@ -55,7 +57,7 @@ export class BusStopController {
   async getOne(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
-    @Query() query: { preset?: string },
+    @Query() query: IBaseQuery,
   ): Promise<IBusStopResponse> {
     return this.getBusStopUseCase.execute({
       data: { slugOrId: id, preset: query.preset ?? 'BASE' },

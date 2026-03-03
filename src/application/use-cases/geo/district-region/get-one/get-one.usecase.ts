@@ -15,10 +15,7 @@ export class GetDistrictRegionUseCase {
     const { data, metadata } = params;
 
     try {
-      return await this.clientProxy.send<
-        IGetDistrictRegionDto,
-        IDistrictRegionResponse
-      >({
+      return await this.clientProxy.send<IGetDistrictRegionDto, IDistrictRegionResponse>({
         messagePattern: EGeoSubjects.DISTRICT_REGION_GET_ONE,
         data: { slugOrId: data.slugOrId, preset: data.preset ?? 'BASE' },
         metadata,

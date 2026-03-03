@@ -15,10 +15,7 @@ export class CreateDistrictRegionUseCase {
     const { data, metadata } = params;
 
     try {
-      return await this.clientProxy.send<
-        ICreateDistrictRegionDto,
-        IDistrictRegionResponse
-      >({
+      return await this.clientProxy.send<ICreateDistrictRegionDto, IDistrictRegionResponse>({
         messagePattern: EGeoSubjects.DISTRICT_REGION_CREATE,
         data,
         metadata,

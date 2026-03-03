@@ -1,5 +1,6 @@
 import { ICreateCountryDto } from '@application/dtos/geo/country/create-country.dto';
 import { IUpdateCountryDto } from '@application/dtos/geo/country/update-country.dto';
+import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
 import { ICountryResponse } from '@application/dtos/geo/response/country.response';
 import { CreateCountryUseCase } from '@application/use-cases/geo/country/create/create.usecase';
 import { DeleteCountryUseCase } from '@application/use-cases/geo/country/delete/delete.usecase';
@@ -37,14 +38,15 @@ export class CountryController {
   @UseGuards(RsaAuthGuard)
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: { preset?: string; filter?: string; limit?: number; offset?: number },
+    @Query() query: IBaseArrayQuery,
   ): Promise<ICountryResponse[]> {
     return this.getCountriesUseCase.execute({
       data: {
         preset: query.preset ?? 'BASE',
         limit: query.limit ?? 25,
         offset: query.offset ?? 0,
-        filter: query.filter ? (JSON.parse(query.filter) as Record<string, unknown>) : undefined,
+        filter: query.filter,
+        orderBy: query.orderBy,
       },
       metadata,
     });
@@ -55,7 +57,7 @@ export class CountryController {
   async getOne(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
-    @Query() query: { preset?: string },
+    @Query() query: IBaseQuery,
   ): Promise<ICountryResponse> {
     return this.getCountryUseCase.execute({
       data: { slugOrId: id, preset: query.preset ?? 'BASE' },

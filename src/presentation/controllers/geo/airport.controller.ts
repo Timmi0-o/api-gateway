@@ -1,5 +1,6 @@
 import { ICreateAirportDto } from '@application/dtos/geo/airport/create-airport.dto';
 import { IUpdateAirportDto } from '@application/dtos/geo/airport/update-airport.dto';
+import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
 import { IAirportResponse } from '@application/dtos/geo/response/airport.response';
 import { CreateAirportUseCase } from '@application/use-cases/geo/airport/create/create.usecase';
 import { DeleteAirportUseCase } from '@application/use-cases/geo/airport/delete/delete.usecase';
@@ -37,14 +38,15 @@ export class AirportController {
   @UseGuards(RsaAuthGuard)
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: { preset?: string; filter?: string; limit?: number; offset?: number },
+    @Query() query: IBaseArrayQuery,
   ): Promise<IAirportResponse[]> {
     return this.getAirportsUseCase.execute({
       data: {
         preset: query.preset ?? 'BASE',
         limit: query.limit ?? 25,
         offset: query.offset ?? 0,
-        filter: query.filter ? (JSON.parse(query.filter) as Record<string, unknown>) : undefined,
+        filter: query.filter,
+        orderBy: query.orderBy,
       },
       metadata,
     });
@@ -55,7 +57,7 @@ export class AirportController {
   async getOne(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
-    @Query() query: { preset?: string },
+    @Query() query: IBaseQuery,
   ): Promise<IAirportResponse> {
     return this.getAirportUseCase.execute({
       data: { slugOrId: id, preset: query.preset ?? 'BASE' },

@@ -15,10 +15,7 @@ export class UpdateLocalityDistrictUseCase {
     const { data, metadata } = params;
 
     try {
-      return await this.clientProxy.send<
-        IUpdateLocalityDistrictDto,
-        ILocalityDistrictResponse
-      >({
+      return await this.clientProxy.send<IUpdateLocalityDistrictDto, ILocalityDistrictResponse>({
         messagePattern: EGeoSubjects.LOCALITY_DISTRICT_UPDATE,
         data,
         metadata,

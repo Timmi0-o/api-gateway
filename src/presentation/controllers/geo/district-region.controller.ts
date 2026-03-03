@@ -1,5 +1,6 @@
 import { ICreateDistrictRegionDto } from '@application/dtos/geo/district-region/create-district-region.dto';
 import { IUpdateDistrictRegionDto } from '@application/dtos/geo/district-region/update-district-region.dto';
+import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
 import { IDistrictRegionResponse } from '@application/dtos/geo/response/district-region.response';
 import { CreateDistrictRegionUseCase } from '@application/use-cases/geo/district-region/create/create.usecase';
 import { DeleteDistrictRegionUseCase } from '@application/use-cases/geo/district-region/delete/delete.usecase';
@@ -37,14 +38,15 @@ export class DistrictRegionController {
   @UseGuards(RsaAuthGuard)
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: { preset?: string; filter?: string; limit?: number; offset?: number },
+    @Query() query: IBaseArrayQuery,
   ): Promise<IDistrictRegionResponse[]> {
     return this.getDistrictRegionsUseCase.execute({
       data: {
         preset: query.preset ?? 'BASE',
         limit: query.limit ?? 25,
         offset: query.offset ?? 0,
-        filter: query.filter ? (JSON.parse(query.filter) as Record<string, unknown>) : undefined,
+        filter: query.filter,
+        orderBy: query.orderBy,
       },
       metadata,
     });
@@ -55,7 +57,7 @@ export class DistrictRegionController {
   async getOne(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
-    @Query() query: { preset?: string },
+    @Query() query: IBaseQuery,
   ): Promise<IDistrictRegionResponse> {
     return this.getDistrictRegionUseCase.execute({
       data: { slugOrId: id, preset: query.preset ?? 'BASE' },

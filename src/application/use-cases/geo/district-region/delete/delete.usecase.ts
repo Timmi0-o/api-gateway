@@ -15,10 +15,7 @@ export class DeleteDistrictRegionUseCase {
     const { data, metadata } = params;
 
     try {
-      return await this.clientProxy.send<
-        IDeleteDistrictRegionDto,
-        IDistrictRegionResponse
-      >({
+      return await this.clientProxy.send<IDeleteDistrictRegionDto, IDistrictRegionResponse>({
         messagePattern: EGeoSubjects.DISTRICT_REGION_DELETE,
         data,
         metadata,

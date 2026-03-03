@@ -1,0 +1,100 @@
+{
+  "info": {
+    "name": "Geo Addresses API",
+    "description": "Addresses: get-one, get-many, create, update, delete. Bearer auth required.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "variable": [
+    { "key": "url", "value": "http://localhost:3000" },
+    { "key": "token", "value": "" },
+    { "key": "entityId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "entityType", "value": "ORGANIZATION" }
+  ],
+  "item": [
+    {
+      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "name": "Get one by entity",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{url}}/v1/geo/addresses/by-entity?entityId={{entityId}}&entityType={{entityType}}&preset=MINIMAL"
+        },
+        "description": "Get one address by entityId and entityType."
+      }
+    },
+    {
+      "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+      "name": "Get many",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{url}}/v1/geo/addresses?limit=10&page=1&offset=0&preset=MINIMAL"
+        },
+        "description": "List addresses with pagination."
+      }
+    },
+    {
+      "id": "d4e5f6a7-b8c9-0123-def0-234567890123",
+      "name": "Create",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"entityId\": \"{{entityId}}\",\n  \"entityType\": \"{{entityType}}\",\n  \"countryId\": null,\n  \"regionId\": null,\n  \"districtRegionId\": null,\n  \"localityId\": null,\n  \"localityDistrictId\": null\n}"
+        },
+        "url": {
+          "raw": "{{url}}/v1/geo/addresses"
+        },
+        "description": "Create address. Roles: ADMIN, SUPER_ADMIN."
+      }
+    },
+    {
+      "id": "e5f6a7b8-c9d0-1234-ef01-345678901234",
+      "name": "Update",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"entityId\": \"{{entityId}}\",\n  \"entityType\": \"{{entityType}}\",\n  \"countryId\": null,\n  \"regionId\": null,\n  \"districtRegionId\": null,\n  \"localityId\": null,\n  \"localityDistrictId\": null\n}"
+        },
+        "url": {
+          "raw": "{{url}}/v1/geo/addresses"
+        },
+        "description": "Partial update. Roles: ADMIN, SUPER_ADMIN."
+      }
+    },
+    {
+      "id": "f6a7b8c9-d0e1-2345-f012-456789012345",
+      "name": "Delete",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"entityId\": \"{{entityId}}\",\n  \"entityType\": \"{{entityType}}\"\n}"
+        },
+        "url": {
+          "raw": "{{url}}/v1/geo/addresses"
+        },
+        "description": "Delete address. Roles: ADMIN, SUPER_ADMIN."
+      }
+    }
+  ]
+}

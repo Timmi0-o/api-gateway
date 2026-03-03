@@ -1,22 +1,22 @@
-import { ITrainStationResponse } from '@application/dtos/geo/response/train-station.response';
-import { ICreateTrainStationDto } from '@application/dtos/geo/train-station/create-train-station.dto';
+import { IDeleteAddressDto } from '@application/dtos/geo/address/delete-address.dto';
+import { IAddress } from '@application/dtos/geo/response/address.response';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
-import { EGeoTransportSubjects } from '@tourgis/common';
+import { EGeoSubjects } from '@tourgis/common';
 
-export class CreateTrainStationUseCase {
+export class DeleteAddressUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(params: {
-    data: ICreateTrainStationDto;
+    data: IDeleteAddressDto;
     metadata: IMetadataObjectForGrpcRequest;
-  }): Promise<ITrainStationResponse> {
+  }): Promise<IAddress> {
     const { data, metadata } = params;
 
     try {
-      return await this.clientProxy.send<ICreateTrainStationDto, ITrainStationResponse>({
-        messagePattern: EGeoTransportSubjects.TRAIN_STATION_CREATE,
+      return await this.clientProxy.send<IDeleteAddressDto, IAddress>({
+        messagePattern: EGeoSubjects.ADDRESS_DELETE,
         data,
         metadata,
       });

@@ -1,9 +1,16 @@
-export interface IGeoQueryDto {
-  limit?: number;
-  offset?: number;
+/** Query-параметры для запроса одного объекта (get-one) */
+export interface IBaseQuery {
   preset?: string;
-  filter?: Record<string, unknown>;
-  orderBy?: Record<string, 'asc' | 'desc'>;
+}
+
+/** Query-параметры для запроса списка (get-many): preset, пагинация, filter/orderBy как JSON-строки */
+export interface IBaseArrayQuery {
+  preset?: string;
+  limit?: number;
+  page?: number;
+  offset?: number;
+  filter?: string;
+  orderBy?: string;
   include?: string[];
   select?: string[];
 }

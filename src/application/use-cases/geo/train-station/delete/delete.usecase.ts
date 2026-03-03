@@ -1,5 +1,5 @@
-import { IDeleteTrainStationDto } from '@application/dtos/geo/train-station/delete-train-station.dto';
 import { ITrainStationResponse } from '@application/dtos/geo/response/train-station.response';
+import { IDeleteTrainStationDto } from '@application/dtos/geo/train-station/delete-train-station.dto';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
@@ -15,10 +15,7 @@ export class DeleteTrainStationUseCase {
     const { data, metadata } = params;
 
     try {
-      return await this.clientProxy.send<
-        IDeleteTrainStationDto,
-        ITrainStationResponse
-      >({
+      return await this.clientProxy.send<IDeleteTrainStationDto, ITrainStationResponse>({
         messagePattern: EGeoTransportSubjects.TRAIN_STATION_DELETE,
         data,
         metadata,

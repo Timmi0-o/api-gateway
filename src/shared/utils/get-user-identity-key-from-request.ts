@@ -16,9 +16,14 @@ export const getUserIdentityKeyFromRequest = (req: Request): string | undefined 
   const origin =
     req.get('origin') || req.get('referer')?.replace(/\/$/, '').split('/').slice(0, 3).join('/');
 
-  if (!origin || !USER_IDENTITY_KEY_MAP[origin]) {
+  const secretIdentityKey = req.get('tourgis-custom-user-identity-key');
+
+  const identityKey =
+    secretIdentityKey || USER_IDENTITY_KEY_MAP[origin as keyof typeof USER_IDENTITY_KEY_MAP];
+
+  if (!secretIdentityKey && (!origin || !USER_IDENTITY_KEY_MAP[origin])) {
     throw ServiceException.forbidden('CANNOT_GET_USER_IDENTITY_KEY');
   }
 
-  return USER_IDENTITY_KEY_MAP[origin];
+  return identityKey;
 };

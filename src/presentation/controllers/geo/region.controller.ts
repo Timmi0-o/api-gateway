@@ -1,3 +1,4 @@
+import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
 import { ICreateRegionDto } from '@application/dtos/geo/region/create-region.dto';
 import { IUpdateRegionDto } from '@application/dtos/geo/region/update-region.dto';
 import { IRegionResponse } from '@application/dtos/geo/response/region.response';
@@ -37,14 +38,15 @@ export class RegionController {
   @UseGuards(RsaAuthGuard)
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: { preset?: string; filter?: string; limit?: number; offset?: number },
+    @Query() query: IBaseArrayQuery,
   ): Promise<IRegionResponse[]> {
     return this.getRegionsUseCase.execute({
       data: {
         preset: query.preset ?? 'BASE',
         limit: query.limit ?? 25,
         offset: query.offset ?? 0,
-        filter: query.filter ? (JSON.parse(query.filter) as Record<string, unknown>) : undefined,
+        filter: query.filter,
+        orderBy: query.orderBy,
       },
       metadata,
     });
@@ -55,7 +57,7 @@ export class RegionController {
   async getOne(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
-    @Query() query: { preset?: string },
+    @Query() query: IBaseQuery,
   ): Promise<IRegionResponse> {
     return this.getRegionUseCase.execute({
       data: { slugOrId: id, preset: query.preset ?? 'BASE' },

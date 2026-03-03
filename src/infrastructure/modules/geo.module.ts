@@ -43,12 +43,18 @@ import { DeleteWharfUseCase } from '@application/use-cases/geo/wharf/delete/dele
 import { GetWharvesUseCase } from '@application/use-cases/geo/wharf/get-many/get-many.usecase';
 import { GetWharfUseCase } from '@application/use-cases/geo/wharf/get-one/get-one.usecase';
 import { UpdateWharfUseCase } from '@application/use-cases/geo/wharf/update/update.usecase';
+import { CreateAddressUseCase } from '@application/use-cases/geo/address/create/create.usecase';
+import { DeleteAddressUseCase } from '@application/use-cases/geo/address/delete/delete.usecase';
+import { GetAddressesUseCase } from '@application/use-cases/geo/address/get-many/get-many.usecase';
+import { GetAddressUseCase } from '@application/use-cases/geo/address/get-one/get-one.usecase';
+import { UpdateAddressUseCase } from '@application/use-cases/geo/address/update/update.usecase';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import {
   MICROSERVICE_CLIENT_PROXY_SERVICE,
   MicroserviceClientProxyModule,
 } from '@infrastructure/services/microservice-client-proxy/microservice-client-proxy.module';
 import { Module } from '@nestjs/common';
+import { AddressController } from '@presentation/controllers/geo/address.controller';
 import { AirportController } from '@presentation/controllers/geo/airport.controller';
 import { BusStopController } from '@presentation/controllers/geo/bus-stop.controller';
 import { CountryController } from '@presentation/controllers/geo/country.controller';
@@ -63,6 +69,7 @@ import { NATS_CLIENTS } from '@shared/constants/nats-clients';
 @Module({
   imports: [MicroserviceClientProxyModule.register(NATS_CLIENTS.GEO_CLIENT)],
   controllers: [
+    AddressController,
     CountryController,
     RegionController,
     LocalityController,
@@ -342,6 +349,36 @@ import { NATS_CLIENTS } from '@shared/constants/nats-clients';
       provide: DeleteWharfUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) =>
         new DeleteWharfUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetAddressUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new GetAddressUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: GetAddressesUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new GetAddressesUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: CreateAddressUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new CreateAddressUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateAddressUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new UpdateAddressUseCase(clientProxy),
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: DeleteAddressUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) =>
+        new DeleteAddressUseCase(clientProxy),
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
   ],

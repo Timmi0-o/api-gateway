@@ -1,5 +1,6 @@
 import { ICreateLocalityDistrictDto } from '@application/dtos/geo/locality-district/create-locality-district.dto';
 import { IUpdateLocalityDistrictDto } from '@application/dtos/geo/locality-district/update-locality-district.dto';
+import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
 import { ILocalityDistrictResponse } from '@application/dtos/geo/response/locality-district.response';
 import { CreateLocalityDistrictUseCase } from '@application/use-cases/geo/locality-district/create/create.usecase';
 import { DeleteLocalityDistrictUseCase } from '@application/use-cases/geo/locality-district/delete/delete.usecase';
@@ -37,14 +38,15 @@ export class LocalityDistrictController {
   @UseGuards(RsaAuthGuard)
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: { preset?: string; filter?: string; limit?: number; offset?: number },
+    @Query() query: IBaseArrayQuery,
   ): Promise<ILocalityDistrictResponse[]> {
     return this.getLocalityDistrictsUseCase.execute({
       data: {
         preset: query.preset ?? 'BASE',
         limit: query.limit ?? 25,
         offset: query.offset ?? 0,
-        filter: query.filter ? (JSON.parse(query.filter) as Record<string, unknown>) : undefined,
+        filter: query.filter,
+        orderBy: query.orderBy,
       },
       metadata,
     });
@@ -55,7 +57,7 @@ export class LocalityDistrictController {
   async getOne(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
-    @Query() query: { preset?: string },
+    @Query() query: IBaseQuery,
   ): Promise<ILocalityDistrictResponse> {
     return this.getLocalityDistrictUseCase.execute({
       data: { slugOrId: id, preset: query.preset ?? 'BASE' },
