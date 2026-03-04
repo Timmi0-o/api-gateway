@@ -14,20 +14,8 @@ export class UpdateRegisterRequestUseCase {
     const { data, metadata } = params;
     return this.clientProxy.send<typeof data, IRegisterRequestDto>({
       messagePattern: EOrganizationSubjects.REGISTER_REQUEST_UPDATE,
-      data: {
-        registerRequestId: data.registerRequestId,
-        ...(data.organizationName !== undefined && { organizationName: data.organizationName }),
-        ...(data.email !== undefined && { email: data.email }),
-        ...(data.phone !== undefined && { phone: data.phone }),
-        ...(data.name !== undefined && { name: data.name }),
-        ...(data.surname !== undefined && { surname: data.surname }),
-        ...(data.patronymic !== undefined && { patronymic: data.patronymic }),
-        ...(data.comment !== undefined && { comment: data.comment }),
-        ...(data.inn !== undefined && { inn: data.inn }),
-        ...(data.organizationType !== undefined && { organizationType: data.organizationType }),
-        ...(data.modules !== undefined && { modules: data.modules }),
-      },
+      data,
       metadata,
-        });
+    });
   }
 }
