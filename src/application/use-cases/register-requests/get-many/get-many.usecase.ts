@@ -25,11 +25,7 @@ export class GetRegisterRequestsUseCase {
       ...(data.orderBy ? { orderBy: JSON.parse(data.orderBy) } : {}),
       ...(data.limit != null ? { limit: data.limit } : {}),
       ...(data.page != null ? { page: data.page } : {}),
-      ...(data.registerRequestId ? { registerRequestId: data.registerRequestId } : {}),
     };
-
-    console.log('payload', payload);
-    console.log('metadata', metadata);
 
     return this.clientProxy.send<
       typeof payload,
