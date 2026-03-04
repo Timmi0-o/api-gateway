@@ -25,11 +25,13 @@ import { CreateOrganizationUseCase } from '@application/use-cases/organization/c
 import { GetOneOrganizationUseCase } from '@application/use-cases/organization/get-one/get-one.usecase';
 import { GetOrganizationsUseCase } from '@application/use-cases/organization/get/get.usecase';
 import { UpdateOrganizationUseCase } from '@application/use-cases/organization/update/update.usecase';
+import { ApproveRegisterRequestUseCase } from '@application/use-cases/register-requests/approve/approve.usecase';
 import { ChangeRegisterRequestStatusUseCase } from '@application/use-cases/register-requests/change-status/change-status.usecase';
 import { CreateRegisterRequestUseCase } from '@application/use-cases/register-requests/create/create.usecase';
 import { DeleteRegisterRequestsUseCase } from '@application/use-cases/register-requests/delete/delete.usecase';
 import { GetRegisterRequestsUseCase } from '@application/use-cases/register-requests/get-many/get-many.usecase';
 import { GetRegisterRequestUseCase } from '@application/use-cases/register-requests/get-one/get-one.usecase';
+import { RejectRegisterRequestUseCase } from '@application/use-cases/register-requests/reject/reject.usecase';
 import { SoftDeleteRegisterRequestsUseCase } from '@application/use-cases/register-requests/soft-delete/soft-delete.usecase';
 import { UpdateRegisterRequestUseCase } from '@application/use-cases/register-requests/update/update.usecase';
 import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
@@ -318,6 +320,20 @@ import { UserUsecaseModule } from './user.module';
       provide: SoftDeleteRegisterRequestsUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
         return new SoftDeleteRegisterRequestsUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: ApproveRegisterRequestUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new ApproveRegisterRequestUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: RejectRegisterRequestUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new RejectRegisterRequestUseCase(clientProxy);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },

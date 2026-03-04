@@ -19,16 +19,16 @@ export class GetOneUserUseCase {
     const { data, metadata } = params;
 
     const res = await this.clientProxy.send<unknown, IQueryAuthUsersDataResponse>({
-    messagePattern: EAuthSubjects.GET_USERS,
-    data: {
-      preset: data.preset ?? 'MINIMAL',
-      filter: {
-        id: data.userId,
+      messagePattern: EAuthSubjects.GET_USERS,
+      data: {
+        preset: data.preset ?? 'MINIMAL',
+        filter: {
+          id: data.userId,
+        },
       },
-    },
-    metadata,
-  });
+      metadata,
+    });
 
-  return { result: res?.data?.[0] ?? null };
+    return { result: res?.data?.[0] ?? null };
   }
 }

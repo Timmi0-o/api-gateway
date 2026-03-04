@@ -6,7 +6,7 @@ export enum EOrganizationType {
 export interface ICreateOrganizationDto {
   name: string;
   description?: string;
-  organizarionType: EOrganizationType;
+  organizationType: EOrganizationType;
   ownerId: string;
   isActive?: boolean;
 }

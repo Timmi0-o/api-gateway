@@ -2,11 +2,13 @@ import { IChangeRegisterRequestStatusBodyDto } from '@application/dtos/organizat
 import { ICreateRegisterRequestDto } from '@application/dtos/organization/register-request-create.dto';
 import { IDeleteRegisterRequestsDto } from '@application/dtos/organization/register-request-delete.dto';
 import { IUpdateRegisterRequestBodyDto } from '@application/dtos/organization/register-request-update.dto';
+import { ApproveRegisterRequestUseCase } from '@application/use-cases/register-requests/approve/approve.usecase';
 import { ChangeRegisterRequestStatusUseCase } from '@application/use-cases/register-requests/change-status/change-status.usecase';
 import { CreateRegisterRequestUseCase } from '@application/use-cases/register-requests/create/create.usecase';
 import { DeleteRegisterRequestsUseCase } from '@application/use-cases/register-requests/delete/delete.usecase';
 import { GetRegisterRequestsUseCase } from '@application/use-cases/register-requests/get-many/get-many.usecase';
 import { GetRegisterRequestUseCase } from '@application/use-cases/register-requests/get-one/get-one.usecase';
+import { RejectRegisterRequestUseCase } from '@application/use-cases/register-requests/reject/reject.usecase';
 import { SoftDeleteRegisterRequestsUseCase } from '@application/use-cases/register-requests/soft-delete/soft-delete.usecase';
 import { UpdateRegisterRequestUseCase } from '@application/use-cases/register-requests/update/update.usecase';
 import {
@@ -20,6 +22,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -37,6 +41,8 @@ export class RegisterRequestsController {
     private readonly createRegisterRequestUseCase: CreateRegisterRequestUseCase,
     private readonly updateRegisterRequestUseCase: UpdateRegisterRequestUseCase,
     private readonly changeRegisterRequestStatusUseCase: ChangeRegisterRequestStatusUseCase,
+    private readonly approveRegisterRequestUseCase: ApproveRegisterRequestUseCase,
+    private readonly rejectRegisterRequestUseCase: RejectRegisterRequestUseCase,
     private readonly deleteRegisterRequestsUseCase: DeleteRegisterRequestsUseCase,
     private readonly softDeleteRegisterRequestsUseCase: SoftDeleteRegisterRequestsUseCase,
   ) {}
@@ -55,9 +61,6 @@ export class RegisterRequestsController {
       registerRequestId?: string;
     },
   ): Promise<{ data: IRegisterRequestDto[]; meta: IPaginationMeta }> {
-    console.log('query', query);
-    console.log('metadata', metadata);
-
     return this.getRegisterRequestsUseCase.execute({
       data: {
         preset: query.preset,
@@ -111,6 +114,33 @@ export class RegisterRequestsController {
   ): Promise<IRegisterRequestDto> {
     return this.changeRegisterRequestStatusUseCase.execute({
       data: { registerRequestId, ...body },
+      metadata,
+    });
+  }
+
+  @Post(':registerRequestId/approve')
+  @UseGuards(RsaAuthGuard, StaffOnlyGuard)
+  @HttpCode(HttpStatus.OK)
+  async approve(
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
+    @Param('registerRequestId') registerRequestId: string,
+  ): Promise<IRegisterRequestDto> {
+    return this.approveRegisterRequestUseCase.execute({
+      data: { registerRequestId },
+      metadata,
+    });
+  }
+
+  @Post(':registerRequestId/reject')
+  @UseGuards(RsaAuthGuard, StaffOnlyGuard)
+  @HttpCode(HttpStatus.OK)
+  async reject(
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
+    @Param('registerRequestId') registerRequestId: string,
+    @Body() body: { rejectionReason?: string },
+  ): Promise<IRegisterRequestDto> {
+    return this.rejectRegisterRequestUseCase.execute({
+      data: { registerRequestId, rejectionReason: body.rejectionReason },
       metadata,
     });
   }
