@@ -12,4 +12,5 @@ export interface ICreateRegisterRequestDto {
   inn?: string | null;
   organizationType: TOrganizationType;
   modules: TModuleType[];
+  localityId: string;
 }
