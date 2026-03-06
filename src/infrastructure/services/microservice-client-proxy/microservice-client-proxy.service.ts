@@ -1,8 +1,9 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ExceptionWIthFormatRpcCode } from '@shared/utils/exception-with-fromat-rpc-code';
 import { firstValueFrom } from 'rxjs';
+import { formatMicroserviceErrorForLogger } from './utils/format-microservises-error-for-logger';
 
 interface ISendOptions<TInput> {
   messagePattern: string;
@@ -23,6 +24,7 @@ export class MicroserviceClientProxyService implements IMicroserviceClientProxyS
     try {
       return await firstValueFrom<TOutput>(this.client.send(messagePattern, payload));
     } catch (err) {
+      Logger.error(formatMicroserviceErrorForLogger(err, messagePattern));
       const exception = ExceptionWIthFormatRpcCode(err);
 
       // @ts-expect-error: any

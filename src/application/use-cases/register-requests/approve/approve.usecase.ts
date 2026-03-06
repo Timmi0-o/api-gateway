@@ -8,6 +8,7 @@ import { ServiceException } from '@shared/exceptions/service.exception';
 import { EAuthSubjects, EOrganizationSubjects } from '@tourgis/common';
 import { IAuthUserDto } from '@tourgis/contracts/dist/auth/v1';
 import { IOrganizationDto, IRegisterRequestDto } from '@tourgis/contracts/dist/organization/v1';
+import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 
 export class ApproveRegisterRequestUseCase {
@@ -36,20 +37,27 @@ export class ApproveRegisterRequestUseCase {
     }
 
     const password = crypto.randomBytes(6).toString('base64url');
+    const passwordHash = await bcrypt.hash(password, 10);
 
     let companyOwnerId: string | null = null;
 
-    const users = await this.clientProxy.send<unknown, { data: IAuthUserDto[] }>({
-      messagePattern: EAuthSubjects.GET_USERS,
-      data: {
-        preset: 'SHORT',
-        limit: 100,
-        orderBy: { createdAt: 'asc' },
-      },
-      metadata,
-    });
-
-    const existingUser = users.data.find((user) => user.email === registerRequest.email);
+    const existingUser = (
+      await this.clientProxy.send<unknown, { data: IAuthUserDto[] }>({
+        messagePattern: EAuthSubjects.GET_USERS,
+        data: {
+          preset: 'BASE',
+          filters: {
+            email: {
+              value: [registerRequest.email],
+            },
+            source: {
+              value: [registerRequest.organizationType],
+            },
+          },
+        },
+        metadata,
+      })
+    )?.data?.[0];
 
     if (existingUser?.id) {
       companyOwnerId = existingUser.id;
@@ -67,29 +75,41 @@ export class ApproveRegisterRequestUseCase {
           phone: registerRequest.phone ?? null,
           source: registerRequest.organizationType,
           identityScopeKey: registerRequest.organizationType,
-          password,
+          passwordHash,
           role: 'AGENT',
           status: 'ACTIVE',
           language: 'RU',
         },
         metadata,
       });
+    }
 
-      const users = await this.clientProxy.send<unknown, { data: IAuthUserDto[] }>({
+    const userForOwner = (
+      await this.clientProxy.send<
+        unknown,
+        { data: (IAuthUserDto & { organizationUser: { id: string } })[] }
+      >({
         messagePattern: EAuthSubjects.GET_USERS,
         data: {
-          email: registerRequest.email,
-          source: registerRequest.organizationType,
           preset: 'BASE',
-          limit: 100,
+          filters: {
+            email: {
+              value: [registerRequest.email],
+            },
+            source: {
+              value: [registerRequest.organizationType],
+            },
+          },
         },
         metadata,
-      });
+      })
+    )?.data?.[0];
 
-      const ownerUser = users.data.find((user) => user.email === registerRequest.email);
-
-      companyOwnerId = ownerUser?.id ?? null;
+    if (!userForOwner) {
+      throw ServiceException.conflict('REGISTER_REQUEST_NOT_APPROVED (USER_FOR_OWNER_NOT_FOUND)');
     }
+
+    companyOwnerId = userForOwner.organizationUser.id;
 
     if (!companyOwnerId) {
       throw ServiceException.conflict('REGISTER_REQUEST_NOT_APPROVED (COMPANY_OWNER_NOT_FOUND)');
