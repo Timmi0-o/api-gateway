@@ -5,6 +5,7 @@ import { getUserIdentityKeyFromRequest } from '@shared/utils/get-user-identity-k
 import { getUserSourceFromRequest } from '@shared/utils/get-user-source-from-request';
 import { EAuthUserRole } from '@tourgis/contracts/dist/auth/v1';
 import { Request } from 'express';
+import { PUBLIC_ENDPOINT_KEY } from './public-endpoint.decorator';
 
 export interface IMetadataObjectForGrpcRequest extends Record<string, unknown> {
   commonUserId: string;
@@ -22,18 +23,25 @@ export const GetMetadataObjectForGrpcRequest = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext): IMetadataObjectForGrpcRequest => {
     const request = ctx.switchToHttp().getRequest<Request & { user: IDecodedToken }>();
 
-    const user = request.user;
+    const user = request?.user ?? null;
 
-    const metadata: IMetadataObjectForGrpcRequest = {
-      commonUserId: user?.sub as string,
-      isStaffUser:
-        user?.systemRole === EAuthUserRole.ADMIN || user?.systemRole === EAuthUserRole.SUPER_ADMIN,
-      systemRole: user?.systemRole as string,
+    const isPublicEndpoint = Reflect.getMetadata(PUBLIC_ENDPOINT_KEY, ctx.getHandler());
+
+    const metadata: Partial<IMetadataObjectForGrpcRequest> = {
+      ...(isPublicEndpoint
+        ? {}
+        : {
+            commonUserId: user?.sub as string,
+            isStaffUser:
+              user?.systemRole === EAuthUserRole.ADMIN ||
+              user?.systemRole === EAuthUserRole.SUPER_ADMIN,
+            systemRole: user?.systemRole as string,
+            orgId: user?.orgId as string,
+          }),
       source: getUserSourceFromRequest(request) as EUserSource,
-      orgId: user?.orgId as string,
       identityScopeKey: getUserIdentityKeyFromRequest(request),
     };
 
-    return metadata;
+    return metadata as IMetadataObjectForGrpcRequest;
   },
 );

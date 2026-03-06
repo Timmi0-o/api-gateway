@@ -14,6 +14,7 @@ import {
   GetMetadataObjectForGrpcRequest,
   IMetadataObjectForGrpcRequest,
 } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
+import { PublicEndpoint } from '@infrastructure/decorators/public-endpoint.decorator';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import { Body, Controller, Delete, Get, Patch, Post, Query, UseGuards } from '@nestjs/common';
 
@@ -28,7 +29,7 @@ export class AddressController {
   ) {}
 
   @Get('by-entity')
-  @UseGuards(RsaAuthGuard)
+  @PublicEndpoint()
   async getOne(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Query() query: IAddressGetOneQuery,
@@ -44,7 +45,7 @@ export class AddressController {
   }
 
   @Get()
-  @UseGuards(RsaAuthGuard)
+  @PublicEndpoint()
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Query() query: IBaseArrayQuery,

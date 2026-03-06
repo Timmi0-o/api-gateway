@@ -11,6 +11,7 @@ import {
   GetMetadataObjectForGrpcRequest,
   IMetadataObjectForGrpcRequest,
 } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
+import { PublicEndpoint } from '@infrastructure/decorators/public-endpoint.decorator';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
 import {
   Body,
@@ -35,7 +36,7 @@ export class CountryController {
   ) {}
 
   @Get()
-  @UseGuards(RsaAuthGuard)
+  @PublicEndpoint()
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Query() query: IBaseArrayQuery,
@@ -53,7 +54,7 @@ export class CountryController {
   }
 
   @Get(':id')
-  @UseGuards(RsaAuthGuard)
+  @PublicEndpoint()
   async getOne(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') id: string,
