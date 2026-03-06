@@ -8,7 +8,6 @@ import { ServiceException } from '@shared/exceptions/service.exception';
 import { EAuthSubjects, EOrganizationSubjects } from '@tourgis/common';
 import { IAuthUserDto } from '@tourgis/contracts/dist/auth/v1';
 import { IOrganizationDto, IRegisterRequestDto } from '@tourgis/contracts/dist/organization/v1';
-import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 
 export class ApproveRegisterRequestUseCase {
@@ -37,7 +36,6 @@ export class ApproveRegisterRequestUseCase {
     }
 
     const password = crypto.randomBytes(6).toString('base64url');
-    const passwordHash = await bcrypt.hash(password, 10);
 
     let companyOwnerId: string | null = null;
 
@@ -67,9 +65,9 @@ export class ApproveRegisterRequestUseCase {
           surname: registerRequest.surname,
           patronymic: registerRequest.patronymic ?? null,
           phone: registerRequest.phone ?? null,
-          passwordHash,
           source: registerRequest.organizationType,
           identityScopeKey: registerRequest.organizationType,
+          password,
           role: 'AGENT',
           status: 'ACTIVE',
           language: 'RU',
@@ -94,7 +92,7 @@ export class ApproveRegisterRequestUseCase {
     }
 
     if (!companyOwnerId) {
-      throw ServiceException.conflict('COMPANY_OWNER_NOT_FOUND');
+      throw ServiceException.conflict('REGISTER_REQUEST_NOT_APPROVED (COMPANY_OWNER_NOT_FOUND)');
     }
 
     const createOrgPayload: ICreateOrganizationDto = {
