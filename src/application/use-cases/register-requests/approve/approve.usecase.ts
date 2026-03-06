@@ -42,7 +42,10 @@ export class ApproveRegisterRequestUseCase {
     let companyOwnerId: string | null = null;
 
     const existingUser = (
-      await this.clientProxy.send<unknown, { data: IAuthUserDto[] }>({
+      await this.clientProxy.send<
+        unknown,
+        { data: (IAuthUserDto & { organizationUser: { id: string } })[] }
+      >({
         messagePattern: EAuthSubjects.GET_USERS,
         data: {
           preset: 'BASE',
@@ -60,6 +63,31 @@ export class ApproveRegisterRequestUseCase {
     )?.data?.[0];
 
     if (existingUser?.id) {
+      const existCompanyWithExistUser = await this.clientProxy.send<
+        unknown,
+        { success: boolean; data: { name: string } }
+      >({
+        messagePattern: EOrganizationSubjects.ORGANIZATION_GET_BY_OWNER,
+        data: {
+          ownerId: existingUser.id,
+          preset: 'BASE',
+        },
+        metadata: {
+          ...metadata,
+          isStaffUser: true,
+        } as IMetadataObjectForGrpcRequest,
+      });
+
+      if (existCompanyWithExistUser?.success) {
+        throw ServiceException.conflict(
+          'Данный пользователь уже является владельцем компании типа ' +
+            registerRequest.organizationType +
+            ' (' +
+            existCompanyWithExistUser?.data?.name +
+            ')',
+        );
+      }
+
       companyOwnerId = existingUser.id;
     } else {
       const username = crypto.randomBytes(6).toString('base64url');
