@@ -14,13 +14,13 @@ export class AdminPermissionsController {
   @Get()
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: { preset?: string; limit?: number; offset?: number },
+    @Query() query: { preset?: string; limit?: number; page?: number },
   ): Promise<unknown> {
     return this.getAdminPermissionsUseCase.execute({
       data: {
         preset: query.preset,
         limit: query.limit,
-        offset: query.offset,
+        page: query.page,
       },
       metadata,
     });

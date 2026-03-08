@@ -46,7 +46,7 @@ export class RoleController {
     query: {
       filter?: string;
       limit?: number;
-      offset?: number;
+      page?: number;
       preset: string;
     },
   ): Promise<IRoleMinimalDto[]> {
@@ -55,7 +55,7 @@ export class RoleController {
       ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
       ...(query.filter ? { filter: query.filter } : {}),
       ...(query.limit ? { limit: query.limit } : {}),
-      ...(query.offset ? { offset: query.offset } : {}),
+      ...(query.page ? { page: query.page } : {}),
     };
 
     return this.getOrganizationRolesUseCase.execute({ data: formatQuery, metadata });

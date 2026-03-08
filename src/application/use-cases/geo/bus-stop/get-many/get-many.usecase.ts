@@ -17,7 +17,7 @@ export class GetBusStopsUseCase {
     messagePattern: EGeoTransportSubjects.BUS_STOP_GET_MANY,
     data: {
       limit: data.limit ?? 25,
-      offset: data.offset ?? 0,
+      page: data.page ?? 1,
       preset: data.preset ?? 'BASE',
       filter: data.filter ? (JSON.parse(data.filter) as Record<string, unknown>) : undefined,
       orderBy: data.orderBy

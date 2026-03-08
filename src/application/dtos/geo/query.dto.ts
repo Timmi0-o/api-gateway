@@ -8,7 +8,6 @@ export interface IBaseArrayQuery {
   preset?: string;
   limit?: number;
   page?: number;
-  offset?: number;
   filter?: string;
   orderBy?: string;
   include?: string[];

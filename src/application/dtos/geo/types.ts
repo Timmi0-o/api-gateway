@@ -25,9 +25,8 @@ export interface ITransportBase {
 export interface IListResponseMeta {
   total: number;
   totalCount: number;
-  offset: number;
-  limit: number;
   page: number;
+  limit: number;
 }
 
 export interface IListResponse<T> {

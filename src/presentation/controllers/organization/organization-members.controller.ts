@@ -49,14 +49,14 @@ export class MembersController {
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
-    @Query() query: { filter?: string; limit?: number; offset?: number; preset: string },
+    @Query() query: { filter?: string; limit?: number; page?: number; preset: string },
   ): Promise<unknown> {
     const formatQuery = {
       organizationId,
       ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
       ...(query.filter ? { filter: query.filter } : {}),
       ...(query.limit ? { limit: query.limit } : {}),
-      ...(query.offset ? { offset: query.offset } : {}),
+      ...(query.page ? { page: query.page } : {}),
     };
 
     const members = (await this.getMembersUseCase.execute({

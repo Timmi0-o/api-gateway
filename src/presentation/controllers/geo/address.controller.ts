@@ -55,7 +55,6 @@ export class AddressController {
         preset: query.preset as 'MINIMAL' | 'SHORT' | 'BASE' | undefined,
         limit: query.limit ?? 10,
         page: query.page ?? 1,
-        offset: query.offset ?? 0,
         filter: query.filter ? (JSON.parse(query.filter) as Record<string, unknown>) : undefined,
         orderBy: query.orderBy
           ? (JSON.parse(query.orderBy) as Record<string, 'asc' | 'desc'>)

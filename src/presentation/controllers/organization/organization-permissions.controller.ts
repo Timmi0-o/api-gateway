@@ -17,14 +17,14 @@ export class OrganizationPermissionsController {
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
-    @Query() query: { preset?: string; limit?: number; offset?: number },
+    @Query() query: { preset?: string; limit?: number; page?: number },
   ): Promise<unknown> {
     return this.getOrganizationPermissionsUseCase.execute({
       data: {
         organizationId,
         preset: query.preset,
         limit: query.limit,
-        offset: query.offset,
+        page: query.page,
       },
       metadata,
     });

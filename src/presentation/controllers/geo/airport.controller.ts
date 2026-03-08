@@ -45,7 +45,7 @@ export class AirportController {
       data: {
         preset: query.preset ?? 'BASE',
         limit: query.limit ?? 25,
-        offset: query.offset ?? 0,
+        page: query.page ?? 1,
         filter: query.filter,
         orderBy: query.orderBy,
       },

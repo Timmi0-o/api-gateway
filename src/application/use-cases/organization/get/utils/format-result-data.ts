@@ -9,7 +9,7 @@ export const getOrganizationsFormatResultData = ({
   return {
     meta: {
       limit: data?.meta?.limit,
-      offset: data?.meta?.offset,
+      page: data?.meta?.page,
       total: data?.meta?.total,
       totalCount: data?.meta?.totalCount,
     },

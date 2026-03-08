@@ -34,7 +34,7 @@
           { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
         ],
         "url": {
-          "raw": "{{url}}/v1/geo/addresses?limit=10&page=1&offset=0&preset=MINIMAL"
+          "raw": "{{url}}/v1/geo/addresses?limit=10&page=1&preset=MINIMAL"
         },
         "description": "List addresses with pagination."
       }

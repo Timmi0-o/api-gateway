@@ -4,11 +4,11 @@ import {
 } from '@application/dtos/organization/organization-create.dto';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
+import { Logger } from '@nestjs/common';
 import { ServiceException } from '@shared/exceptions/service.exception';
 import { EAuthSubjects, EOrganizationSubjects } from '@tourgis/common';
 import { IAuthUserDto } from '@tourgis/contracts/dist/auth/v1';
 import { IOrganizationDto, IRegisterRequestDto } from '@tourgis/contracts/dist/organization/v1';
-import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
 
 export class ApproveRegisterRequestUseCase {
@@ -20,6 +20,7 @@ export class ApproveRegisterRequestUseCase {
   }): Promise<IRegisterRequestDto> {
     const { data, metadata } = params;
 
+    Logger.log(`Получение заявки на регистрацию: ${data.registerRequestId}`);
     const registerRequest = (
       await this.clientProxy.send<unknown, { data: IRegisterRequestDto }>({
         messagePattern: EOrganizationSubjects.REGISTER_REQUEST_GET_ONE,
@@ -29,18 +30,24 @@ export class ApproveRegisterRequestUseCase {
     )?.data;
 
     if (!registerRequest) {
+      Logger.error('REGISTER_REQUEST_NOT_FOUND');
       throw ServiceException.entityNotFound('REGISTER_REQUEST_NOT_FOUND');
     }
 
+    Logger.log(`Статус заявки: ${registerRequest.status}`);
     if (registerRequest.status !== 'PENDING') {
+      Logger.error('REGISTER_REQUEST_ALREADY_PROCESSED');
       throw ServiceException.conflict('REGISTER_REQUEST_ALREADY_PROCESSED');
     }
 
+    Logger.log(`Генерация пароля для пользователя: ${registerRequest.email}`);
     const password = crypto.randomBytes(6).toString('base64url');
-    const passwordHash = await bcrypt.hash(password, 10);
 
     let companyOwnerId: string | null = null;
 
+    Logger.log(
+      `Проверка наличия пользователя с email: ${registerRequest.email}, organizationType: ${registerRequest.organizationType}`,
+    );
     const existingUser = (
       await this.clientProxy.send<
         unknown,
@@ -63,6 +70,9 @@ export class ApproveRegisterRequestUseCase {
     )?.data?.[0];
 
     if (existingUser?.id) {
+      Logger.log(
+        `Пользователь существует. ID: ${existingUser.id}. Проверяем компании, которыми он владеет...`,
+      );
       const existCompanyWithExistUser = await this.clientProxy.send<
         unknown,
         { success: boolean; data: { name: string } }
@@ -79,6 +89,9 @@ export class ApproveRegisterRequestUseCase {
       });
 
       if (existCompanyWithExistUser?.success) {
+        Logger.error(
+          `Данный пользователь уже является владельцем компании типа ${registerRequest.organizationType} (${existCompanyWithExistUser?.data?.name})`,
+        );
         throw ServiceException.conflict(
           'Данный пользователь уже является владельцем компании типа ' +
             registerRequest.organizationType +
@@ -89,7 +102,11 @@ export class ApproveRegisterRequestUseCase {
       }
 
       companyOwnerId = existingUser.id;
+      Logger.log(
+        `Используем существующего пользователя как владельца компании. OwnerID: ${companyOwnerId}`,
+      );
     } else {
+      Logger.log(`Пользователь не найден. Создаем нового пользователя: ${registerRequest.email}`);
       const username = crypto.randomBytes(6).toString('base64url');
 
       await this.clientProxy.send<unknown, { data: IAuthUserDto }>({
@@ -103,15 +120,17 @@ export class ApproveRegisterRequestUseCase {
           phone: registerRequest.phone ?? null,
           source: registerRequest.organizationType,
           identityScopeKey: registerRequest.organizationType,
-          passwordHash,
+          password,
           role: 'AGENT',
           status: 'ACTIVE',
           language: 'RU',
         },
         metadata,
       });
+      Logger.log(`Пользователь успешно создан: ${registerRequest.email}`);
     }
 
+    Logger.log(`Получаем пользователя для владельца компании...`);
     const userForOwner = (
       await this.clientProxy.send<
         unknown,
@@ -134,15 +153,18 @@ export class ApproveRegisterRequestUseCase {
     )?.data?.[0];
 
     if (!userForOwner) {
+      Logger.error('REGISTER_REQUEST_NOT_APPROVED (USER_FOR_OWNER_NOT_FOUND)');
       throw ServiceException.conflict('REGISTER_REQUEST_NOT_APPROVED (USER_FOR_OWNER_NOT_FOUND)');
     }
 
     companyOwnerId = userForOwner.organizationUser.id;
 
     if (!companyOwnerId) {
+      Logger.error('REGISTER_REQUEST_NOT_APPROVED (COMPANY_OWNER_NOT_FOUND)');
       throw ServiceException.conflict('REGISTER_REQUEST_NOT_APPROVED (COMPANY_OWNER_NOT_FOUND)');
     }
 
+    Logger.log(`Создаем компанию с ownerId: ${companyOwnerId}`);
     const createOrgPayload: ICreateOrganizationDto = {
       name: registerRequest.organizationName,
       organizationType: registerRequest.organizationType as EOrganizationType,
@@ -155,7 +177,9 @@ export class ApproveRegisterRequestUseCase {
       data: createOrgPayload,
       metadata,
     });
+    Logger.log(`Компания создана. ID: ${createdOrganization?.id}`);
 
+    Logger.log(`Меняем статус заявки на 'APPROVED'...`);
     await this.clientProxy.send<unknown, IRegisterRequestDto>({
       messagePattern: EOrganizationSubjects.REGISTER_REQUEST_CHANGE_STATUS,
       data: {
@@ -165,8 +189,10 @@ export class ApproveRegisterRequestUseCase {
       },
       metadata,
     });
+    Logger.log('Статус заявки успешно изменён на APPROVED');
 
-    return this.clientProxy.send<unknown, IRegisterRequestDto>({
+    Logger.log('Обновляем заявку с учетными данными владельца и id созданной организации...');
+    const updatedRequest = await this.clientProxy.send<unknown, IRegisterRequestDto>({
       messagePattern: EOrganizationSubjects.REGISTER_REQUEST_UPDATE,
       data: {
         registerRequestId: data.registerRequestId,
@@ -175,5 +201,8 @@ export class ApproveRegisterRequestUseCase {
       },
       metadata,
     });
+    Logger.log('Заявка успешно обновлена и завершена');
+
+    return updatedRequest;
   }
 }

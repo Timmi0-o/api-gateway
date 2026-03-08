@@ -10,7 +10,7 @@ export class GetOrganizationRolesUseCase {
     data: {
       filter?: string;
       limit?: number;
-      offset?: number;
+      page?: number;
       organizationId: string;
       preset: string;
     };
@@ -26,7 +26,7 @@ export class GetOrganizationRolesUseCase {
         ? { ...JSON.parse(query.filter), name: { not: 'Владелец' } }
         : undefined,
       limit: query?.limit ? +query.limit : 25,
-      offset: query.offset ?? 0,
+      page: query.page ?? 1,
       preset: query.preset ?? 'MINIMAL',
     },
     metadata,

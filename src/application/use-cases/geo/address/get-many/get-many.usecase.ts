@@ -19,7 +19,6 @@ export class GetAddressesUseCase {
     data: {
       limit: data.limit ?? 10,
       page: data.page ?? 1,
-      offset: data.offset ?? 0,
       preset: data.preset ?? 'MINIMAL',
       filter: data.filter,
       orderBy: data.orderBy,

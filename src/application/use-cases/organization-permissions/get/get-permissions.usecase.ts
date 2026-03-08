@@ -10,7 +10,7 @@ export class GetOrganizationPermissionsUseCase {
       organizationId: string;
       preset?: string;
       limit?: number;
-      offset?: number;
+      page?: number;
     };
     metadata: IMetadataObjectForGrpcRequest;
   }): Promise<unknown> {
@@ -22,7 +22,7 @@ export class GetOrganizationPermissionsUseCase {
       organizationId: data.organizationId,
       preset: data.preset ?? 'MINIMAL',
       limit: data?.limit ? +data.limit : 25,
-      offset: data.offset ?? 0,
+      page: data.page ?? 1,
     },
     metadata,
   });

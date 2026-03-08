@@ -40,7 +40,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "{{url}}/geo/countries?preset=BASE&limit=25&offset=0"
+                "url": "{{url}}/geo/countries?preset=BASE&limit=25&page=1"
               }
             },
             {
@@ -103,7 +103,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "{{url}}/geo/regions?preset=BASE&limit=25&offset=0"
+                "url": "{{url}}/geo/regions?preset=BASE&limit=25&page=1"
               }
             },
             {
@@ -166,7 +166,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "{{url}}/geo/localities?preset=BASE&limit=25&offset=0"
+                "url": "{{url}}/geo/localities?preset=BASE&limit=25&page=1"
               }
             },
             {
@@ -230,7 +230,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{url}}/geo/district-regions?preset=BASE&limit=25&offset=0"
+                  "raw": "{{url}}/geo/district-regions?preset=BASE&limit=25&page=1"
                 }
               }
             },
@@ -295,7 +295,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{url}}/geo/locality-districts?preset=BASE&limit=25&offset=0"
+                  "raw": "{{url}}/geo/locality-districts?preset=BASE&limit=25&page=1"
                 }
               }
             },
@@ -364,7 +364,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "{{url}}/geo/airports?preset=BASE&limit=25&offset=0"
+                "url": "{{url}}/geo/airports?preset=BASE&limit=25&page=1"
               }
             },
             {
@@ -427,7 +427,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "{{url}}/geo/bus-stops?preset=BASE&limit=25&offset=0"
+                "url": "{{url}}/geo/bus-stops?preset=BASE&limit=25&page=1"
               }
             },
             {
@@ -490,7 +490,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "{{url}}/geo/train-stations?preset=BASE&limit=25&offset=0"
+                "url": "{{url}}/geo/train-stations?preset=BASE&limit=25&page=1"
               }
             },
             {
@@ -553,7 +553,7 @@
               "request": {
                 "method": "GET",
                 "header": [],
-                "url": "{{url}}/geo/wharves?preset=BASE&limit=25&offset=0"
+                "url": "{{url}}/geo/wharves?preset=BASE&limit=25&page=1"
               }
             },
             {

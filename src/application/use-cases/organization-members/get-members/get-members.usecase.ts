@@ -10,7 +10,7 @@ export class GetMembersUseCase {
       organizationId: string;
       filter?: string;
       limit?: number;
-      offset?: number;
+      page?: number;
       preset: string;
     };
     metadata: IMetadataObjectForGrpcRequest;
@@ -18,17 +18,17 @@ export class GetMembersUseCase {
     const { data, metadata } = params;
 
     const res = await this.clientProxy.send({
-    messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_GET_MANY,
-    data: {
-      organizationId: data.organizationId,
-      filter: data.filter ? JSON.parse(data.filter) : undefined,
-      limit: data?.limit ? +data.limit : 25,
-      offset: data.offset ?? 0,
-      preset: data.preset ?? 'MINIMAL',
-    },
-    metadata,
-  });
+      messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_GET_MANY,
+      data: {
+        organizationId: data.organizationId,
+        filter: data.filter ? JSON.parse(data.filter) : undefined,
+        limit: data?.limit ? +data.limit : 25,
+        page: data.page ?? 1,
+        preset: data.preset ?? 'MINIMAL',
+      },
+      metadata,
+    });
 
-  return res;
+    return res;
   }
 }

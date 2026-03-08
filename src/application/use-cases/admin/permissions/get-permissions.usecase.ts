@@ -6,7 +6,7 @@ export class GetAdminPermissionsUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(params: {
-    data: { preset?: string; limit?: number; offset?: number };
+    data: { preset?: string; limit?: number; page?: number };
     metadata: IMetadataObjectForGrpcRequest;
   }): Promise<unknown> {
     const { data, metadata } = params;
@@ -16,7 +16,7 @@ export class GetAdminPermissionsUseCase {
     data: {
       preset: data.preset ?? 'MINIMAL',
       limit: data?.limit ? +data.limit : 25,
-      offset: data.offset ?? 0,
+      page: data.page ?? 1,
     },
     metadata,
   });
