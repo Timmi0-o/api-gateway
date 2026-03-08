@@ -17,27 +17,27 @@ export class EditOrganizationModulesUseCase {
     const { data, metadata } = params;
 
     if (data.added?.length) {
-    await this.clientProxy.send({
-      messagePattern: EOrganizationSubjects.ORGANIZATION_MODULE_ADD,
-      data: {
-        organizationId: data.organizationId,
-        modules: data.added,
-      },
-      metadata,
-        });
-  }
+      await this.clientProxy.send({
+        messagePattern: EOrganizationSubjects.ORGANIZATION_MODULE_ADD,
+        data: {
+          organizationId: data.organizationId,
+          modules: data.added,
+        },
+        metadata,
+      });
+    }
 
-  if (data.deleted?.length) {
-    await this.clientProxy.send({
-      messagePattern: EOrganizationSubjects.ORGANIZATION_MODULE_REMOVE,
-      data: {
-        organizationId: data.organizationId,
-        modules: data.deleted,
-      },
-      metadata,
-        });
-  }
+    if (data.deleted?.length) {
+      await this.clientProxy.send({
+        messagePattern: EOrganizationSubjects.ORGANIZATION_MODULE_REMOVE,
+        data: {
+          organizationId: data.organizationId,
+          modules: data.deleted,
+        },
+        metadata,
+      });
+    }
 
-  return { success: true };
+    return { success: true };
   }
 }

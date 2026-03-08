@@ -19,17 +19,17 @@ export class GetOrganizationsUseCase {
     const { data, metadata } = params;
 
     const res = await this.clientProxy.send<unknown, IQueryOrganizationsDataResponse>({
-    messagePattern: EOrganizationSubjects.ORGANIZATION_GET_MANY,
-    data: {
-      ...data,
-      filter: data.filter ? JSON.parse(data.filter) : undefined,
-      limit: data?.limit ? +data.limit : 25,
-      page: data.page ?? 1,
-    },
-    metadata,
-  });
+      messagePattern: EOrganizationSubjects.ORGANIZATION_GET_MANY,
+      data: {
+        ...data,
+        filter: data.filter ? JSON.parse(data.filter) : undefined,
+        limit: data?.limit ? +data.limit : 25,
+        page: data.page ?? 1,
+      },
+      metadata,
+    });
 
-  // return getOrganizationsFormatResultData({ data: res });
-  return res as unknown as IOrganizationsDataResponse;
+    // return getOrganizationsFormatResultData({ data: res });
+    return res as unknown as IOrganizationsDataResponse;
   }
 }
