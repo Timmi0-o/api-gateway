@@ -1,0 +1,11 @@
+# Скопировать в корень контекста сборки (www) для уменьшения размера:
+# cp api-gateway/dockerignore-context.prod ../.dockerignore
+# Исключает node_modules из микросервисов и api-gateway
+
+**/node_modules
+**/.git
+**/dist
+**/*.log
+**/.env*
+**/coverage
+**/.cache
