@@ -1,6 +1,6 @@
 # Скопировать в корень контекста сборки (www) для уменьшения размера:
-# cp api-gateway/dockerignore-context.prod ../.dockerignore
-# Исключает node_modules из микросервисов и api-gateway
+# cp api.tourgis.ru/dockerignore-context.prod ../.dockerignore
+# На сервере: cd /var/www/www-root/data/www && cp api.tourgis.ru/dockerignore-context.prod .dockerignore
 
 **/node_modules
 **/.git
@@ -9,3 +9,4 @@
 **/.env*
 **/coverage
 **/.cache
+**/.npm
