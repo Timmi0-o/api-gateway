@@ -6,6 +6,7 @@ import { IMicroserviceClientProxyService } from '@domain/services/i-microservice
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { Logger } from '@nestjs/common';
 import { ServiceException } from '@shared/exceptions/service.exception';
+import { clearPhone } from '@shared/utils/clear-phone';
 import { EAuthSubjects, EOrganizationSubjects } from '@tourgis/common';
 import { IAuthUserDto } from '@tourgis/contracts/dist/auth/v1';
 import { IOrganizationDto, IRegisterRequestDto } from '@tourgis/contracts/dist/organization/v1';
@@ -117,7 +118,7 @@ export class ApproveRegisterRequestUseCase {
           name: registerRequest.name,
           surname: registerRequest.surname,
           patronymic: registerRequest.patronymic ?? null,
-          phone: registerRequest.phone ?? null,
+          phone: clearPhone(registerRequest.phone),
           source: registerRequest.organizationType,
           identityScopeKey: registerRequest.organizationType,
           password,
