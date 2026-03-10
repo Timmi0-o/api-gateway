@@ -10,6 +10,8 @@ const USER_IDENTITY_KEY_MAP: Record<string, string> = {
   'https://api.tourgis.ru': 'ADMIN',
   'http://api.tourgis.ru': 'ADMIN',
   'http://localhost:2044': 'FRANCHISE',
+  'https://localhost:3044': 'BUSINESS',
+  'http://localhost:3044': 'BUSINESS',
 };
 
 export const getUserIdentityKeyFromRequest = (req: Request): string | undefined => {

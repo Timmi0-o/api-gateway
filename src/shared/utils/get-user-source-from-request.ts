@@ -12,6 +12,8 @@ const USER_SOURCE_WHITELIST = [
   'https://api.tourgis.ru',
   'http://localhost:2044',
   'https://localhost:2044',
+  'https://localhost:3044',
+  'http://localhost:3044',
   'Postman',
 ];
 
@@ -23,6 +25,8 @@ const USER_SOURCE_MAP = {
   'http://api.tourgis.ru': 'ADMIN',
   'https://localhost:2044': 'FRANCHISE',
   'http://localhost:2044': 'FRANCHISE',
+  'https://localhost:3044': 'BUSINESS',
+  'http://localhost:3044': 'BUSINESS',
   Postman: 'POSTMAN',
 } as const;
 
