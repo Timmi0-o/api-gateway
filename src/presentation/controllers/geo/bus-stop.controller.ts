@@ -1,6 +1,6 @@
 import { ICreateBusStopDto } from '@application/dtos/geo/bus-stop/create-bus-stop.dto';
 import { IUpdateBusStopDto } from '@application/dtos/geo/bus-stop/update-bus-stop.dto';
-import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
+import { IBaseQuery, IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { IBusStopResponse } from '@application/dtos/geo/response/bus-stop.response';
 import { CreateBusStopUseCase } from '@application/use-cases/geo/bus-stop/create/create.usecase';
 import { DeleteBusStopUseCase } from '@application/use-cases/geo/bus-stop/delete/delete.usecase';
@@ -39,18 +39,9 @@ export class BusStopController {
   @PublicEndpoint()
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: IBaseArrayQuery,
+    @Query() query: IRawArrayQuery,
   ): Promise<IBusStopResponse[]> {
-    return this.getBusStopsUseCase.execute({
-      data: {
-        preset: query.preset ?? 'BASE',
-        limit: query.limit ?? 25,
-        page: query.page ?? 1,
-        filter: query.filter,
-        orderBy: query.orderBy,
-      },
-      metadata,
-    });
+    return this.getBusStopsUseCase.execute({ data: query, metadata });
   }
 
   @Get(':id')

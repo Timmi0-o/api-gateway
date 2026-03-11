@@ -10,6 +10,8 @@ export interface IBaseArrayQuery {
   page?: number;
   filter?: string;
   orderBy?: string;
-  include?: string[];
-  select?: string[];
 }
+
+export type IRawArrayQuery = IBaseArrayQuery & Record<string, unknown>;
+
+export type { INormalizedArrayQuery } from '@shared/utils/split-array-query-params';

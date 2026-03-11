@@ -1,4 +1,4 @@
-import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
+import { IBaseQuery, IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { ICreateRegionDto } from '@application/dtos/geo/region/create-region.dto';
 import { IUpdateRegionDto } from '@application/dtos/geo/region/update-region.dto';
 import { IRegionResponse } from '@application/dtos/geo/response/region.response';
@@ -39,18 +39,9 @@ export class RegionController {
   @PublicEndpoint()
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: IBaseArrayQuery,
+    @Query() query: IRawArrayQuery,
   ): Promise<IRegionResponse[]> {
-    return this.getRegionsUseCase.execute({
-      data: {
-        preset: query.preset ?? 'BASE',
-        limit: query.limit ?? 25,
-        page: query.page ?? 1,
-        filter: query.filter,
-        orderBy: query.orderBy,
-      },
-      metadata,
-    });
+    return this.getRegionsUseCase.execute({ data: query, metadata });
   }
 
   @Get(':id')

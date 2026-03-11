@@ -1,6 +1,6 @@
 import { ICreateDistrictRegionDto } from '@application/dtos/geo/district-region/create-district-region.dto';
 import { IUpdateDistrictRegionDto } from '@application/dtos/geo/district-region/update-district-region.dto';
-import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
+import { IBaseQuery, IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { IDistrictRegionResponse } from '@application/dtos/geo/response/district-region.response';
 import { CreateDistrictRegionUseCase } from '@application/use-cases/geo/district-region/create/create.usecase';
 import { DeleteDistrictRegionUseCase } from '@application/use-cases/geo/district-region/delete/delete.usecase';
@@ -39,18 +39,9 @@ export class DistrictRegionController {
   @PublicEndpoint()
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: IBaseArrayQuery,
+    @Query() query: IRawArrayQuery,
   ): Promise<IDistrictRegionResponse[]> {
-    return this.getDistrictRegionsUseCase.execute({
-      data: {
-        preset: query.preset ?? 'BASE',
-        limit: query.limit ?? 25,
-        page: query.page ?? 1,
-        filter: query.filter,
-        orderBy: query.orderBy,
-      },
-      metadata,
-    });
+    return this.getDistrictRegionsUseCase.execute({ data: query, metadata });
   }
 
   @Get(':id')

@@ -1,6 +1,6 @@
 import { ICreateLocalityDto } from '@application/dtos/geo/locality/create-locality.dto';
 import { IUpdateLocalityDto } from '@application/dtos/geo/locality/update-locality.dto';
-import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
+import { IBaseQuery, IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { ILocalityResponse } from '@application/dtos/geo/response/locality.response';
 import { CreateLocalityUseCase } from '@application/use-cases/geo/locality/create/create.usecase';
 import { DeleteLocalityUseCase } from '@application/use-cases/geo/locality/delete/delete.usecase';
@@ -39,18 +39,9 @@ export class LocalityController {
   @PublicEndpoint()
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: IBaseArrayQuery,
+    @Query() query: IRawArrayQuery,
   ): Promise<ILocalityResponse[]> {
-    return this.getLocalitiesUseCase.execute({
-      data: {
-        preset: query.preset ?? 'BASE',
-        limit: query.limit ?? 25,
-        page: query.page ?? 1,
-        filter: query.filter,
-        orderBy: query.orderBy,
-      },
-      metadata,
-    });
+    return this.getLocalitiesUseCase.execute({ data: query, metadata });
   }
 
   @Get(':id')

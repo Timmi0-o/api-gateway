@@ -1,6 +1,6 @@
 import { ICreateCountryDto } from '@application/dtos/geo/country/create-country.dto';
 import { IUpdateCountryDto } from '@application/dtos/geo/country/update-country.dto';
-import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
+import { IBaseQuery, IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { ICountryResponse } from '@application/dtos/geo/response/country.response';
 import { CreateCountryUseCase } from '@application/use-cases/geo/country/create/create.usecase';
 import { DeleteCountryUseCase } from '@application/use-cases/geo/country/delete/delete.usecase';
@@ -39,18 +39,9 @@ export class CountryController {
   @PublicEndpoint()
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: IBaseArrayQuery,
+    @Query() query: IRawArrayQuery,
   ): Promise<ICountryResponse[]> {
-    return this.getCountriesUseCase.execute({
-      data: {
-        preset: query.preset ?? 'BASE',
-        limit: query.limit ?? 25,
-        page: query.page ?? 1,
-        filter: query.filter,
-        orderBy: query.orderBy,
-      },
-      metadata,
-    });
+    return this.getCountriesUseCase.execute({ data: query, metadata });
   }
 
   @Get(':id')

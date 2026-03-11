@@ -1,6 +1,6 @@
 import { ICreateLocalityDistrictDto } from '@application/dtos/geo/locality-district/create-locality-district.dto';
 import { IUpdateLocalityDistrictDto } from '@application/dtos/geo/locality-district/update-locality-district.dto';
-import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
+import { IBaseQuery, IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { ILocalityDistrictResponse } from '@application/dtos/geo/response/locality-district.response';
 import { CreateLocalityDistrictUseCase } from '@application/use-cases/geo/locality-district/create/create.usecase';
 import { DeleteLocalityDistrictUseCase } from '@application/use-cases/geo/locality-district/delete/delete.usecase';
@@ -39,18 +39,9 @@ export class LocalityDistrictController {
   @PublicEndpoint()
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: IBaseArrayQuery,
+    @Query() query: IRawArrayQuery,
   ): Promise<ILocalityDistrictResponse[]> {
-    return this.getLocalityDistrictsUseCase.execute({
-      data: {
-        preset: query.preset ?? 'BASE',
-        limit: query.limit ?? 25,
-        page: query.page ?? 1,
-        filter: query.filter,
-        orderBy: query.orderBy,
-      },
-      metadata,
-    });
+    return this.getLocalityDistrictsUseCase.execute({ data: query, metadata });
   }
 
   @Get(':id')

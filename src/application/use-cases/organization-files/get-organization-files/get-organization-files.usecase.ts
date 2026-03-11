@@ -1,5 +1,9 @@
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
+import {
+  INormalizedArrayQuery,
+  splitArrayQueryParams,
+} from '@shared/utils/split-array-query-params';
 import { EOrganizationSubjects } from '@tourgis/common';
 import { IGetOrganizationFilesResponse } from '@tourgis/contracts/dist/files/v1';
 
@@ -19,20 +23,30 @@ export class GetOrganizationFilesUseCase {
   }): Promise<IGetOrganizationFilesResponse> {
     const { data, metadata } = params;
 
-    const res = await this.clientProxy.send<
-    IGetOrganizationFilesData,
-    IGetOrganizationFilesResponse
-  >({
-    messagePattern: EOrganizationSubjects.ORGANIZATION_FILE_GET_MANY,
-    data: {
+    const normalizedQuery = splitArrayQueryParams({ preset: data.preset });
+
+    const payload: INormalizedArrayQuery & {
+      path?: string;
+      requiredIds: string[];
+      organizationId: string;
+    } = {
+      ...normalizedQuery,
       path: data.path,
       requiredIds: data.requiredIds ?? [],
-      preset: data.preset ?? 'MINIMAL',
       organizationId: data.organizationId,
-    },
-    metadata,
-  });
+    };
 
-  return res;
+    return this.clientProxy.send<
+      INormalizedArrayQuery & {
+        path?: string;
+        requiredIds: string[];
+        organizationId: string;
+      },
+      IGetOrganizationFilesResponse
+    >({
+      messagePattern: EOrganizationSubjects.ORGANIZATION_FILE_GET_MANY,
+      data: payload,
+      metadata,
+    });
   }
 }

@@ -1,6 +1,6 @@
 import { ICreateTrainStationDto } from '@application/dtos/geo/train-station/create-train-station.dto';
 import { IUpdateTrainStationDto } from '@application/dtos/geo/train-station/update-train-station.dto';
-import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
+import { IBaseQuery, IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { ITrainStationResponse } from '@application/dtos/geo/response/train-station.response';
 import { CreateTrainStationUseCase } from '@application/use-cases/geo/train-station/create/create.usecase';
 import { DeleteTrainStationUseCase } from '@application/use-cases/geo/train-station/delete/delete.usecase';
@@ -39,18 +39,9 @@ export class TrainStationController {
   @PublicEndpoint()
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: IBaseArrayQuery,
+    @Query() query: IRawArrayQuery,
   ): Promise<ITrainStationResponse[]> {
-    return this.getTrainStationsUseCase.execute({
-      data: {
-        preset: query.preset ?? 'BASE',
-        limit: query.limit ?? 25,
-        page: query.page ?? 1,
-        filter: query.filter,
-        orderBy: query.orderBy,
-      },
-      metadata,
-    });
+    return this.getTrainStationsUseCase.execute({ data: query, metadata });
   }
 
   @Get(':id')

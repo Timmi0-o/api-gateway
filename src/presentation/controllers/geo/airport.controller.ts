@@ -1,6 +1,6 @@
 import { ICreateAirportDto } from '@application/dtos/geo/airport/create-airport.dto';
 import { IUpdateAirportDto } from '@application/dtos/geo/airport/update-airport.dto';
-import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
+import { IBaseQuery, IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { IAirportResponse } from '@application/dtos/geo/response/airport.response';
 import { CreateAirportUseCase } from '@application/use-cases/geo/airport/create/create.usecase';
 import { DeleteAirportUseCase } from '@application/use-cases/geo/airport/delete/delete.usecase';
@@ -39,18 +39,9 @@ export class AirportController {
   @PublicEndpoint()
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: IBaseArrayQuery,
+    @Query() query: IRawArrayQuery,
   ): Promise<IAirportResponse[]> {
-    return this.getAirportsUseCase.execute({
-      data: {
-        preset: query.preset ?? 'BASE',
-        limit: query.limit ?? 25,
-        page: query.page ?? 1,
-        filter: query.filter,
-        orderBy: query.orderBy,
-      },
-      metadata,
-    });
+    return this.getAirportsUseCase.execute({ data: query, metadata });
   }
 
   @Get(':id')

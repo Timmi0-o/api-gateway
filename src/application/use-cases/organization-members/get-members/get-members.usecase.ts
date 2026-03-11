@@ -1,34 +1,40 @@
+import { IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { IMicroserviceClientProxyService } from '@domain/services/i-microservice-client-proxy.service';
 import { IMetadataObjectForGrpcRequest } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
+import {
+  INormalizedArrayQuery,
+  splitArrayQueryParams,
+} from '@shared/utils/split-array-query-params';
 import { EOrganizationSubjects } from '@tourgis/common';
 
 export class GetMembersUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(params: {
-    data: {
-      organizationId: string;
-      filter?: string;
-      limit?: number;
-      page?: number;
-      preset: string;
-    };
+    data: IRawArrayQuery & { organizationId: string };
     metadata: IMetadataObjectForGrpcRequest;
   }): Promise<unknown> {
     const { data, metadata } = params;
 
-    const res = await this.clientProxy.send({
-      messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_GET_MANY,
-      data: {
-        organizationId: data.organizationId,
-        filter: data.filter ? JSON.parse(data.filter) : undefined,
-        limit: data?.limit ? +data.limit : 25,
-        page: data.page ?? 1,
-        preset: data.preset ?? 'MINIMAL',
-      },
-      metadata,
+    const normalizedQuery = splitArrayQueryParams({
+      preset: data.preset,
+      filter: data.filter,
+      limit: data.limit,
+      page: data.page,
     });
 
-    return res;
+    const payload: INormalizedArrayQuery & { organizationId: string } = {
+      ...normalizedQuery,
+      organizationId: data.organizationId,
+    };
+
+    return this.clientProxy.send<
+      INormalizedArrayQuery & { organizationId: string },
+      unknown
+    >({
+      messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_GET_MANY,
+      data: payload,
+      metadata,
+    });
   }
 }

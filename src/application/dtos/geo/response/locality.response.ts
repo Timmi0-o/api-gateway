@@ -1,4 +1,4 @@
-import { IGeoPoint, LangRecord } from '@application/dtos/geo/types';
+import { IGeoPoint } from '@application/dtos/geo/types';
 
 export interface ILocalityResponse {
   id: string;
@@ -8,11 +8,11 @@ export interface ILocalityResponse {
   type: number;
   main: boolean;
   coordinates: IGeoPoint | null;
-  name: LangRecord;
-  descriptions: LangRecord | null;
-  metaTitle: LangRecord | null;
-  metaDescriptions: LangRecord | null;
-  metaKeywords: LangRecord | null;
+  name: string;
+  descriptions: string | null;
+  metaTitle: string | null;
+  metaDescriptions: string | null;
+  metaKeywords: string | null;
   createdAt: string;
   updatedAt: string;
 }

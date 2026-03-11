@@ -1,6 +1,6 @@
 import { ICreateWharfDto } from '@application/dtos/geo/wharf/create-wharf.dto';
 import { IUpdateWharfDto } from '@application/dtos/geo/wharf/update-wharf.dto';
-import { IBaseArrayQuery, IBaseQuery } from '@application/dtos/geo/query.dto';
+import { IBaseQuery, IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { IWharfResponse } from '@application/dtos/geo/response/wharf.response';
 import { CreateWharfUseCase } from '@application/use-cases/geo/wharf/create/create.usecase';
 import { DeleteWharfUseCase } from '@application/use-cases/geo/wharf/delete/delete.usecase';
@@ -39,18 +39,9 @@ export class WharfController {
   @PublicEndpoint()
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
-    @Query() query: IBaseArrayQuery,
+    @Query() query: IRawArrayQuery,
   ): Promise<IWharfResponse[]> {
-    return this.getWharvesUseCase.execute({
-      data: {
-        preset: query.preset ?? 'BASE',
-        limit: query.limit ?? 25,
-        page: query.page ?? 1,
-        filter: query.filter,
-        orderBy: query.orderBy,
-      },
-      metadata,
-    });
+    return this.getWharvesUseCase.execute({ data: query, metadata });
   }
 
   @Get(':id')
