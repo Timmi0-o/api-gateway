@@ -18,7 +18,7 @@ import {
 } from '@tourgis/contracts/dist/auth/v1';
 import { Request } from 'express';
 
-@Controller({ path: 'GetOneUserUseCase', version: '1' })
+@Controller({ path: 'user', version: '1' })
 export class UserController {
   constructor(
     private readonly registerUsecase: RegisterUseCase,

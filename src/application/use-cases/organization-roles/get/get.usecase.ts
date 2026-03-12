@@ -12,24 +12,17 @@ export class GetOrganizationRolesUseCase {
   constructor(private readonly clientProxy: IMicroserviceClientProxyService) {}
 
   async execute(params: {
-    data: IRawArrayQuery & { organizationId: string };
+    data: { organizationId: string; query: IRawArrayQuery };
     metadata: IMetadataObjectForGrpcRequest;
   }): Promise<IRoleMinimalDto[]> {
     const { data, metadata } = params;
+    console.log('data', JSON.stringify(data, null, 2));
 
-    const normalizedQuery = splitArrayQueryParams({
-      preset: data.preset,
-      limit: data.limit,
-      page: data.page,
-      filter: data.filter,
-    });
+    const normalizedQuery = splitArrayQueryParams(data.query);
 
     const payload: INormalizedArrayQuery & { organizationId: string } = {
       ...normalizedQuery,
       organizationId: data.organizationId,
-      filter: normalizedQuery.filter
-        ? { ...normalizedQuery.filter, name: { not: 'Владелец' } }
-        : undefined,
     };
 
     return this.clientProxy.send<

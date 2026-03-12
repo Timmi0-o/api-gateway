@@ -7,7 +7,7 @@ export interface INormalizedArrayQuery {
   filter?: Record<string, unknown>;
 }
 
-const RESERVED_KEYS = new Set(['preset', 'limit', 'page', 'orderBy']);
+const RESERVED_KEYS = new Set(['preset', 'limit', 'page', 'orderBy', 'filter']);
 
 function toNumber(value: unknown, fallback: number): number {
   if (value === undefined || value === null) return fallback;
@@ -77,6 +77,10 @@ function deepParseJson(value: unknown): unknown {
 }
 
 export function splitArrayQueryParams(query: Record<string, unknown>): INormalizedArrayQuery {
+  if (typeof query === 'string') {
+    query = JSON.parse(query) as Record<string, unknown>;
+  }
+
   const filterFromQueryRaw = parseFilterJson(query.filter);
   const filterFromQuery =
     filterFromQueryRaw && Object.keys(filterFromQueryRaw).length > 0
@@ -101,6 +105,6 @@ export function splitArrayQueryParams(query: Record<string, unknown>): INormaliz
     limit: toNumber(query.limit, 25),
     page: toNumber(query.page, 1),
     orderBy: parseOrderBy(query.orderBy),
-    filter: filter && Object.keys(filter).length > 0 ? filter : undefined,
+    filter: filter && Object.keys(filter).length > 0 ? { ...filter } : undefined,
   };
 }

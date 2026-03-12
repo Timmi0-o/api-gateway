@@ -1,6 +1,6 @@
+import { IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { ICreateRoleDto } from '@application/dtos/organization/role-create.dto';
 import { CreateRolePermissionsUseCase } from '@application/use-cases/organization-permissions/create/create-permissions.usecase';
-import { CreateRoleUseCase } from '@application/use-cases/organization-roles/create/create.usecase';
 import { DeleteRoleUseCase } from '@application/use-cases/organization-roles/delete/delete.usecase';
 import { GetOneOrganizationRoleUseCase } from '@application/use-cases/organization-roles/get-one/get-one.usecase';
 import { GetOrganizationRolesUseCase } from '@application/use-cases/organization-roles/get/get.usecase';
@@ -31,7 +31,6 @@ export class RoleController {
   constructor(
     private readonly getOrganizationRolesUseCase: GetOrganizationRolesUseCase,
     private readonly getOneOrganizationRoleUseCase: GetOneOrganizationRoleUseCase,
-    private readonly createRoleUseCase: CreateRoleUseCase,
     private readonly createRolePermissionsUseCase: CreateRolePermissionsUseCase,
     private readonly updateRoleUseCase: UpdateRoleUseCase,
     private readonly deleteRoleUseCase: DeleteRoleUseCase,
@@ -43,22 +42,9 @@ export class RoleController {
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @Query()
-    query: {
-      filter?: string;
-      limit?: number;
-      page?: number;
-      preset: string;
-    },
+    query: IRawArrayQuery,
   ): Promise<IRoleMinimalDto[]> {
-    const formatQuery = {
-      organizationId,
-      ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
-      ...(query.filter ? { filter: query.filter } : {}),
-      ...(query.limit ? { limit: query.limit } : {}),
-      ...(query.page ? { page: query.page } : {}),
-    };
-
-    return this.getOrganizationRolesUseCase.execute({ data: formatQuery, metadata });
+    return this.getOrganizationRolesUseCase.execute({ data: { organizationId, query }, metadata });
   }
 
   @Get(':roleId')
@@ -82,47 +68,10 @@ export class RoleController {
     @Param('organizationId') organizationId: string,
     @Body() data: ICreateRoleDto & { permissionIds?: string[] },
   ): Promise<{ success: boolean; roleId: string }> {
-    const { permissionIds, ...roleData } = data;
-    let roleId: string;
-
-    const existRole = await this.getOrganizationRolesUseCase.execute({
-      data: {
-        organizationId,
-        preset: 'MINIMAL',
-        filter: JSON.stringify({ name: roleData.name, organizationId }),
-      },
+    return this.createRolePermissionsUseCase.execute({
+      data: { ...data, organizationId },
       metadata,
     });
-
-    // @ts-expect-error: any
-    if (!existRole || !existRole?.data.find((role) => role.name === roleData.name)) {
-      const newRole = await this.createRoleUseCase.execute({
-        data: {
-          ...roleData,
-          organizationId,
-        },
-        metadata,
-      });
-
-      // @ts-expect-error: any
-      roleId = newRole.data.id;
-    } else {
-      // @ts-expect-error: any
-      roleId = existRole?.data?.find((role) => role.name === roleData.name)?.id;
-    }
-
-    if (permissionIds?.length) {
-      await this.createRolePermissionsUseCase.execute({
-        data: {
-          roleId,
-          organizationId,
-          permissionIds,
-        },
-        metadata,
-      });
-    }
-
-    return { success: true, roleId };
   }
 
   @Patch(':roleId')

@@ -168,10 +168,18 @@ import { UserUsecaseModule } from './user.module';
     },
     {
       provide: CreateRolePermissionsUseCase,
-      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
-        return new CreateRolePermissionsUseCase(clientProxy);
+      useFactory: (
+        clientProxy: IMicroserviceClientProxyService,
+        getOrganizationRolesUseCase: GetOrganizationRolesUseCase,
+        createRoleUseCase: CreateRoleUseCase,
+      ) => {
+        return new CreateRolePermissionsUseCase(
+          clientProxy,
+          getOrganizationRolesUseCase,
+          createRoleUseCase,
+        );
       },
-      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE, GetOrganizationRolesUseCase, CreateRoleUseCase],
     },
     {
       provide: DeleteRoleUseCase,
