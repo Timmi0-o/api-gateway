@@ -39,7 +39,6 @@ export class OrganizationController {
     query: { filter?: string; limit?: number; page?: number; preset: 'string' },
   ): Promise<IOrganizationsDataResponse> {
     const formatQuery = {
-      ...(query.filter ? { filter: query.filter } : {}),
       ...(query.limit ? { limit: query.limit } : {}),
       ...(query.page ? { page: query.page } : {}),
       ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),

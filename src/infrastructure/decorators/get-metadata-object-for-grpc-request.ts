@@ -37,6 +37,7 @@ export const GetMetadataObjectForGrpcRequest = createParamDecorator(
               user?.systemRole === EAuthUserRole.SUPER_ADMIN,
             systemRole: user?.systemRole as string,
             orgId: user?.orgId as string,
+            roleId: user?.roleId as string,
           }),
       source: getUserSourceFromRequest(request) as EUserSource,
       identityScopeKey: getUserIdentityKeyFromRequest(request),
