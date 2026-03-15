@@ -1,3 +1,4 @@
+import { IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { ICreateOrganizationDto } from '@application/dtos/organization/organization-create.dto';
 import { IUpdateOrganizationDto } from '@application/dtos/organization/organization-update.dto';
 import { CreateOrganizationUseCase } from '@application/use-cases/organization/create/create.usecase';
@@ -36,14 +37,9 @@ export class OrganizationController {
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Query()
-    query: { filter?: string; limit?: number; page?: number; preset: 'string' },
+    query: IRawArrayQuery,
   ): Promise<IOrganizationsDataResponse> {
-    const formatQuery = {
-      ...(query.limit ? { limit: query.limit } : {}),
-      ...(query.page ? { page: query.page } : {}),
-      ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
-    };
-    return this.getOrganizationsUsecase.execute({ data: formatQuery, metadata });
+    return this.getOrganizationsUsecase.execute({ data: query, metadata });
   }
 
   @Get(':id')

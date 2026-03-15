@@ -20,14 +20,13 @@ export class GetOrganizationsUseCase {
 
     const normalizedQuery = splitArrayQueryParams(data);
 
-    const res = await this.clientProxy.send<
-      INormalizedArrayQuery,
-      IQueryOrganizationsDataResponse
-    >({
-      messagePattern: EOrganizationSubjects.ORGANIZATION_GET_MANY,
-      data: normalizedQuery,
-      metadata,
-    });
+    const res = await this.clientProxy.send<INormalizedArrayQuery, IQueryOrganizationsDataResponse>(
+      {
+        messagePattern: EOrganizationSubjects.ORGANIZATION_GET_MANY,
+        data: normalizedQuery,
+        metadata,
+      },
+    );
 
     return res as unknown as IOrganizationsDataResponse;
   }
