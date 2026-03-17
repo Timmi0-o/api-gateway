@@ -77,8 +77,9 @@ export class S3Service implements IS3Service, OnModuleInit {
         etag: response.ETag || '',
       };
     } catch (err) {
-      this.logger.error(`Error uploading file: ${err.message}`, err.stack);
-      throw ExternalServiceError.withMessage('Произошла ошибка при загрузке файла');
+      const message = err?.message ?? String(err);
+      this.logger.error(`Error uploading file: ${message}`, err?.stack);
+      throw ExternalServiceError.withMessage(`Произошла ошибка при загрузке файла: ${message}`);
     }
   }
 
@@ -108,8 +109,9 @@ export class S3Service implements IS3Service, OnModuleInit {
         etag: response.Location || '',
       };
     } catch (err) {
-      this.logger.error(`Error uploading large file: ${err.message}`, err.stack);
-      throw ExternalServiceError.withMessage('Произошла ошибка при загрузке файла');
+      const message = err?.message ?? String(err);
+      this.logger.error(`Error uploading large file: ${message}`, err?.stack);
+      throw ExternalServiceError.withMessage(`Произошла ошибка при загрузке файла: ${message}`);
     }
   }
 

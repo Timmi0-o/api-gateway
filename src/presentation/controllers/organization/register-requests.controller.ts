@@ -2,6 +2,7 @@ import { IChangeRegisterRequestStatusBodyDto } from '@application/dtos/organizat
 import { ICreateRegisterRequestDto } from '@application/dtos/organization/register-request-create.dto';
 import { IDeleteRegisterRequestsDto } from '@application/dtos/organization/register-request-delete.dto';
 import { IUpdateRegisterRequestBodyDto } from '@application/dtos/organization/register-request-update.dto';
+import { CreateOrganizationContractsUseCase } from '@application/use-cases/organization-contracts/create/create-organization-contracts.usecase';
 import { ApproveRegisterRequestUseCase } from '@application/use-cases/register-requests/approve/approve.usecase';
 import { ChangeRegisterRequestStatusUseCase } from '@application/use-cases/register-requests/change-status/change-status.usecase';
 import { CreateRegisterRequestUseCase } from '@application/use-cases/register-requests/create/create.usecase';
@@ -16,7 +17,7 @@ import {
   IMetadataObjectForGrpcRequest,
 } from '@infrastructure/decorators/get-metadata-object-for-grpc-request';
 import { RsaAuthGuard } from '@infrastructure/guards/rsa-auth.guard';
-import { StaffOnlyGuard } from '@infrastructure/guards/staff-only.guard';
+import {} from '@infrastructure/guards/staff-only.guard';
 import {
   Body,
   Controller,
@@ -28,8 +29,11 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { IPaginationMeta } from '@tourgis/contracts';
 import { IRegisterRequestDto } from '@tourgis/contracts/dist/organization/v1';
 
@@ -45,10 +49,11 @@ export class RegisterRequestsController {
     private readonly rejectRegisterRequestUseCase: RejectRegisterRequestUseCase,
     private readonly deleteRegisterRequestsUseCase: DeleteRegisterRequestsUseCase,
     private readonly softDeleteRegisterRequestsUseCase: SoftDeleteRegisterRequestsUseCase,
+    private readonly createOrganizationContractsUseCase: CreateOrganizationContractsUseCase,
   ) {}
 
   @Get()
-  @UseGuards(RsaAuthGuard, StaffOnlyGuard)
+  @UseGuards(RsaAuthGuard)
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Query()
@@ -92,8 +97,22 @@ export class RegisterRequestsController {
     return this.createRegisterRequestUseCase.execute(body);
   }
 
+  @Post('upload-contracts')
+  @UseGuards(RsaAuthGuard)
+  @UseInterceptors(FilesInterceptor('files', 10, { limits: { fileSize: 50 * 1024 * 1024 } }))
+  async createContracts(
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body() body: { registerRequestId: string },
+  ): Promise<{ count: number; errors: unknown[] }> {
+    return this.createOrganizationContractsUseCase.execute({
+      data: { registerRequestId: body.registerRequestId, files },
+      metadata,
+    });
+  }
+
   @Patch(':registerRequestId')
-  @UseGuards(RsaAuthGuard, StaffOnlyGuard)
+  @UseGuards(RsaAuthGuard)
   async update(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('registerRequestId') registerRequestId: string,
@@ -106,7 +125,7 @@ export class RegisterRequestsController {
   }
 
   @Patch(':registerRequestId/status')
-  @UseGuards(RsaAuthGuard, StaffOnlyGuard)
+  @UseGuards(RsaAuthGuard)
   async changeStatus(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('registerRequestId') registerRequestId: string,
@@ -119,7 +138,7 @@ export class RegisterRequestsController {
   }
 
   @Post(':registerRequestId/approve')
-  @UseGuards(RsaAuthGuard, StaffOnlyGuard)
+  @UseGuards(RsaAuthGuard)
   @HttpCode(HttpStatus.OK)
   async approve(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
@@ -132,7 +151,7 @@ export class RegisterRequestsController {
   }
 
   @Post(':registerRequestId/reject')
-  @UseGuards(RsaAuthGuard, StaffOnlyGuard)
+  @UseGuards(RsaAuthGuard)
   @HttpCode(HttpStatus.OK)
   async reject(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
@@ -146,7 +165,7 @@ export class RegisterRequestsController {
   }
 
   @Delete()
-  @UseGuards(RsaAuthGuard, StaffOnlyGuard)
+  @UseGuards(RsaAuthGuard)
   async delete(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Body() body: IDeleteRegisterRequestsDto,
@@ -159,7 +178,7 @@ export class RegisterRequestsController {
   }
 
   @Delete('soft')
-  @UseGuards(RsaAuthGuard, StaffOnlyGuard)
+  @UseGuards(RsaAuthGuard)
   async softDelete(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Body() body: IDeleteRegisterRequestsDto,

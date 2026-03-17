@@ -25,6 +25,7 @@ import { CreateOrganizationUseCase } from '@application/use-cases/organization/c
 import { GetOneOrganizationUseCase } from '@application/use-cases/organization/get-one/get-one.usecase';
 import { GetOrganizationsUseCase } from '@application/use-cases/organization/get/get.usecase';
 import { UpdateOrganizationUseCase } from '@application/use-cases/organization/update/update.usecase';
+import { CreateOrganizationContractsUseCase } from '@application/use-cases/organization-contracts/create/create-organization-contracts.usecase';
 import { ApproveRegisterRequestUseCase } from '@application/use-cases/register-requests/approve/approve.usecase';
 import { ChangeRegisterRequestStatusUseCase } from '@application/use-cases/register-requests/change-status/change-status.usecase';
 import { CreateRegisterRequestUseCase } from '@application/use-cases/register-requests/create/create.usecase';
@@ -344,6 +345,16 @@ import { UserUsecaseModule } from './user.module';
         return new RejectRegisterRequestUseCase(clientProxy);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: CreateOrganizationContractsUseCase,
+      useFactory: (
+        clientProxy: IMicroserviceClientProxyService,
+        fileUploadService: FileUploadService,
+      ) => {
+        return new CreateOrganizationContractsUseCase(clientProxy, fileUploadService);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE, FileUploadService],
     },
   ],
 })
