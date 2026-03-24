@@ -13,17 +13,16 @@ export class UpdateOrganizationMemberUseCase {
     const { data, metadata } = params;
 
     const res = await this.clientProxy.send({
-    messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_UPDATE,
-    data: {
-      commonUserId: metadata.commonUserId,
-      organizationId: data.organizationId,
-      userId: data.userId,
-      roleId: data.roleId,
-      ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
-    },
-    metadata,
-  });
+      messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_UPDATE,
+      data: {
+        organizationId: data.organizationId,
+        userId: data.userId,
+        roleId: data.roleId,
+        ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
+      },
+      metadata,
+    });
 
-  return res;
+    return res;
   }
 }
