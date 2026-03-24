@@ -5,6 +5,7 @@ export interface INormalizedArrayQuery {
   page: number;
   orderBy?: Record<string, 'asc' | 'desc'>;
   filter?: Record<string, unknown>;
+  requiredIds?: string[];
 }
 
 const RESERVED_KEYS = new Set(['preset', 'limit', 'page', 'orderBy', 'filter']);
@@ -106,5 +107,8 @@ export function splitArrayQueryParams(query: Record<string, unknown>): INormaliz
     page: toNumber(query.page, 1),
     orderBy: parseOrderBy(query.orderBy),
     filter: filter && Object.keys(filter).length > 0 ? { ...filter } : undefined,
+    ...(query.requiredIds
+      ? { requiredIds: Array.isArray(query.requiredIds) ? query.requiredIds : [query.requiredIds] }
+      : {}),
   };
 }

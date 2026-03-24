@@ -1,3 +1,4 @@
+import { IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { IRegisterDto } from '@application/dtos/user/register.dto';
 import { IUpdateUserDto } from '@application/dtos/user/update.dto';
 import { GetOneUserUseCase } from '@application/use-cases/user/get-one/get-one.usecase';
@@ -40,15 +41,9 @@ export class UserController {
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Query()
-    query: { filter?: string; limit?: number; page?: number; preset: string },
+    query: IRawArrayQuery,
   ): Promise<IQueryAuthUsersDataResponse> {
-    const formatQuery = {
-      ...(query.filter ? { filter: query.filter } : {}),
-      ...(query.limit ? { limit: query.limit } : {}),
-      ...(query.page ? { page: query.page } : {}),
-      ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
-    };
-    return this.getUsersUsecase.execute({ data: formatQuery, metadata });
+    return this.getUsersUsecase.execute({ data: query, metadata });
   }
 
   @Get(':id')
@@ -56,13 +51,9 @@ export class UserController {
   async getOne(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('id') userId: string,
-    @Query() query: { preset: string },
+    @Query() query: IRawArrayQuery,
   ): Promise<{ result: IUserWithOrganizationData | null }> {
-    const formatQuery = {
-      userId,
-      ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
-    };
-    return this.getOneUserUsecase.execute({ data: formatQuery, metadata });
+    return this.getOneUserUsecase.execute({ data: { userId, ...query }, metadata });
   }
 
   @Patch(':id')

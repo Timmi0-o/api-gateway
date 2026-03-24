@@ -10,6 +10,7 @@ export interface IBaseArrayQuery {
   page?: number;
   filter?: string;
   orderBy?: string;
+  requiredIds?: string;
 }
 
 export type IRawArrayQuery = IBaseArrayQuery & Record<string, unknown>;

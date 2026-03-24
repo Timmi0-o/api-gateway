@@ -1,4 +1,5 @@
 import { EUserSource } from '@application/dtos/auth/login.dto';
+import { IRawArrayQuery } from '@application/dtos/geo/query.dto';
 import { IAddOrganizationMemberDto } from '@application/dtos/organization/organization-member-add.dto';
 import { IUpdateOrganizationMemberDto } from '@application/dtos/organization/organization-member-update.dto';
 import { AddMemberUseCase } from '@application/use-cases/organization-members/add-member/add-member.usecase';
@@ -29,7 +30,6 @@ import {
 import { getUserIdentityKeyFromRequest } from '@shared/utils/get-user-identity-key-from-request';
 import { getUserSourceFromRequest } from '@shared/utils/get-user-source-from-request';
 import { Permissions } from '@tourgis/common';
-import { Organization } from '@tourgis/contracts';
 import { Request } from 'express';
 
 @Controller({ path: 'organization/:organizationId/members', version: '1' })
@@ -49,23 +49,15 @@ export class MembersController {
   async getMany(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
-    @Query() query: { filter?: string; limit?: number; page?: number; preset: string },
+    @Query() query: IRawArrayQuery,
   ): Promise<unknown> {
-    const formatQuery = {
-      organizationId,
-      ...(query.preset ? { preset: query.preset } : { preset: 'MINIMAL' }),
-      ...(query.filter ? { filter: query.filter } : {}),
-      ...(query.limit ? { limit: query.limit } : {}),
-      ...(query.page ? { page: query.page } : {}),
-    };
-
-    const members = (await this.getMembersUseCase.execute({
-      data: formatQuery,
+    return this.getMembersUseCase.execute({
+      data: {
+        organizationId,
+        ...query,
+      },
       metadata,
-    })) as (Organization.v1.IOrganizationMemberDto &
-      Organization.v1.IOrganizationMemberRelationsMap)[];
-
-    return members;
+    });
   }
 
   @Get(':userId')
@@ -106,26 +98,23 @@ export class MembersController {
   }
 
   @Patch(':userId')
-  @UseGuards(RsaAuthGuard)
+  @UseGuards(RsaAuthGuard, PermissionGuard)
+  @Permission(Permissions.member.update)
   async update(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,
     @Param('userId') userId: string,
-    @Body() data: Pick<IUpdateOrganizationMemberDto, 'roleId' | 'isActive'>,
+    @Body() data: IUpdateOrganizationMemberDto,
   ): Promise<unknown> {
     return this.updateOrganizationMemberUseCase.execute({
-      data: {
-        organizationId,
-        userId,
-        roleId: data.roleId,
-        ...(data.isActive !== undefined ? { isActive: data.isActive } : {}),
-      },
+      data,
       metadata,
     });
   }
 
   @Delete(':userId')
-  @UseGuards(RsaAuthGuard)
+  @UseGuards(RsaAuthGuard, PermissionGuard)
+  @Permission(Permissions.member.delete)
   async delete(
     @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
     @Param('organizationId') organizationId: string,

@@ -16,22 +16,16 @@ export class GetMembersUseCase {
   }): Promise<unknown> {
     const { data, metadata } = params;
 
-    const normalizedQuery = splitArrayQueryParams({
-      preset: data.preset,
-      filter: data.filter,
-      limit: data.limit,
-      page: data.page,
-    });
+    const { organizationId, ...query } = data;
+
+    const normalizedQuery = splitArrayQueryParams(query);
 
     const payload: INormalizedArrayQuery & { organizationId: string } = {
       ...normalizedQuery,
       organizationId: data.organizationId,
     };
 
-    return this.clientProxy.send<
-      INormalizedArrayQuery & { organizationId: string },
-      unknown
-    >({
+    return this.clientProxy.send<INormalizedArrayQuery & { organizationId: string }, unknown>({
       messagePattern: EOrganizationSubjects.ORGANIZATION_MEMBER_GET_MANY,
       data: payload,
       metadata,
