@@ -2,6 +2,7 @@ import { IChangeRegisterRequestStatusBodyDto } from '@application/dtos/organizat
 import { ICreateRegisterRequestDto } from '@application/dtos/organization/register-request-create.dto';
 import { IDeleteRegisterRequestsDto } from '@application/dtos/organization/register-request-delete.dto';
 import { IUpdateRegisterRequestBodyDto } from '@application/dtos/organization/register-request-update.dto';
+import { IUpdateRegisterRequestTariffsBodyDto } from '@application/dtos/organization/register-request-update-tariffs.dto';
 import { CreateOrganizationContractsUseCase } from '@application/use-cases/organization-contracts/create/create-organization-contracts.usecase';
 import { ApproveRegisterRequestUseCase } from '@application/use-cases/register-requests/approve/approve.usecase';
 import { ChangeRegisterRequestStatusUseCase } from '@application/use-cases/register-requests/change-status/change-status.usecase';
@@ -11,6 +12,7 @@ import { GetRegisterRequestsUseCase } from '@application/use-cases/register-requ
 import { GetRegisterRequestUseCase } from '@application/use-cases/register-requests/get-one/get-one.usecase';
 import { RejectRegisterRequestUseCase } from '@application/use-cases/register-requests/reject/reject.usecase';
 import { SoftDeleteRegisterRequestsUseCase } from '@application/use-cases/register-requests/soft-delete/soft-delete.usecase';
+import { UpdateRegisterRequestTariffsUseCase } from '@application/use-cases/register-requests/update-tariffs/update-tariffs.usecase';
 import { UpdateRegisterRequestUseCase } from '@application/use-cases/register-requests/update/update.usecase';
 import {
   GetMetadataObjectForGrpcRequest,
@@ -44,6 +46,7 @@ export class RegisterRequestsController {
     private readonly getRegisterRequestsUseCase: GetRegisterRequestsUseCase,
     private readonly createRegisterRequestUseCase: CreateRegisterRequestUseCase,
     private readonly updateRegisterRequestUseCase: UpdateRegisterRequestUseCase,
+    private readonly updateRegisterRequestTariffsUseCase: UpdateRegisterRequestTariffsUseCase,
     private readonly changeRegisterRequestStatusUseCase: ChangeRegisterRequestStatusUseCase,
     private readonly approveRegisterRequestUseCase: ApproveRegisterRequestUseCase,
     private readonly rejectRegisterRequestUseCase: RejectRegisterRequestUseCase,
@@ -119,6 +122,19 @@ export class RegisterRequestsController {
     @Body() body: IUpdateRegisterRequestBodyDto,
   ): Promise<IRegisterRequestDto> {
     return this.updateRegisterRequestUseCase.execute({
+      data: { registerRequestId, ...body },
+      metadata,
+    });
+  }
+
+  @Patch(':registerRequestId/tariffs')
+  @UseGuards(RsaAuthGuard)
+  async updateTariffs(
+    @GetMetadataObjectForGrpcRequest() metadata: IMetadataObjectForGrpcRequest,
+    @Param('registerRequestId') registerRequestId: string,
+    @Body() body: IUpdateRegisterRequestTariffsBodyDto,
+  ): Promise<IRegisterRequestDto> {
+    return this.updateRegisterRequestTariffsUseCase.execute({
       data: { registerRequestId, ...body },
       metadata,
     });

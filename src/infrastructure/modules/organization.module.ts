@@ -34,6 +34,7 @@ import { GetRegisterRequestsUseCase } from '@application/use-cases/register-requ
 import { GetRegisterRequestUseCase } from '@application/use-cases/register-requests/get-one/get-one.usecase';
 import { RejectRegisterRequestUseCase } from '@application/use-cases/register-requests/reject/reject.usecase';
 import { SoftDeleteRegisterRequestsUseCase } from '@application/use-cases/register-requests/soft-delete/soft-delete.usecase';
+import { UpdateRegisterRequestTariffsUseCase } from '@application/use-cases/register-requests/update-tariffs/update-tariffs.usecase';
 import { UpdateRegisterRequestUseCase } from '@application/use-cases/register-requests/update/update.usecase';
 import { GetUsersUseCase } from '@application/use-cases/user/get/get.usecase';
 import { RegisterUseCase } from '@application/use-cases/user/register.usecase';
@@ -308,6 +309,13 @@ import { UserUsecaseModule } from './user.module';
       provide: UpdateRegisterRequestUseCase,
       useFactory: (clientProxy: IMicroserviceClientProxyService) => {
         return new UpdateRegisterRequestUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateRegisterRequestTariffsUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new UpdateRegisterRequestTariffsUseCase(clientProxy);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
