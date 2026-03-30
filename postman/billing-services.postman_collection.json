@@ -1,0 +1,134 @@
+{
+  "info": {
+    "name": "Billing Services",
+    "description": "CRUD для billing/services. Все запросы требуют Bearer token.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "serviceId",
+      "value": "uuid-of-service"
+    }
+  ],
+  "item": [
+    {
+      "name": "Get many",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{url}}/v1/billing/services?preset=BASE&limit=25&page=1",
+          "host": ["{{url}}"],
+          "path": ["v1", "billing", "services"],
+          "query": [
+            { "key": "preset", "value": "BASE" },
+            { "key": "limit", "value": "25" },
+            { "key": "page", "value": "1" },
+            { "key": "search", "value": "", "disabled": true },
+            { "key": "orderBy", "value": "", "disabled": true },
+            { "key": "orderDirection", "value": "", "disabled": true }
+          ]
+        },
+        "description": "Список услуг с пагинацией."
+      }
+    },
+    {
+      "name": "Get one",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{url}}/v1/billing/services/{{serviceId}}?preset=BASE",
+          "host": ["{{url}}"],
+          "path": ["v1", "billing", "services", "{{serviceId}}"],
+          "query": [{ "key": "preset", "value": "BASE" }]
+        },
+        "description": "Детальная информация об услуге."
+      }
+    },
+    {
+      "name": "Create",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Экскурсия по центру\",\n  \"description\": \"Пешеходный маршрут с гидом\",\n  \"type\": \"EXCURSION\",\n  \"module\": \"BOOKING\",\n  \"isCountable\": true,\n  \"defaultCount\": 1,\n  \"isActive\": true\n}"
+        },
+        "url": {
+          "raw": "{{url}}/v1/billing/services",
+          "host": ["{{url}}"],
+          "path": ["v1", "billing", "services"]
+        },
+        "description": "Создание услуги."
+      }
+    },
+    {
+      "name": "Update",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Экскурсия по центру (обновлено)\",\n  \"description\": \"Обновленное описание\",\n  \"isActive\": true\n}"
+        },
+        "url": {
+          "raw": "{{url}}/v1/billing/services/{{serviceId}}",
+          "host": ["{{url}}"],
+          "path": ["v1", "billing", "services", "{{serviceId}}"]
+        },
+        "description": "Частичное обновление услуги."
+      }
+    },
+    {
+      "name": "Delete many",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceIds\": [\"{{serviceId}}\"]\n}"
+        },
+        "url": {
+          "raw": "{{url}}/v1/billing/services",
+          "host": ["{{url}}"],
+          "path": ["v1", "billing", "services"]
+        },
+        "description": "Удаление услуг по списку ID."
+      }
+    }
+  ]
+}

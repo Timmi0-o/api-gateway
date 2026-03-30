@@ -12,22 +12,18 @@ export class ChangeRegisterRequestStatusUseCase {
     metadata: IMetadataObjectForGrpcRequest;
   }): Promise<IRegisterRequestDto> {
     const { data, metadata } = params;
+
+    console.log('data', data);
     return this.clientProxy.send<
       {
         registerRequestId: string;
         status: string;
         rejectionReason?: string;
-        commonUserId: string;
       },
       IRegisterRequestDto
     >({
       messagePattern: EOrganizationSubjects.REGISTER_REQUEST_CHANGE_STATUS,
-      data: {
-        registerRequestId: data.registerRequestId,
-        status: data.status,
-        ...(data.rejectionReason !== undefined && { rejectionReason: data.rejectionReason }),
-        commonUserId: metadata.commonUserId,
-      },
+      data,
       metadata,
     });
   }

@@ -1,5 +1,6 @@
 import { AdminModule } from '@infrastructure/modules/admin.module';
 import { AuthUsecaseModule } from '@infrastructure/modules/auth.module';
+import { BillingModule } from '@infrastructure/modules/billing.module';
 import { BookingModule } from '@infrastructure/modules/booking.module';
 import { GeoModule } from '@infrastructure/modules/geo.module';
 import { OrganizationUsecaseModule } from '@infrastructure/modules/organization.module';
@@ -26,6 +27,7 @@ import { ConfigModule } from '@nestjs/config';
     UserUsecaseModule,
     UserCacheDataModule,
     OrganizationUsecaseModule,
+    BillingModule,
     BookingModule,
     GeoModule,
     AdminModule,
