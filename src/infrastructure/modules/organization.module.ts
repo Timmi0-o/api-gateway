@@ -26,6 +26,10 @@ import { GetOneOrganizationUseCase } from '@application/use-cases/organization/g
 import { GetOrganizationsUseCase } from '@application/use-cases/organization/get/get.usecase';
 import { UpdateOrganizationUseCase } from '@application/use-cases/organization/update/update.usecase';
 import { CreateOrganizationContractsUseCase } from '@application/use-cases/organization-contracts/create/create-organization-contracts.usecase';
+import { CreateNoteUseCase } from '@application/use-cases/organization-notes/create/create.usecase';
+import { DeleteNoteUseCase } from '@application/use-cases/organization-notes/delete/delete.usecase';
+import { GetNotesByEntityUseCase } from '@application/use-cases/organization-notes/get-many/get-many.usecase';
+import { UpdateNoteUseCase } from '@application/use-cases/organization-notes/update/update.usecase';
 import { ApproveRegisterRequestUseCase } from '@application/use-cases/register-requests/approve/approve.usecase';
 import { ChangeRegisterRequestStatusUseCase } from '@application/use-cases/register-requests/change-status/change-status.usecase';
 import { CreateRegisterRequestUseCase } from '@application/use-cases/register-requests/create/create.usecase';
@@ -48,6 +52,7 @@ import { Module } from '@nestjs/common';
 import { OrganizationFilesController } from '@presentation/controllers/organization/organization-files.controller';
 import { OrganizationFoldersController } from '@presentation/controllers/organization/organization-folders.controller';
 import { MembersController } from '@presentation/controllers/organization/organization-members.controller';
+import { OrganizationNotesController } from '@presentation/controllers/organization/organization-notes.controller';
 import { OrganizationModulesController } from '@presentation/controllers/organization/organization-modules.controller';
 import { OrganizationPermissionsController } from '@presentation/controllers/organization/organization-permissions.controller';
 import { OrganizationController } from '@presentation/controllers/organization/organization.controller';
@@ -72,6 +77,7 @@ import { UserUsecaseModule } from './user.module';
     OrganizationModulesController,
     OrganizationFilesController,
     OrganizationFoldersController,
+    OrganizationNotesController,
   ],
   providers: [
     {
@@ -363,6 +369,34 @@ import { UserUsecaseModule } from './user.module';
         return new CreateOrganizationContractsUseCase(clientProxy, fileUploadService);
       },
       inject: [MICROSERVICE_CLIENT_PROXY_SERVICE, FileUploadService],
+    },
+    {
+      provide: GetNotesByEntityUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new GetNotesByEntityUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: CreateNoteUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new CreateNoteUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: UpdateNoteUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new UpdateNoteUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
+    },
+    {
+      provide: DeleteNoteUseCase,
+      useFactory: (clientProxy: IMicroserviceClientProxyService) => {
+        return new DeleteNoteUseCase(clientProxy);
+      },
+      inject: [MICROSERVICE_CLIENT_PROXY_SERVICE],
     },
   ],
 })

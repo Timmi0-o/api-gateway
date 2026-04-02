@@ -9,8 +9,7 @@ import {
   IUploadedFile,
 } from '@infrastructure/services/file-upload/file-upload.service';
 import { ServiceException } from '@shared/exceptions/service.exception';
-
-const ORGANIZATION_CONTRACT_CREATE = 'organization.v1.organization-contract.create';
+import { EOrganizationSubjects } from '@tourgis/common';
 
 const S3_PUBLIC_BASE_URL = process.env['S3_PUBLIC_BASE_URL'] ?? 'http://localhost:9000';
 
@@ -40,7 +39,7 @@ export class CreateOrganizationContractsUseCase {
       { registerRequestId: string; files: ICreateOrganizationContractFileDto[] },
       ICreateOrganizationContractsResponseDto
     >({
-      messagePattern: ORGANIZATION_CONTRACT_CREATE,
+      messagePattern: EOrganizationSubjects.ORGANIZATION_CONTRACT_CREATE,
       data: {
         registerRequestId: data.registerRequestId,
         files: filesMetadata,
